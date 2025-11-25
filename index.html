@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>The Music Archives</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <style>
+      :root {
+        --bg: #000000;
+        --panel: #000000;
+        --panel-2: #000000;
+        --text: #e7e9ee;
+        --muted: #a8adbd;
+        --accent: #8be9fd;
+        --border: #2a2e3f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        height: 100vh;
+      }
+
+      /* ===========================
+         TOP TABS (Bands / Shows)
+      ============================ */
+      .top-tabs {
+        display: inline-flex;
+        gap: 0;
+        margin-top: 6px;
+        margin-bottom: 10px;
+        background: #1c222b;
+        border-radius: 9999px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .top-tab {
+        border: none;
+        background: transparent;
+        color: #dbeafe;
+        padding: 8px 26px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        outline: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.02);
+      }
+
+      .top-tab:last-child {
+        border-right: none;
+      }
+
+      .top-tab.active {
+        background: #ffffff;
+        color: #111827;
+      }
+
+      /* ===========================
+               HEADER
+      ============================ */
+      header {
+        background: var(--panel);
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      header small {
+        margin-left: auto;
+      }
+
+      #crumbs {
+        font-size: 14px;
+        margin-bottom: 4px;
+        text-align: center;
+      }
+
+      /* ===========================
+               LAYOUT
+      ============================ */
+      .wrap {
+        display: block;
+        height: calc(100vh - 50px);
+      }
+
+      main {
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .results-head {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--panel);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* ===========================
+            REGION + LETTER PILLS
+      ============================ */
+      .region-pills {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .region-pill {
+        padding: 6px 20px;
+        font-size: 13px;
+        border-radius: 999px;
+        background: #1c222b;
+        color: #dbeafe;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        user-select: none;
+        transition: background 0.15s, color 0.15s;
+      }
+
+      .region-pill.active {
+        background: #ffffff;
+        color: #111827;
+      }
+
+      #letter-groups,
+      .letter-groups {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+
+      .letter-pill {
+        padding: 6px 18px;
+        border-radius: 999px;
+        background: #0f172a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #dbeafe;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        user-select: none;
+        transition: background 0.15s, color 0.15s;
+      }
+
+      .letter-pill:hover {
+        background: #1e293b;
+      }
+
+      .letter-pill.active {
+        background: #ffffff;
+        color: #0f172a;
+      }
+
+      /* ===========================
+                LEGEND
+      ============================ */
+      #status-legend {
+        margin-top: 10px;
+        font-size: 12px;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .legend {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        margin-right: 4px;
+        vertical-align: middle;
+      }
+
+      .legend.none {
+        background: #922;
+      }
+
+      .legend.partial {
+        background: #c7a008;
+      }
+
+      .legend.complete {
+        background: #0a8d3a;
+      }
+
+      /* ===========================
+                CARDS GRID
+      ============================ */
+      .cards {
+        padding: 16px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 17px;
+        overflow-y: auto;
+      }
+
+      .card {
+        border: 5px solid transparent;
+        border-radius: 10px;
+        background: #050505;
+      }
+
+      .card-empty {
+        border-color: #222222;
+        background: inherit;
+      }
+
+      .card-partial {
+        background: linear-gradient(
+          160deg,
+          rgba(250, 204, 21, 0.12),
+          rgba(2, 6, 23, 1)
+        );
+        border: 5px solid rgba(250, 204, 21, 0.35);
+      }
+
+      .card-complete {
+        background: linear-gradient(
+          160deg,
+          rgba(22, 163, 74, 0.16),
+          rgba(2, 6, 23, 1)
+        );
+        border: 5px solid rgba(22, 163, 74, 0.45);
+      }
+
+      .card .thumb {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        background: #0b0c10;
+        display: grid;
+        place-items: center;
+      }
+
+      .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 14px;
+      }
+
+      .small-link {
+        margin: 0 12px 14px;
+        display: inline-block;
+        font-size: 12px;
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .small-link:hover {
+        text-decoration: underline;
+      }
+
+      .empty {
+        color: var(--muted);
+        padding: 20px;
+        text-align: center;
+      }
+
+      @media (max-width: 900px) {
+        main {
+          height: calc(100vh - 50px - 240px);
+        }
+      }
+
+      /* ===========================
+             BAND DETAIL PANEL
+      ============================ */
+      .band-detail {
+	    padding: 1rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+		max-width: 1200px;
+		margin: 0 auto;
+		align-items: flex-start;
+      }
+	  
+	  /* Center the whole "Current Albums in Archive" area */
+	  #band-albums-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* Make the album tiles grid center under the band card */
+      #band-albums-grid {
+        display: grid;
+        justify-content: center;
+      }
+
+      .band-detail h2 {
+        font-size: 1.6rem;
+      }
+
+      .band-panel {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+      }
+
+      .band-panel p {
+        margin-bottom: 0.75rem;
+        color: #ddd;
+      }
+
+      .band-open-btn {
+        display: inline-block;
+        background: #0ea5e9;
+        color: #000;
+        padding: 0.5rem 0.9rem;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+	  
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>The Music Archives</h1>
+      <small style="opacity: 0.6">Voodoo Media</small>
+    </header>
+
+    <div class="wrap">
+      <main>
+        <div class="results-head">
+          <div id="crumbs">Select a region first, then the corresponding letter.</div>
+
+          <div id="region-pills" class="region-pills"></div>
+
+          <div id="letter-groups" class="letter-groups"></div>
+
+          <div id="status-legend">
+            <span class="legend none"></span> = Nothing yet, keep checking back
+            <span class="legend partial"></span> = In Progress
+            <span class="legend complete"></span> = Fully updated/completed
+          </div>
+        </div>
+
+        <section id="results" class="cards"></section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
