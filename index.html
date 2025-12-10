@@ -463,6 +463,23 @@
   }
 }
 
+@media (max-width: 900px) and (orientation: portrait) {
+  /* Let the wrapper grow naturally instead of locking to viewport height */
+  .wrap {
+    height: auto;
+  }
+
+  /* Same for main content area */
+  main {
+    min-height: auto;
+  }
+
+  /* Remove the inner scroll box on the band grid */
+  .cards {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
 </style>
 
 
@@ -509,6 +526,7 @@
 
   </body>
 </html>
+
 
 
 
