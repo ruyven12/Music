@@ -1603,10 +1603,7 @@ function showBandCard(region, letter, bandObj) {
   resultsEl.style.justifyContent = "center";
   resultsEl.style.alignItems = "flex-start";
   resultsEl.style.flexDirection = "column";
-  resultsEl.style.borderRadius = "16px";
   resultsEl.style.padding = "24px";
-  resultsEl.style.boxShadow =
-    "0 0 20px rgba(125,197,255,0.15), inset 0 0 20px rgba(125,197,255,0.08)";
 
   const wrapper = document.createElement("div")
   // center the whole band-details block
