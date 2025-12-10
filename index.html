@@ -5,7 +5,7 @@
     <title>The Music Archives</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <style>
+<style>
   :root {
     --bg: #000000;
     --panel: #000000;
@@ -19,6 +19,14 @@
   * {
     box-sizing: border-box;
   }
+
+  /* REMOVE BLUE HIGHLIGHT */
+*:focus {
+  outline: none !important;
+}
+* {
+  -webkit-tap-highlight-color: transparent;
+}
 
   html,
   body {
@@ -311,10 +319,22 @@
 
   #band-albums-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     justify-content: center;
   }
+
+  @media (max-width: 900px) {
+  #band-albums-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #band-albums-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
   .band-detail h2 {
     font-size: 1.6rem;
@@ -418,6 +438,7 @@
     <script src="script.js"></script>
   </body>
 </html>
+
 
 
 
