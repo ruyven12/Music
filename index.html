@@ -370,10 +370,11 @@
   }
 
   #band-albums-grid {
-    display: grid;
-    gap: 12px;
-    width: 100%;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+   display: grid;
+   gap: 16px;
+   /* as many columns as will fit, each at least 150px wide, otherwise they wrap */
+   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+   justify-content: center;
   }
 
   .album-tile {
@@ -526,6 +527,7 @@
 
   </body>
 </html>
+
 
 
 
