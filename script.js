@@ -2179,7 +2179,7 @@ backBtn.addEventListener("click", () => {
           meta.textContent = [datePretty, venueBits.join(" • ")]
             .filter(Boolean)
             .join(" — ")
-          meta.style.fontSize = "12px"
+          meta.style.fontSize = "14px"
           meta.style.color = "rgba(203,213,225,0.85)"
           card.appendChild(meta)
         }
