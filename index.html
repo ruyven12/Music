@@ -369,13 +369,22 @@
         padding: 0 16px 24px;
       }
 
-      #band-albums-grid {
-        display: grid;
-        gap: 16px;
-        /* as many columns as will fit, each at least 150px wide, otherwise they wrap */
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        justify-content: center;
-      }
+      /* RESTORED: Horizontal scroll box for band album thumbs */
+#band-albums-grid {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+}
+
+#band-albums-grid > .album-tile {
+    flex: 0 0 auto;
+    width: 180px;
+    scroll-snap-align: start;
+}
+
 
       .album-tile {
         background: #050505;
@@ -552,3 +561,4 @@
     </script>
   </body>
 </html>
+
