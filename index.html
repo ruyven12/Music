@@ -481,6 +481,13 @@
     overflow-y: visible;
   }
 }
+
+  /* AUTO-SHRINK entire UI in portrait mode to prevent cutoff */
+@media screen and (orientation: portrait) {
+  body {
+    transform-origin: top center;
+  }
+}
 </style>
 
 
@@ -525,8 +532,25 @@
   window.addEventListener('orientationchange', setVH);
 </script>
 
+    <script>
+function adjustScale() {
+    const contentWidth = 1100; // ← replace with the REAL width your layout is designed for
+    const viewportWidth = window.innerWidth;
+
+    // only shrink if viewport is narrower than your layout
+    let scale = Math.min(1, viewportWidth / contentWidth);
+
+    document.body.style.transform = `scale(${scale})`;
+}
+
+// Run on load + on rotation + on resize
+window.addEventListener("load", adjustScale);
+window.addEventListener("resize", adjustScale);
+window.addEventListener("orientationchange", adjustScale);
+</script>
   </body>
 </html>
+
 
 
 
