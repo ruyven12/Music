@@ -527,38 +527,7 @@
       window.addEventListener("resize", setVH);
       window.addEventListener("orientationchange", setVH);
     </script>
-
-    <!-- DYNAMIC SCALE: make whole UI fit in portrait -->
-    <script>
-      function adjustScale() {
-        // clear previous scaling so we can measure real width
-        document.body.style.transform = "none";
-
-        const isPortrait = window.matchMedia(
-          "(orientation: portrait)"
-        ).matches;
-        const viewportWidth = window.innerWidth;
-
-        // Only auto-shrink on phones/tablets in portrait
-        if (!isPortrait || viewportWidth >= 900) {
-          document.body.style.transformOrigin = "";
-          return;
-        }
-
-        // How wide is the content actually, unscaled?
-        const contentWidth = document.documentElement.scrollWidth;
-
-        // shrink so that the widest point fits in the viewport
-        const scale = Math.min(1, viewportWidth / contentWidth);
-
-        document.body.style.transformOrigin = "top center";
-        document.body.style.transform = `scale(${scale})`;
-      }
-
-      window.addEventListener("load", adjustScale);
-      window.addEventListener("resize", adjustScale);
-      window.addEventListener("orientationchange", adjustScale);
-    </script>
   </body>
 </html>
+
 
