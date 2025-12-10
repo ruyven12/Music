@@ -1438,7 +1438,7 @@ async function loadAndShowAlbumPhotos(
       const gridEl = document.createElement("div")
       gridEl.className = "photo-grid"
       gridEl.style.display = "grid"
-      gridEl.style.gridTemplateColumns = "repeat(6, 200px)"
+      gridEl.style.gridTemplateColumns = "repeat(4, 200px)"
       gridEl.style.gap = "12px"
       photosWrap.appendChild(gridEl)
 
