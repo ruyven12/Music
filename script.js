@@ -1,5 +1,5 @@
 // ================== CONFIG ==================
-const API_BASE = "https://browser-2qb2.onrender.com";
+const API_BASE = "https://music-archive-3lfa.onrender.com/";
 const CSV_ENDPOINT = `${API_BASE}/sheet/bands`;
 const SHOWS_ENDPOINT = `${API_BASE}/sheet/shows`;
 
