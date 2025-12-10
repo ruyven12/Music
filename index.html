@@ -389,60 +389,80 @@
   }
 
   /* ===========================
-           RESPONSIVE
-  ============================ */
+   MOBILE / NARROW SCREENS
+   Make everything fit in portrait
+=========================== */
 
-  /* phones & small tablets */
-  @media (max-width: 768px) {
-    header h1 {
-      font-size: 14px;
-    }
-
-    .results-head {
-      padding: 10px 8px;
-    }
-
-    .cards {
-      padding: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-
-    .band-detail {
-      padding: 12px;
-    }
-
-    .band-detail-header {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .band-detail-logo {
-      flex: 0 0 auto;
-      max-width: 260px;
-      width: 100%;
-    }
-
-    .band-detail-main {
-      width: 100%;
-    }
-
-    #band-albums-wrap {
-      padding: 0 12px 20px;
-    }
-
-    #band-albums-grid {
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    }
+@media (max-width: 900px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* no sideways scroll */
   }
 
-  /* make sure portrait never overflows horizontally */
-  @media (orientation: portrait) {
-    html,
-    body {
-      max-width: 100%;
-      overflow-x: hidden;
-    }
+  /* Main app wrapper */
+  .wrap,
+  main {
+    width: 100%;
+    max-width: 100%;
   }
+
+  /* Band detail layout – stack instead of side-by-side */
+  .band-detail {
+    padding: 0.75rem;
+  }
+
+  .band-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .band-logo-wrapper {
+    max-width: 260px;
+    width: 100%;
+  }
+
+  .band-info-panel {
+    width: 100%;
+  }
+
+  /* Albums grid under the band card */
+  #band-albums-wrap {
+    width: 100%;
+    max-width: 100%;
+    align-items: stretch;
+  }
+
+  #band-albums-grid {
+    width: 100%;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  /* Cards grid on the main band list view */
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 540px) {
+  #band-albums-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 thumbs per row */
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 </style>
 
 
@@ -489,6 +509,7 @@
 
   </body>
 </html>
+
 
 
 
