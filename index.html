@@ -3,495 +3,491 @@
   <head>
     <meta charset="utf-8" />
     <title>The Music Archives</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-
-<style>
-  :root {
-    --bg: #000000;
-    --panel: #000000;
-    --panel-2: #000000;
-    --text: #e7e9ee;
-    --muted: #a8adbd;
-    --accent: #8be9fd;
-    --border: #2a2e3f;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-      sans-serif;
-    min-height: 100%;
-    max-width: 100%;
-    overflow-x: hidden; /* important for portrait */
-  }
-
-  body {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ===========================
-       TOP TABS (Bands / Shows)
-  ============================ */
-  .top-tabs {
-    display: inline-flex;
-    gap: 0;
-    margin-top: 6px;
-    margin-bottom: 10px;
-    background: #1c222b;
-    border-radius: 9999px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .top-tab {
-    border: none;
-    background: transparent;
-    color: #dbeafe;
-    padding: 8px 26px;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    outline: none;
-    border-right: 1px solid rgba(255, 255, 255, 0.02);
-  }
-
-  .top-tab:last-child {
-    border-right: none;
-  }
-
-  .top-tab.active {
-    background: #ffffff;
-    color: #111827;
-  }
-
-  /* ===========================
-             HEADER
-  ============================ */
-  header {
-    background: var(--panel);
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    width: 100%;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 16px;
-  }
-
-  header small {
-    margin-left: auto;
-  }
-
-  #crumbs {
-    font-size: 14px;
-    margin-bottom: 4px;
-    text-align: center;
-  }
-
-  /* ===========================
-             LAYOUT
-  ============================ */
-  .wrap {
-    flex: 1 1 auto;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  main {
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .results-head {
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border);
-    background: var(--panel);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* ===========================
-        REGION + LETTER PILLS
-  ============================ */
-  .region-pills {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .region-pill {
-    padding: 6px 20px;
-    font-size: 13px;
-    border-radius: 999px;
-    background: #1c222b;
-    color: #dbeafe;
-    cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    user-select: none;
-    transition: background 0.15s, color 0.15s;
-  }
-
-  .region-pill.active {
-    background: #ffffff;
-    color: #111827;
-  }
-
-  #letter-groups,
-  .letter-groups {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 6px;
-  }
-
-  .letter-pill {
-    padding: 6px 18px;
-    border-radius: 999px;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #dbeafe;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    user-select: none;
-    transition: background 0.15s, color 0.15s;
-  }
-
-  .letter-pill:hover {
-    background: #1e293b;
-  }
-
-  .letter-pill.active {
-    background: #ffffff;
-    color: #0f172a;
-  }
-
-  /* ===========================
-              LEGEND
-  ============================ */
-  #status-legend {
-    margin-top: 10px;
-    font-size: 12px;
-    text-align: center;
-    opacity: 0.85;
-  }
-
-  .legend {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border-radius: 4px;
-    margin-right: 4px;
-    vertical-align: middle;
-  }
-
-  .legend.none {
-    background: #922;
-  }
-
-  .legend.partial {
-    background: #c7a008;
-  }
-
-  .legend.complete {
-    background: #0a8d3a;
-  }
-
-  /* ===========================
-             CARDS GRID
-  ============================ */
-  .cards {
-    padding: 16px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 17px;
-    overflow-y: auto;
-    width: 100%;
-  }
-
-  .card {
-    border: 5px solid transparent;
-    border-radius: 10px;
-    background: #050505;
-  }
-
-  .card-empty {
-    border-color: #222222;
-    background: inherit;
-  }
-
-  .card-partial {
-    background: linear-gradient(
-      160deg,
-      rgba(250, 204, 21, 0.12),
-      rgba(2, 6, 23, 1)
-    );
-    border: 5px solid rgba(250, 204, 21, 0.35);
-  }
-
-  .card-complete {
-    background: linear-gradient(
-      160deg,
-      rgba(22, 163, 74, 0.16),
-      rgba(2, 6, 23, 1)
-    );
-    border: 5px solid rgba(22, 163, 74, 0.45);
-  }
-
-  .card .thumb {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background: #0b0c10;
-    display: grid;
-    place-items: center;
-  }
-
-  .card img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 14px;
-  }
-
-  .small-link {
-    margin: 0 12px 14px;
-    display: inline-block;
-    font-size: 12px;
-    color: var(--accent);
-    text-decoration: none;
-  }
-
-  .small-link:hover {
-    text-decoration: underline;
-  }
-
-  .empty {
-    color: var(--muted);
-    padding: 20px;
-    text-align: center;
-  }
-
-  /* ===========================
-         BAND DETAIL PANEL
-  ============================ */
-
-  .band-detail {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  /* top part of band card (logo + info) */
-  .band-detail-header {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: stretch;
-    width: 100%;
-  }
-
-  .band-detail-logo {
-    flex: 0 0 260px;
-    max-width: 100%;
-  }
-
-  .band-detail-logo img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 8px;
-  }
-
-  .band-detail-main {
-    flex: 1 1 260px;
-    min-width: 0;
-  }
-
-  .band-panel {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-  }
-
-  .band-panel p {
-    margin-bottom: 0.75rem;
-    color: #ddd;
-  }
-
-  .band-open-btn {
-    display: inline-block;
-    background: #0ea5e9;
-    color: #000;
-    padding: 0.5rem 0.9rem;
-    border-radius: 6px;
-    font-weight: 600;
-  }
-
-  /* wrapper for "Current albums in archive" */
-  #band-albums-wrap {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 0 16px 24px;
-  }
-
-  #band-albums-grid {
-   display: grid;
-   gap: 16px;
-   /* as many columns as will fit, each at least 150px wide, otherwise they wrap */
-   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-   justify-content: center;
-  }
-
-  .album-tile {
-    background: #050505;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .album-tile img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  /* ===========================
-   MOBILE / NARROW SCREENS
-   Make everything fit in portrait
-=========================== */
-
-@media (max-width: 900px) {
-  html,
-  body {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden; /* no sideways scroll */
-  }
-
-  /* Main app wrapper */
-  .wrap,
-  main {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* Band detail layout – stack instead of side-by-side */
-  .band-detail {
-    padding: 0.75rem;
-  }
-
-  .band-layout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .band-logo-wrapper {
-    max-width: 260px;
-    width: 100%;
-  }
-
-  .band-info-panel {
-    width: 100%;
-  }
-
-  /* Albums grid under the band card */
-  #band-albums-wrap {
-    width: 100%;
-    max-width: 100%;
-    align-items: stretch;
-  }
-
-  #band-albums-grid {
-    width: 100%;
-    max-width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-  }
-
-  /* Cards grid on the main band list view */
-  .cards {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  }
-}
-
-/* Extra-small phones */
-@media (max-width: 540px) {
-  #band-albums-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 thumbs per row */
-  }
-
-  .cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) and (orientation: portrait) {
-  /* Let the wrapper grow naturally instead of locking to viewport height */
-  .wrap {
-    height: auto;
-  }
-
-  /* Same for main content area */
-  main {
-    min-height: auto;
-  }
-
-  /* Remove the inner scroll box on the band grid */
-  .cards {
-    max-height: none;
-    overflow-y: visible;
-  }
-}
-
-  /* AUTO-SHRINK entire UI in portrait mode to prevent cutoff */
-@media screen and (orientation: portrait) {
-  body {
-    transform-origin: top center;
-  }
-}
-</style>
-
-
-
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      :root {
+        --bg: #000000;
+        --panel: #000000;
+        --panel-2: #000000;
+        --text: #e7e9ee;
+        --muted: #a8adbd;
+        --accent: #8be9fd;
+        --border: #2a2e3f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        min-height: 100%;
+        max-width: 100%;
+        overflow-x: hidden; /* important for portrait / small screens */
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ===========================
+           TOP TABS (Bands / Shows)
+      ============================ */
+      .top-tabs {
+        display: inline-flex;
+        gap: 0;
+        margin-top: 6px;
+        margin-bottom: 10px;
+        background: #1c222b;
+        border-radius: 9999px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .top-tab {
+        border: none;
+        background: transparent;
+        color: #dbeafe;
+        padding: 8px 26px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        outline: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.02);
+      }
+
+      .top-tab:last-child {
+        border-right: none;
+      }
+
+      .top-tab.active {
+        background: #ffffff;
+        color: #111827;
+      }
+
+      /* ===========================
+                 HEADER
+      ============================ */
+      header {
+        background: var(--panel);
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        width: 100%;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      header small {
+        margin-left: auto;
+      }
+
+      #crumbs {
+        font-size: 14px;
+        margin-bottom: 4px;
+        text-align: center;
+      }
+
+      /* ===========================
+                 LAYOUT
+      ============================ */
+      .wrap {
+        flex: 1 1 auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+
+      main {
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .results-head {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--panel);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* ===========================
+          REGION + LETTER PILLS
+      ============================ */
+      .region-pills {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .region-pill {
+        padding: 6px 20px;
+        font-size: 13px;
+        border-radius: 999px;
+        background: #1c222b;
+        color: #dbeafe;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        user-select: none;
+        transition: background 0.15s, color 0.15s;
+      }
+
+      .region-pill.active {
+        background: #ffffff;
+        color: #111827;
+      }
+
+      #letter-groups,
+      .letter-groups {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+
+      .letter-pill {
+        padding: 6px 18px;
+        border-radius: 999px;
+        background: #0f172a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #dbeafe;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        user-select: none;
+        transition: background 0.15s, color 0.15s;
+      }
+
+      .letter-pill:hover {
+        background: #1e293b;
+      }
+
+      .letter-pill.active {
+        background: #ffffff;
+        color: #0f172a;
+      }
+
+      /* ===========================
+                  LEGEND
+      ============================ */
+      #status-legend {
+        margin-top: 10px;
+        font-size: 12px;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .legend {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        margin-right: 4px;
+        vertical-align: middle;
+      }
+
+      .legend.none {
+        background: #922;
+      }
+
+      .legend.partial {
+        background: #c7a008;
+      }
+
+      .legend.complete {
+        background: #0a8d3a;
+      }
+
+      /* ===========================
+               CARDS GRID
+      ============================ */
+      .cards {
+        padding: 16px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 17px;
+        width: 100%;
+        /* IMPORTANT: no inner scroll box, let the page scroll */
+        overflow: visible;
+      }
+
+      .card {
+        border: 5px solid transparent;
+        border-radius: 10px;
+        background: #050505;
+      }
+
+      .card-empty {
+        border-color: #222222;
+        background: inherit;
+      }
+
+      .card-partial {
+        background: linear-gradient(
+          160deg,
+          rgba(250, 204, 21, 0.12),
+          rgba(2, 6, 23, 1)
+        );
+        border: 5px solid rgba(250, 204, 21, 0.35);
+      }
+
+      .card-complete {
+        background: linear-gradient(
+          160deg,
+          rgba(22, 163, 74, 0.16),
+          rgba(2, 6, 23, 1)
+        );
+        border: 5px solid rgba(22, 163, 74, 0.45);
+      }
+
+      .card .thumb {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        background: #0b0c10;
+        display: grid;
+        place-items: center;
+      }
+
+      .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 14px;
+      }
+
+      .small-link {
+        margin: 0 12px 14px;
+        display: inline-block;
+        font-size: 12px;
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .small-link:hover {
+        text-decoration: underline;
+      }
+
+      .empty {
+        color: var(--muted);
+        padding: 20px;
+        text-align: center;
+      }
+
+      /* ===========================
+           BAND DETAIL PANEL
+      ============================ */
+
+      .band-detail {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* top part of band card (logo + info) */
+      .band-detail-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: stretch;
+        width: 100%;
+      }
+
+      .band-detail-logo {
+        flex: 0 0 260px;
+        max-width: 100%;
+      }
+
+      .band-detail-logo img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 8px;
+      }
+
+      .band-detail-main {
+        flex: 1 1 260px;
+        min-width: 0;
+      }
+
+      .band-panel {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+      }
+
+      .band-panel p {
+        margin-bottom: 0.75rem;
+        color: #ddd;
+      }
+
+      .band-open-btn {
+        display: inline-block;
+        background: #0ea5e9;
+        color: #000;
+        padding: 0.5rem 0.9rem;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+
+      /* wrapper for "Current albums in archive" */
+      #band-albums-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 16px 24px;
+      }
+
+      #band-albums-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        justify-content: center;
+      }
+
+      .album-tile {
+        background: #050505;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .album-tile img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* ===========================
+         MOBILE / NARROW SCREENS
+         Make everything fit in portrait
+      =========================== */
+
+      @media (max-width: 900px) {
+        html,
+        body {
+          width: 100%;
+          max-width: 100%;
+          margin: 0;
+          padding: 0;
+          overflow-x: hidden; /* no sideways scroll */
+        }
+
+        .wrap,
+        main {
+          width: 100%;
+          max-width: 100%;
+        }
+
+        /* Band detail layout – stack instead of side-by-side */
+        .band-detail {
+          padding: 0.75rem;
+        }
+
+        .band-layout {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .band-logo-wrapper {
+          max-width: 260px;
+          width: 100%;
+        }
+
+        .band-info-panel {
+          width: 100%;
+        }
+
+        /* Albums grid under the band card */
+        #band-albums-wrap {
+          width: 100%;
+          max-width: 100%;
+          align-items: stretch;
+        }
+
+        #band-albums-grid {
+          width: 100%;
+          max-width: 100%;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 10px;
+        }
+
+        /* Cards grid on the main band list view */
+        .cards {
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+      }
+
+      /* Extra-small phones */
+      @media (max-width: 540px) {
+        #band-albums-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 thumbs per row */
+        }
+
+        .cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 900px) and (orientation: portrait) {
+        /* Let the wrapper grow naturally instead of locking to viewport height */
+        .wrap {
+          height: auto;
+        }
+
+        /* Same for main content area */
+        main {
+          min-height: auto;
+        }
+
+        /* Ensure no inner scroll box */
+        .cards {
+          max-height: none;
+          overflow: visible;
+        }
+      }
+
+      /* AUTO-SHRINK entire UI in portrait mode to prevent horizontal cutoff */
+      @media screen and (orientation: portrait) {
+        body {
+          transform-origin: top center;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -503,7 +499,9 @@
     <div class="wrap">
       <main>
         <div class="results-head">
-          <div id="crumbs">Select a region first, then the corresponding letter.</div>
+          <div id="crumbs">
+            Select a region first, then the corresponding letter.
+          </div>
 
           <div id="region-pills" class="region-pills"></div>
 
@@ -520,45 +518,40 @@
       </main>
     </div>
 
+    <!-- Your main logic -->
     <script src="script.js"></script>
+
+    <!-- Optional: vh helper, kept in case you use --vh somewhere -->
     <script>
-  function setVH() {
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', vh + 'px');
-  }
+      function setVH() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", vh + "px");
+      }
 
-  setVH();
-  window.addEventListener('resize', setVH);
-  window.addEventListener('orientationchange', setVH);
-</script>
+      setVH();
+      window.addEventListener("resize", setVH);
+      window.addEventListener("orientationchange", setVH);
+    </script>
 
+    <!-- Portrait auto-scale to keep everything on-screen horizontally -->
     <script>
-function adjustScale() {
-    const contentWidth = 1100; // ← replace with the REAL width your layout is designed for
-    const viewportWidth = window.innerWidth;
+      function adjustScale() {
+        const contentWidth = 1100; // logical design width of your layout
+        const viewportWidth = window.innerWidth;
+        const isPortrait = window.matchMedia("(orientation: portrait)").matches;
 
-    // only shrink if viewport is narrower than your layout
-    let scale = Math.min(1, viewportWidth / contentWidth);
+        if (isPortrait && viewportWidth < contentWidth) {
+          const scale = viewportWidth / contentWidth;
+          document.body.style.transform = "scale(" + scale + ")";
+        } else {
+          // no scaling on wider screens / landscape
+          document.body.style.transform = "none";
+        }
+      }
 
-    document.body.style.transform = `scale(${scale})`;
-}
-
-// Run on load + on rotation + on resize
-window.addEventListener("load", adjustScale);
-window.addEventListener("resize", adjustScale);
-window.addEventListener("orientationchange", adjustScale);
-</script>
+      window.addEventListener("load", adjustScale);
+      window.addEventListener("resize", adjustScale);
+      window.addEventListener("orientationchange", adjustScale);
+    </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
