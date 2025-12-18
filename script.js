@@ -89,7 +89,7 @@ function initTopTabs() {
 		if (legend) legend.style.display = ""
 
 		// rebuild region pills if Shows wiped them
-		if (rg && !rg.children.length) {
+		if (rg) {
 			initRegionPills()
 		}
 
