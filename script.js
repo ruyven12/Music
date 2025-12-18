@@ -1102,6 +1102,26 @@ async function loadAndShowAlbumPhotos(
   keywordBox.style.gap = "10px"
   keywordBox.style.width = "500px"
   topBar.appendChild(keywordBox)
+  
+  // ===== MOBILE WRAP FIX (prevents horizontal scroll) =====
+const isMobile = window.matchMedia("(max-width: 700px)").matches;
+
+// allow header rows to wrap instead of forcing width
+row1.style.flexWrap = "wrap";
+row2.style.flexWrap = "wrap";
+
+if (isMobile) {
+  // stop fixed-width overflow
+  headerPill.style.minWidth = "0";
+  headerPill.style.width = "100%";
+
+  keywordBox.style.width = "100%";
+
+  // let text wrap naturally
+  headerPill.style.whiteSpace = "normal";
+  headerPill.style.textAlign = "center";
+}
+
 
   const loading = document.createElement("div")
   loading.textContent = "Loading photos…"
