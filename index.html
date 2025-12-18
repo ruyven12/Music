@@ -124,7 +124,7 @@
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    overflow-y: auto;
+    overflow-y: visible;
   }
 
   .results-head {
@@ -224,6 +224,15 @@
   .legend.complete {
     background: #0a8d3a;
   }
+
+  /* keep the controls (above the legend) pinned while scrolling */
+#controls-fixed{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--panel);
+  padding-bottom: 8px;
+}
 
   /* ===========================
              CARDS GRID
@@ -404,18 +413,21 @@
   <div class="wrap">
     <main>
       <div class="results-head">
-        <div id="crumbs">Select a region first, then the corresponding letter.</div>
 
-        <div id="region-pills" class="region-pills"></div>
+  <!-- ✅ this stays STILL -->
+  <div id="controls-fixed">
+    <div id="crumbs">Select a region first, then the corresponding letter.</div>
+    <div id="region-pills" class="region-pills"></div>
+    <div id="letter-groups" class="letter-groups"></div>
+  </div>
 
-        <div id="letter-groups" class="letter-groups"></div>
-
-        <div id="status-legend">
-          <span class="legend none"></span> = Nothing yet       
-          <span class="legend partial"></span> = In Progress       
-          <span class="legend complete"></span> = Fully updated       
-        </div>
-      </div>
+  <!-- ✅ this scrolls normally (with the content below) -->
+  <div id="status-legend">
+    <span class="legend none"></span> = Nothing yet
+    <span class="legend partial"></span> = In Progress
+    <span class="legend complete"></span> = Fully updated
+  </div>
+</div>
 
       <section id="results" class="cards"></section>
 
