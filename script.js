@@ -1906,8 +1906,10 @@ if (window.matchMedia("(max-width: 900px)").matches) {
   // inside showBandCard(...) with this version.
   const membersRow = document.createElement("div")
   membersRow.style.display = "flex"
-  membersRow.style.flexWrap = "nowrap"
-  membersRow.style.marginLeft = "10%";
+  membersRow.style.flexWrap = "wrap"
+  membersRow.style.marginLeft = "0"
+  membersRow.style.width = "100%"
+  membersRow.style.justifyContent = "center"   // optional, but nice on mobile
   membersRow.style.gap = "14px"
   membersRow.style.marginBottom = "16px"
   membersRow.style.alignSelf = "flex-start"
@@ -1928,6 +1930,8 @@ if (window.matchMedia("(max-width: 900px)").matches) {
     // SPACING
     box.style.padding = "12px 18px"
     box.style.minWidth = "260px"
+	box.style.flex = "1 1 260px"     // allows wrapping into new row
+    box.style.maxWidth = "520px"     // optional: prevents them getting too huge
     box.style.display = "flex"
     box.style.flexDirection = "column"
     box.style.gap = "4px"
@@ -2123,8 +2127,8 @@ if (window.matchMedia("(max-width: 900px)").matches) {
     for (let i = 0; i < albums.length; i += ROW_SIZE) {
       const rowAlbums = albums.slice(i, i + ROW_SIZE)
       const row = document.createElement("div")
-      row.style.display = "grid"
-      row.style.gridTemplateColumns = `repeat(${rowAlbums.length}, 250px)`
+      row.style.display = "flex"
+      row.style.flexWrap = "wrap"
       row.style.justifyContent = "center"
       row.style.gap = "14px"
       row.style.marginBottom = "14px"
@@ -2162,6 +2166,7 @@ if (window.matchMedia("(max-width: 900px)").matches) {
         card.style.cursor = albumKey ? "pointer" : "default"
         card.style.textAlign = "left"
         card.style.width = "250px"
+		card.style.maxWidth = "100%"
         card.style.boxShadow = "0 10px 25px rgba(0,0,0,0.35)"
 
         // poster area
