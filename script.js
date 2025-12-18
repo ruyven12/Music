@@ -2557,6 +2557,24 @@ function renderShowListForYear(year, shows) {
     venueBox.textContent = venueBits.join(" • ")
     venueBox.style.fontSize = "13px"
     venueBox.style.color = "rgba(148,163,184,0.95)"
+	
+	// ✅ NEW: show description line (from CSV column "show_desc")
+	const descBox = document.createElement("div")
+	const descText =
+  (show.show_desc || show.desc || show.description || "").trim()
+
+	if (descText) {
+		descBox.textContent = descText
+		descBox.style.fontSize = "13px"
+		descBox.style.color = "rgba(148,163,184,0.95)"
+		descBox.style.lineHeight = "1.35"
+		// optional: keep it from getting too tall on mobile
+		descBox.style.display = "-webkit-box"
+		descBox.style.webkitLineClamp = "3"
+		descBox.style.webkitBoxOrient = "vertical"
+		descBox.style.overflow = "hidden"
+	}
+
 
     const details = document.createElement("div")
 
