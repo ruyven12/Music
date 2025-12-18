@@ -1481,7 +1481,7 @@ if (isMobile) {
       const gridEl = document.createElement("div")
       gridEl.className = "photo-grid"
       gridEl.style.display = "grid"
-      gridEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))"
+      gridEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(130px, 1fr))"
 	  gridEl.style.width = "100%"
       gridEl.style.maxWidth = "min(1100px, 100%)"
 	  const isMobile = window.matchMedia("(max-width: 700px)").matches;
@@ -1536,7 +1536,7 @@ if (isMobile) {
       const grid = document.createElement("div")
       grid.className = "photo-grid"
       grid.style.display = "grid"
-      grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))"
+      grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(130px, 1fr))"
 	  grid.style.width = "100%"
 	  grid.style.maxWidth = "min(1100px, 100%)"
 	  const isMobile = window.matchMedia("(max-width: 700px)").matches;
