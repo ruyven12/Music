@@ -1461,9 +1461,13 @@ async function loadAndShowAlbumPhotos(
       const gridEl = document.createElement("div")
       gridEl.className = "photo-grid"
       gridEl.style.display = "grid"
-      gridEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 1fr))"
+      gridEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))"
 	  gridEl.style.width = "100%"
-      gridEl.style.maxWidth = "1100px"
+      gridEl.style.maxWidth = "min(1100px, 100%)"
+	  const isMobile = window.matchMedia("(max-width: 700px)").matches;
+      gridEl.style.gridTemplateColumns = isMobile
+      ? "repeat(auto-fit, minmax(120px, 1fr))"
+      : "repeat(auto-fit, minmax(150px, 1fr))";
       gridEl.style.margin = "0 auto"
       gridEl.style.gap = "12px"
       photosWrap.appendChild(gridEl)
@@ -1512,9 +1516,13 @@ async function loadAndShowAlbumPhotos(
       const grid = document.createElement("div")
       grid.className = "photo-grid"
       grid.style.display = "grid"
-      grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 1fr))"
+      grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))"
 	  grid.style.width = "100%"
-	  grid.style.maxWidth = "1100px"
+	  grid.style.maxWidth = "min(1100px, 100%)"
+	  const isMobile = window.matchMedia("(max-width: 700px)").matches;
+	  gridEl.style.gridTemplateColumns = isMobile
+	  ? "repeat(auto-fit, minmax(120px, 1fr))"
+	  : "repeat(auto-fit, minmax(150px, 1fr))";
 	  grid.style.margin = "0 auto"
       grid.style.gap = "12px"
       photosWrap.appendChild(grid)
