@@ -78,15 +78,30 @@ function initTopTabs() {
       btn.classList.add("active")
 
       if (currentTab === "bands") {
-        // reset layout to normal bands view
-        resultsEl.style.display = ""
-        resultsEl.style.width = ""
-        resultsEl.style.gridTemplateColumns = ""
-        resultsEl.style.gap = ""
+        // 🔁 RESTORE BANDS UI (this is Step 3)
+		const rg = document.getElementById("region-pills")
+		if (rg) rg.style.display = "flex"
 
-        buildTree()
-        crumbsEl.textContent = "Select a band from the list."
-        resultsEl.innerHTML = ""
+		const lg = document.getElementById("letter-groups")
+		if (lg) lg.style.display = ""
+
+		const legend = document.getElementById("status-legend")
+		if (legend) legend.style.display = ""
+
+		// rebuild region pills if Shows wiped them
+		if (rg && !rg.children.length) {
+			initRegionPills()
+		}
+
+		// existing behavior
+		resultsEl.style.display = ""
+		resultsEl.style.width = ""
+		resultsEl.style.gridTemplateColumns = ""
+		resultsEl.style.gap = ""
+
+		buildTree()
+		crumbsEl.textContent = "Select a region first, then the corresponding letter."
+		resultsEl.innerHTML = ""
       } else if (currentTab === "shows") {
         buildShowsYears()
         crumbsEl.textContent = "Select a year from the list."
@@ -134,6 +149,10 @@ function initRegionPills() {
   const container = document.getElementById("region-pills")
   if (!container) return
 
+  // (Re)build pills cleanly (prevents duplicates when switching tabs)
+  container.innerHTML = ""
+  container.style.display = "flex"
+  
   const regions = [
     { key: "Local", label: "Local" },
     { key: "Regional", label: "Regional" },
@@ -2209,36 +2228,87 @@ backBtn.addEventListener("click", () => {
 
 // build the left pane for "Shows" tab – just years
 function buildShowsYears() {
-  if (!treeEl) return
-  const groupsEl = document.getElementById("letter-groups")
-  if (!groupsEl) return
-  groupsEl.innerHTML = ""
+  // In "Shows" mode we want ONLY year bubbles (2025 → 2011) in the top pill area.
+  const regionEl = document.getElementById("region-pills")
+  const letterEl = document.getElementById("letter-groups")
 
-  const years = []
-  for (let y = 2025; y >= 2011; y--) {
-    years.push(y)
+  if (regionEl) {
+    regionEl.innerHTML = ""
+    regionEl.style.display = "flex"
+  }
+  if (letterEl) {
+    letterEl.innerHTML = ""
+    // hide the band-letter row while in Shows mode
+    letterEl.style.display = "none"
   }
 
-  years.forEach((year) => {
-    const details = document.createElement("details")
-    details.className = "letter"
-    const summary = document.createElement("summary")
-    summary.textContent = String(year)
-    details.appendChild(summary)
+  // Left tree: show years as an accordion list (same UI style as the band tree)
+  if (treeEl) {
+    treeEl.innerHTML = ""
+    const years = []
+    for (let y = 2025; y >= 2011; y--) years.push(y)
 
-    summary.addEventListener("click", () => {
-      const matches = getShowsForYear(year)
-      crumbsEl.textContent = `Shows › ${year}`
-      renderShowListForYear(year, matches)
+    years.forEach((year) => {
+      const det = document.createElement("details")
+      det.className = "letter"
+
+      const sum = document.createElement("summary")
+      sum.textContent = String(year)
+
+      // Load show list for this year on click
+      sum.addEventListener("click", () =>
+        setTimeout(async () => {
+          try {
+            if (!SHOWS || !SHOWS.length) {
+              SHOWS = await loadShowsFromCsv()
+            }
+            const showsForYear = getShowsForYear(year)
+            renderShowListForYear(year, showsForYear)
+          } catch (err) {
+            console.error("Failed to load shows:", err)
+            resultsEl.innerHTML = ""
+            const msg = document.createElement("div")
+            msg.textContent = "Could not load shows right now."
+            msg.style.color = "rgba(255,255,255,0.7)"
+            resultsEl.appendChild(msg)
+          }
+        }, 0),
+      )
+
+      det.appendChild(sum)
+      treeEl.appendChild(det)
     })
+  }
 
-    groupsEl.appendChild(details)
-  })
+  // Top pills row: years (use existing pill styling)
+  if (regionEl) {
+    for (let y = 2025; y >= 2011; y--) {
+      const pill = document.createElement("div")
+      pill.className = "region-pill"
+      pill.textContent = String(y)
 
-  if (statusEl) {
-    statusEl.textContent = "Showing shows by year."
+      pill.addEventListener("click", async () => {
+        regionEl
+          .querySelectorAll(".region-pill")
+          .forEach((p) => p.classList.remove("active"))
+        pill.classList.add("active")
+
+        try {
+          if (!SHOWS || !SHOWS.length) {
+            SHOWS = await loadShowsFromCsv()
+          }
+          const showsForYear = getShowsForYear(y)
+          renderShowListForYear(y, showsForYear)
+        } catch (err) {
+          console.error("Failed to load shows:", err)
+        }
+      })
+
+      regionEl.appendChild(pill)
+    }
   }
 }
+
 
 // =============== tree build ===============
 function buildTree() {
