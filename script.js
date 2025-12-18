@@ -2405,7 +2405,7 @@ function renderShowListForYear(year, shows) {
 
   // make the results area itself a 2-column grid
   resultsEl.style.display = "grid"
-  resultsEl.style.gridTemplateColumns = "repeat(2, minmax(0, 1fr))"
+  resultsEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(420px, 1fr))"
   resultsEl.style.gap = "16px"
   resultsEl.style.alignItems = "flex-start"
 
@@ -2421,6 +2421,8 @@ function renderShowListForYear(year, shows) {
     row.style.padding = "10px 12px"
     row.style.position = "relative"
     row.style.overflow = "hidden"
+	row.style.width = "100%"
+	row.style.maxWidth = "100%"
 
     const left = document.createElement("div")
     left.style.width = "140px"
@@ -2458,6 +2460,14 @@ function renderShowListForYear(year, shows) {
     right.style.display = "grid"
     right.style.gridTemplateRows = "auto auto auto auto"
     right.style.gap = "4px"
+	
+	// Mobile: stack poster above text
+		if (window.matchMedia("(max-width: 900px)").matches) {
+		row.style.gridTemplateColumns = "1fr"
+		left.style.width = "100%"
+		left.style.height = "220px" // tweak taller/shorter if you want
+	}
+
 
     const titleBox = document.createElement("div")
     titleBox.textContent =
