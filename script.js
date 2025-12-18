@@ -78,30 +78,30 @@ function initTopTabs() {
       btn.classList.add("active")
 
       if (currentTab === "bands") {
-        // 🔁 RESTORE BANDS UI (this is Step 3)
-		const rg = document.getElementById("region-pills")
-		if (rg) rg.style.display = "flex"
+  // restore top UI
+  const rg = document.getElementById("region-pills")
+  const lg = document.getElementById("letter-groups")
+  const legend = document.getElementById("status-legend")
 
-		const lg = document.getElementById("letter-groups")
-		if (lg) lg.style.display = ""
+  if (rg) rg.style.display = "flex"
+  if (lg) lg.style.display = ""       // <-- undo the Shows hide
+  if (legend) legend.style.display = ""
 
-		const legend = document.getElementById("status-legend")
-		if (legend) legend.style.display = ""
+  // rebuild the region bubbles (Shows overwrote this container with years)
+  initRegionPills()
 
-		// rebuild region pills if Shows wiped them
-		if (rg) {
-			initRegionPills()
-		}
+  // rebuild the letter row for the current/default region
+  updateLetterGroups(CURRENT_REGION || "Local")
 
-		// existing behavior
-		resultsEl.style.display = ""
-		resultsEl.style.width = ""
-		resultsEl.style.gridTemplateColumns = ""
-		resultsEl.style.gap = ""
+  // reset layout to normal bands view
+  resultsEl.style.display = ""
+  resultsEl.style.width = ""
+  resultsEl.style.gridTemplateColumns = ""
+  resultsEl.style.gap = ""
 
-		buildTree()
-		crumbsEl.textContent = "Select a region first, then the corresponding letter."
-		resultsEl.innerHTML = ""
+  buildTree()
+  crumbsEl.textContent = "Select a region first, then the corresponding letter."
+  resultsEl.innerHTML = ""
       } else if (currentTab === "shows") {
         buildShowsYears()
         crumbsEl.textContent = "Select a year from the list."
