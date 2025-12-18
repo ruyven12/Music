@@ -2421,7 +2421,6 @@ function renderShowListForYear(year, shows) {
     row.style.padding = "10px 12px"
     row.style.position = "relative"
     row.style.overflow = "hidden"
-    row.style.width = "1000px"
 
     const left = document.createElement("div")
     left.style.width = "140px"
