@@ -1798,6 +1798,24 @@ backBtn.addEventListener("click", () => {
   topRow.appendChild(leftCol)
   topRow.appendChild(rightCol)
 
+  // ✅ Mobile: stack right column UNDER the logo
+if (window.matchMedia("(max-width: 900px)").matches) {
+  topRow.style.flexDirection = "column"
+  topRow.style.alignItems = "center"
+  topRow.style.gap = "16px"
+
+  leftCol.style.alignItems = "center"
+  leftCol.style.width = "100%"
+
+  // logo becomes responsive
+  logoImg.style.width = "100%"
+  logoImg.style.maxWidth = "350px"     // keep your desktop size as a cap
+  logoImg.style.height = "auto"
+
+  rightCol.style.alignItems = "center"
+  rightCol.style.width = "100%"
+}
+
   // separator
   const sep = document.createElement("div")
   sep.style.height = "3px"
@@ -1811,6 +1829,10 @@ backBtn.addEventListener("click", () => {
   const topInfoRow = document.createElement("div")
   topInfoRow.style.display = "flex"
   topInfoRow.style.flexWrap = "nowrap"
+  if (window.matchMedia("(max-width: 900px)").matches) {
+  topInfoRow.style.flexWrap = "wrap"
+  topInfoRow.style.justifyContent = "center"
+}
   topInfoRow.style.gap = "14px"
   topInfoRow.style.marginBottom = "16px"
   topInfoRow.style.width = "100%"
