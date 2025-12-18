@@ -1461,7 +1461,7 @@ async function loadAndShowAlbumPhotos(
       const gridEl = document.createElement("div")
       gridEl.className = "photo-grid"
       gridEl.style.display = "grid"
-      gridEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))"
+      gridEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 1fr))"
 	  gridEl.style.width = "100%"
       gridEl.style.maxWidth = "1100px"
       gridEl.style.margin = "0 auto"
@@ -1512,7 +1512,7 @@ async function loadAndShowAlbumPhotos(
       const grid = document.createElement("div")
       grid.className = "photo-grid"
       grid.style.display = "grid"
-      grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))"
+      grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 1fr))"
 	  grid.style.width = "100%"
 	  grid.style.maxWidth = "1100px"
 	  grid.style.margin = "0 auto"
