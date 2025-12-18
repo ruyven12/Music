@@ -2522,7 +2522,7 @@ function renderShowListForYear(year, shows) {
 
     const right = document.createElement("div")
     right.style.display = "grid"
-    right.style.gridTemplateRows = "auto auto auto auto"
+    right.style.gridTemplateRows = "auto auto auto auto auto"
     right.style.gap = "4px"
 	
 	// Mobile: stack poster above text
@@ -2746,6 +2746,8 @@ buildTree()
     right.appendChild(titleBox)
     right.appendChild(dateBox)
     right.appendChild(venueBox)
+	if (descText) 
+	  right.appendChild(descBox)
     right.appendChild(details)
 
     // details spans both columns
