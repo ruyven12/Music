@@ -103,6 +103,8 @@ function initTopTabs() {
   crumbsEl.textContent = "Select a region first, then the corresponding letter."
   resultsEl.innerHTML = ""
       } else if (currentTab === "shows") {
+		const legend = document.getElementById("status-legend")
+		if (legend) legend.style.display = "none"   // ✅ hide legend for years  
         buildShowsYears()
         crumbsEl.textContent = "Select a year from the list."
         resultsEl.innerHTML = ""
