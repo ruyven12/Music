@@ -61,6 +61,7 @@ function initTopTabs() {
 
   const tabs = [
     { id: "bands", label: "Bands" },
+	{ id: "shows", label: "Shows" },
   ]
 
   let currentTab = "bands"
