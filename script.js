@@ -1398,8 +1398,9 @@ async function loadAndShowAlbumPhotos(
     box.style.borderRadius = "10px"
     box.style.overflow = "hidden"
     box.style.cursor = "pointer"
-    box.style.width = "150px"
-    box.style.height = "110px"
+    box.style.width = "100%"
+    box.style.height = "auto"
+    box.style.aspectRatio = "4 / 3"
     box.style.display = "flex"
     box.style.alignItems = "center"
     box.style.justifyContent = "center"
@@ -1511,7 +1512,10 @@ async function loadAndShowAlbumPhotos(
       const grid = document.createElement("div")
       grid.className = "photo-grid"
       grid.style.display = "grid"
-      grid.style.gridTemplateColumns = "repeat(6, 200px)"
+      grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))"
+	  grid.style.width = "100%"
+	  grid.style.maxWidth = "1100px"
+	  grid.style.margin = "0 auto"
       grid.style.gap = "12px"
       photosWrap.appendChild(grid)
 
