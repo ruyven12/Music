@@ -2614,10 +2614,26 @@ function renderShowListForYear(year, shows) {
               resultsEl.style.gridTemplateColumns = ""
               resultsEl.style.gap = ""
 
-              // 3) Rebuild left side band-tree navigation (Local / Regional / etc.)
-              buildTree()
+              // 3) Restore Bands top UI (Shows uses that area for years)
+const rg = document.getElementById("region-pills")
+const lg = document.getElementById("letter-groups")
+const legend = document.getElementById("status-legend")
 
-              // 4) Remember where we are in band navigation
+if (rg) rg.style.display = "flex"
+if (lg) lg.style.display = ""
+if (legend) legend.style.display = ""
+
+// Rebuild region pills (this clears the year pills)
+initRegionPills()
+
+// Make sure the letter row matches where the band lives
+CURRENT_REGION = info.region
+updateLetterGroups(info.region)
+
+// 4) Rebuild left side band-tree navigation (Local / Regional / etc.)
+buildTree()
+
+              // 5) Remember where we are in band navigation
               LAST_VIEW = {
                 type: "letter",
                 region: info.region,
