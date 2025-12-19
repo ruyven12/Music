@@ -2257,10 +2257,19 @@ if (window.matchMedia("(max-width: 900px)").matches) {
         if (show) {
           const meta = document.createElement("div")
           const datePretty = formatShowDate(show.date || show.show_date || "")
-          const venueBits = [show.venue, show.city, show.state]
-            .map((v) => (v || "").trim())
-            .filter(Boolean)
-          meta.textContent = [datePretty, venueBits.join(" • ")]
+          let venueText = ""
+		  const venue = (show.venue || "").trim()
+		  const city = (show.city || "").trim()
+		  const state = (show.state || "").trim()
+
+		  if (venue && city && state) venueText = `${venue} - ${city}, ${state}`
+		  else if (venue && city) venueText = `${venue} - ${city}`
+		  else if (venue && state) venueText = `${venue} - ${state}`
+		  else if (city && state) venueText = `${city}, ${state}`
+		  else venueText = venue || city || state || ""
+
+		venueBox.textContent = venueText
+
             .filter(Boolean)
             .join(" — ")
           meta.style.fontSize = "14px"
