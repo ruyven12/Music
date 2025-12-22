@@ -1608,7 +1608,7 @@ if (isMobile) {
 	  grid.style.width = "100%"
 	  grid.style.maxWidth = "min(1100px, 100%)"
 	  const isMobile = window.matchMedia("(max-width: 700px)").matches;
-	  gridEl.style.gridTemplateColumns = isMobile
+	  grid.style.gridTemplateColumns = isMobile
 	  ? "repeat(auto-fit, minmax(120px, 1fr))"
 	  : "repeat(auto-fit, minmax(150px, 1fr))";
 	  grid.style.margin = "0 auto"
