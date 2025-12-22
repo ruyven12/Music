@@ -2254,28 +2254,27 @@ if (window.matchMedia("(max-width: 900px)").matches) {
 
         // show metadata if we can match this album to a show
         const show = findShowForAlbumName(albumName)
-        if (show) {
-          const meta = document.createElement("div")
-          const datePretty = formatShowDate(show.date || show.show_date || "")
-          let venueText = ""
-		  const venue = (show.venue || "").trim()
-		  const city = (show.city || "").trim()
-		  const state = (show.state || "").trim()
+if (show) {
+  const meta = document.createElement("div")
+  const datePretty = formatShowDate(show.date || show.show_date || "")
 
-		  if (venue && city && state) venueText = `${venue} - ${city}, ${state}`
-		  else if (venue && city) venueText = `${venue} - ${city}`
-		  else if (venue && state) venueText = `${venue} - ${state}`
-		  else if (city && state) venueText = `${city}, ${state}`
-		  else venueText = venue || city || state || ""
+  const venue = (show.venue || "").trim()
+  const city = (show.city || "").trim()
+  const state = (show.state || "").trim()
 
-		venueBox.textContent = venueText
+  let venueText = ""
+  if (venue && city && state) venueText = `${venue} - ${city}, ${state}`
+  else if (venue && city) venueText = `${venue} - ${city}`
+  else if (venue && state) venueText = `${venue} - ${state}`
+  else if (city && state) venueText = `${city}, ${state}`
+  else venueText = venue || city || state || ""
 
-            .filter(Boolean)
-            .join(" — ")
-          meta.style.fontSize = "14px"
-          meta.style.color = "rgba(203,213,225,0.85)"
-          card.appendChild(meta)
-        }
+  meta.textContent = [datePretty, venueText].filter(Boolean).join(" — ")
+  meta.style.fontSize = "14px"
+  meta.style.color = "rgba(203,213,225,0.85)"
+  card.appendChild(meta)
+}
+
 
         // click → open photo grid
         if (albumKey) {
@@ -2559,25 +2558,21 @@ function renderShowListForYear(year, shows) {
     dateBox.style.fontSize = "13px"
     dateBox.style.color = "rgba(148,163,184,0.95)"
 
-    const venue = (show.venue || "").trim()
+    const venueBox = document.createElement("div")
+
+const venue = (show.venue || "").trim()
 const city = (show.city || "").trim()
 const state = (show.state || "").trim()
 
 let venueText = ""
-
-if (venue && city && state) {
-  venueText = `${venue} - ${city}, ${state}`
-} else if (venue && city) {
-  venueText = `${venue} - ${city}`
-} else if (venue && state) {
-  venueText = `${venue} - ${state}`
-} else if (city && state) {
-  venueText = `${city}, ${state}`
-} else {
-  venueText = venue || city || state || ""
-}
+if (venue && city && state) venueText = `${venue} - ${city}, ${state}`
+else if (venue && city) venueText = `${venue} - ${city}`
+else if (venue && state) venueText = `${venue} - ${state}`
+else if (city && state) venueText = `${city}, ${state}`
+else venueText = venue || city || state || ""
 
 venueBox.textContent = venueText
+
     venueBox.style.fontSize = "13px"
     venueBox.style.color = "rgba(148,163,184,0.95)"
 	
