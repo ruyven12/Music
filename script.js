@@ -2318,7 +2318,7 @@ function buildShowsYears() {
   if (treeEl) {
     treeEl.innerHTML = ""
     const years = []
-    for (let y = 2025; y >= 2011; y--) years.push(y)
+    for (let y = 2025; y >= 2009; y--) years.push(y)
 
     years.forEach((year) => {
       const det = document.createElement("details")
@@ -2354,7 +2354,7 @@ function buildShowsYears() {
 
   // Top pills row: years (use existing pill styling)
   if (regionEl) {
-    for (let y = 2025; y >= 2011; y--) {
+    for (let y = 2025; y >= 2009; y--) {
       const pill = document.createElement("div")
       pill.className = "region-pill"
       pill.textContent = String(y)
