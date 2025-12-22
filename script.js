@@ -2559,11 +2559,25 @@ function renderShowListForYear(year, shows) {
     dateBox.style.fontSize = "13px"
     dateBox.style.color = "rgba(148,163,184,0.95)"
 
-    const venueBox = document.createElement("div")
-    const venueBits = [show.venue, show.city, show.state]
-      .map((v) => (v || "").trim())
-      .filter(Boolean)
-    venueBox.textContent = venueBits.join(" • ")
+    const venue = (show.venue || "").trim()
+const city = (show.city || "").trim()
+const state = (show.state || "").trim()
+
+let venueText = ""
+
+if (venue && city && state) {
+  venueText = `${venue} - ${city}, ${state}`
+} else if (venue && city) {
+  venueText = `${venue} - ${city}`
+} else if (venue && state) {
+  venueText = `${venue} - ${state}`
+} else if (city && state) {
+  venueText = `${city}, ${state}`
+} else {
+  venueText = venue || city || state || ""
+}
+
+venueBox.textContent = venueText
     venueBox.style.fontSize = "13px"
     venueBox.style.color = "rgba(148,163,184,0.95)"
 	
