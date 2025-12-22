@@ -596,10 +596,9 @@ async function fetchFolderAlbums(folderPath, region) {
   const baseSlug = toSlug(folderPath || "")
 
   const res = await fetch(
-  `${API_BASE}/smug/${encodeURIComponent(baseSlug)}?folder=${encodeURIComponent(
-    folderPath,
-  )}&region=${encodeURIComponent(region || "")}&count=200&start=1`,
+  `${API_BASE}/smug/${encodeURIComponent(baseSlug)}?folder=${encodeURIComponent(folderPath)}&region=${encodeURIComponent(region || "")}&count=200&start=1`,
 )
+
   const data = await res.json()
 
   // your /smug/... handler returns Response.Album
