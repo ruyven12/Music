@@ -634,7 +634,7 @@ async function bandHasAlbumForCode(info, mmddyy) {
     const albums = await fetchFolderAlbums(folderPath, info.region)
 
     const found = (albums || []).some((alb) => {
-      const name = String(alb?.Name || alb?.Title || alb?.UrlName || "").trim()
+      const name = String(alb?.UrlName || alb?.Name || alb?.Title || "").trim()
 	  return name.includes(mmddyy)
     })
 
