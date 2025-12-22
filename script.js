@@ -2647,7 +2647,7 @@ venueBox.textContent = venueText
 
           const card = document.createElement("div")
           card.style.background = "rgba(15,23,42,0.18)"
-          card.style.border = "1px solid rgba(148,163,184,0.12)"
+          card.style.border = "3px solid rgba(148,163,184,0.12)"
           card.style.borderRadius = "16px"
           card.style.padding = "10px"
           card.style.display = "flex"
