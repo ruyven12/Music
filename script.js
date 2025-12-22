@@ -592,22 +592,18 @@ async function buildShowDateBandIndex() {
 // get all albums inside a SmugMug folder using the same pattern
 // your code already uses in showBandCard(...)
 async function fetchFolderAlbums(folderPath, region) {
-  // make a slug the same way the band view does
   const baseSlug = toSlug(folderPath || "")
-
   const res = await fetch(
-  `${API_BASE}/smug/${encodeURIComponent(baseSlug)}?folder=${encodeURIComponent(folderPath)}&region=${encodeURIComponent(region || "")}&count=200&start=1`,
-)
-
+    `${API_BASE}/smug/${encodeURIComponent(baseSlug)}?folder=${encodeURIComponent(
+      folderPath,
+    )}&region=${encodeURIComponent(region || "")}&count=200&start=1`,
+  )
   const data = await res.json()
-
-  // your /smug/... handler returns Response.Album
   const albums =
-    (data && data.Response && (data.Response.Album || data.Response.Albums)) ||
-    []
-
+    (data && data.Response && (data.Response.Album || data.Response.Albums)) || []
   return albums
 }
+
 
 // ===== show-date (MMDDYY) -> album existence check =====
 const BAND_DATE_ALBUM_CACHE = {} // key: "<folder>|<MMDDYY>" -> true/false
@@ -638,8 +634,8 @@ async function bandHasAlbumForCode(info, mmddyy) {
     const albums = await fetchFolderAlbums(folderPath, info.region)
 
     const found = (albums || []).some((alb) => {
-      const name = (alb && alb.Name ? alb.Name : "").trim()
-      return name.includes(mmddyy) // e.g. "120625" anywhere in album name
+      const name = String(alb?.Name || alb?.Title || alb?.UrlName || "").trim()
+	  return name.includes(mmddyy)
     })
 
     BAND_DATE_ALBUM_CACHE[cacheKey] = found
@@ -649,6 +645,7 @@ async function bandHasAlbumForCode(info, mmddyy) {
     BAND_DATE_ALBUM_CACHE[cacheKey] = false
     return false
   }
+  console.log("CHECK", folderPath, info.region, mmddyy, albums?.length, albums?.[0])
 }
 
 
