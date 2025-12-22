@@ -610,6 +610,49 @@ async function fetchFolderAlbums(folderPath) {
   return albums
 }
 
+// ===== show-date (MMDDYY) -> album existence check =====
+const BAND_DATE_ALBUM_CACHE = {} // key: "<folder>|<MMDDYY>" -> true/false
+
+function toMMDDYY(raw) {
+  // expects M/D/YY or MM/DD/YY (from your Shows CSV)
+  const parts = (raw || "").trim().split("/")
+  if (parts.length !== 3) return ""
+  let [m, d, y] = parts
+  m = String(m || "").padStart(2, "0")
+  d = String(d || "").padStart(2, "0")
+  y = String(y || "")
+  // if someone gives 2025, take last 2
+  if (y.length === 4) y = y.slice(-2)
+  y = y.padStart(2, "0")
+  return `${m}${d}${y}`
+}
+
+async function bandHasAlbumForCode(info, mmddyy) {
+  if (!info || !info.band || !info.band.smug_folder || !mmddyy) return false
+
+  const folderPath = info.band.smug_folder.trim()
+  const cacheKey = `${folderPath}|${mmddyy}`
+
+  if (cacheKey in BAND_DATE_ALBUM_CACHE) return BAND_DATE_ALBUM_CACHE[cacheKey]
+
+  try {
+    const albums = await fetchFolderAlbums(folderPath)
+
+    const found = (albums || []).some((alb) => {
+      const name = (alb && alb.Name ? alb.Name : "").trim()
+      return name.includes(mmddyy) // e.g. "120625" anywhere in album name
+    })
+
+    BAND_DATE_ALBUM_CACHE[cacheKey] = found
+    return found
+  } catch (e) {
+    console.warn("bandHasAlbumForCode failed:", folderPath, mmddyy, e)
+    BAND_DATE_ALBUM_CACHE[cacheKey] = false
+    return false
+  }
+}
+
+
 // get ALL images from ONE album (paged) – same paging behavior as your album view
 async function fetchAllAlbumImages(albumKey) {
   const all = []
@@ -2622,7 +2665,7 @@ venueBox.textContent = venueText
     const details = document.createElement("div")
 
     // make the whole left block clickable (works with or without a poster)
-    left.addEventListener("click", () => {
+    left.addEventListener("click", async () => {
       // toggle closed
       if (details.classList.contains("open")) {
         details.classList.remove("open")
@@ -2631,6 +2674,7 @@ venueBox.textContent = venueText
       }
 
       const bands = getBandsFromShowRow(show)
+	  const bandsWithAlbums = await getBandsWithAlbumForShow(show)
 
       // normalize names so "Re:Vision" == "ReVision" == "re vision"
       function normName(s) {
@@ -2672,7 +2716,21 @@ venueBox.textContent = venueText
 
           const card = document.createElement("div")
           card.style.background = "rgba(15,23,42,0.18)"
-          card.style.border = "1px solid rgba(148,163,184,0.12)"
+          // default border while we check SmugMug
+card.style.border = "1px solid rgba(148,163,184,0.12)"
+
+// MMDDYY code from the Shows CSV date, e.g. "12/6/25" -> "120625"
+const mmddyy = toMMDDYY(show.date || show.show_date || "")
+
+// async check: if album exists under this band's smug_folder with that code -> green else red
+;(() => {
+  if (!info) return
+  bandHasAlbumForCode(info, mmddyy).then((hasAlbum) => {
+    card.style.border = hasAlbum
+      ? "2px solid rgba(52,211,153,0.95)"   // green
+      : "2px solid rgba(248,113,113,0.95)"  // red
+  })
+})()
           card.style.borderRadius = "16px"
           card.style.padding = "10px"
           card.style.display = "flex"
