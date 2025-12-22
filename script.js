@@ -29,6 +29,31 @@ const POSTERS_MANUAL = {}
 let BANDS = {}
 let SHOWS = []
 
+// Cache: show-date -> Set(normalizedBandName)
+const SHOW_DATE_BANDS_WITH_ALBUM = {}
+
+// normalize names so "Re:Vision" == "ReVision" == "re vision"
+function normName(s) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9]/g, "")
+}
+
+async function getBandsWithAlbumForShow(show) {
+  const date = (show.date || show.show_date || "").trim()
+  if (!date) return new Set()
+
+  if (SHOW_DATE_BANDS_WITH_ALBUM[date]) {
+    return SHOW_DATE_BANDS_WITH_ALBUM[date]
+  }
+
+  // Uses your existing helper that matches album names containing the show date
+  const matches = await findAlbumsForShow(show)
+
+  const set = new Set(matches.map((m) => normName(m.bandName)))
+  SHOW_DATE_BANDS_WITH_ALBUM[date] = set
+  return set
+}
+
+
 // remember last letter view for “back to bands”
 let LAST_VIEW = null
 
@@ -2606,6 +2631,7 @@ venueBox.textContent = venueText
       }
 
       const bands = getBandsFromShowRow(show)
+	  const bandsWithAlbums = await getBandsWithAlbumForShow(show)
 
       // normalize names so "Re:Vision" == "ReVision" == "re vision"
       function normName(s) {
@@ -2647,7 +2673,10 @@ venueBox.textContent = venueText
 
           const card = document.createElement("div")
           card.style.background = "rgba(15,23,42,0.18)"
-          card.style.border = "3px solid rgba(148,163,184,0.12)"
+          const hasAlbum = info && bandsWithAlbums.has(normName(info.band.name))
+		  card.style.border = hasAlbum
+			? "1px solid rgba(52,211,153,0.9)"   // green
+			: "1px solid rgba(248,113,113,0.9)"  // red
           card.style.borderRadius = "16px"
           card.style.padding = "10px"
           card.style.display = "flex"
