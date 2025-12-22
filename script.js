@@ -2674,7 +2674,7 @@ venueBox.textContent = venueText
       }
 
       const bands = getBandsFromShowRow(show)
-	  const bandsWithAlbums = async getBandsWithAlbumForShow(show)
+	  const bandsWithAlbums = await getBandsWithAlbumForShow(show)
 
       // normalize names so "Re:Vision" == "ReVision" == "re vision"
       function normName(s) {
