@@ -2631,7 +2631,6 @@ venueBox.textContent = venueText
       }
 
       const bands = getBandsFromShowRow(show)
-	  const bandsWithAlbums = await getBandsWithAlbumForShow(show)
 
       // normalize names so "Re:Vision" == "ReVision" == "re vision"
       function normName(s) {
@@ -2673,10 +2672,7 @@ venueBox.textContent = venueText
 
           const card = document.createElement("div")
           card.style.background = "rgba(15,23,42,0.18)"
-          const hasAlbum = info && bandsWithAlbums.has(normName(info.band.name))
-		  card.style.border = hasAlbum
-			? "1px solid rgba(52,211,153,0.9)"   // green
-			: "1px solid rgba(248,113,113,0.9)"  // red
+          card.style.border = "1px solid rgba(148,163,184,0.12)"
           card.style.borderRadius = "16px"
           card.style.padding = "10px"
           card.style.display = "flex"
