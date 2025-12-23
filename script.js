@@ -2875,6 +2875,7 @@ function renderShowListForYear(year, shows) {
     right.appendChild(titleBox);
     right.appendChild(dateBox);
     right.appendChild(venueBox);
+	if (cameraBox) right.appendChild(cameraBox);
     if (descText) right.appendChild(descBox);
     right.appendChild(details);
 
