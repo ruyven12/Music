@@ -127,14 +127,12 @@ function initTopTabs() {
         crumbsEl.textContent =
           "Select a region first, then the corresponding letter.";
         resultsEl.innerHTML = "";
-		ensureTopMessageAndSeparator();
       } else if (currentTab === "shows") {
         const legend = document.getElementById("status-legend");
         if (legend) legend.style.display = "none"; // ✅ hide legend for years
         buildShowsYears();
         crumbsEl.textContent = "Select a year from the list.";
         resultsEl.innerHTML = "";
-		ensureTopMessageAndSeparator();
       }
     });
 
@@ -154,54 +152,22 @@ function initTopTabs() {
   }
 }
 
-function ensureTopMessageAndSeparator() {
-  const controlsFixed = document.getElementById("controls-fixed");
-  if (!controlsFixed) return;
+const controlsFixed = document.getElementById("controls-fixed");
 
-  // --- message ---
-  let msg = document.getElementById("top-message");
-  if (!msg) {
-    msg = document.createElement("div");
-    msg.id = "top-message";
-    msg.textContent = "test"; // change later
+if (controlsFixed && !document.getElementById("top-message")) {
+  const msg = document.createElement("div");
+  msg.id = "top-message";
+  msg.textContent = "test"; // change later
 
-    msg.style.textAlign = "center";
-    msg.style.fontSize = "14px";
-    msg.style.fontWeight = "600";
-    msg.style.color = "rgba(226,232,240,0.9)";
-    msg.style.marginBottom = "6px";
-  }
+  msg.style.textAlign = "center";
+  msg.style.fontSize = "14px";
+  msg.style.fontWeight = "600";
+  msg.style.color = "rgba(226,232,240,0.9)";
+  msg.style.marginBottom = "6px";
 
-  // --- separator ---
-  let sep = document.getElementById("top-sep");
-  if (!sep) {
-    sep = document.createElement("div");
-    sep.id = "top-sep";
-    sep.style.height = "3px";
-    sep.style.width = "100%";
-    sep.style.maxWidth = "480px";
-    sep.style.margin = "6px auto 8px auto";
-    sep.style.background =
-      "linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent)";
-  }
-
-  // Ensure correct order: msg -> sep -> (existing stuff like crumbs/region pills/letters)
-  // Put msg at top if it isn't already inside controlsFixed
-  if (msg.parentNode !== controlsFixed) {
-    controlsFixed.insertBefore(msg, controlsFixed.firstChild);
-  } else if (controlsFixed.firstChild !== msg) {
-    controlsFixed.insertBefore(msg, controlsFixed.firstChild);
-  }
-
-  // Put sep right after msg
-  if (sep.parentNode !== controlsFixed) {
-    controlsFixed.insertBefore(sep, msg.nextSibling);
-  } else if (msg.nextSibling !== sep) {
-    controlsFixed.insertBefore(sep, msg.nextSibling);
-  }
+  // insert above the crumbs line
+  controlsFixed.insertBefore(msg, controlsFixed.firstChild);
 }
-
-
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
@@ -2949,7 +2915,6 @@ Promise.all([loadBandsFromCsv(), loadShowsFromCsv()]).then(
     BANDS = builtBands;
     SHOWS = shows;
     initTopTabs();
-	ensureTopMessageAndSeparator();
     initRegionPills();
     buildTree();
     crumbsEl.textContent = "Select a band from the list.";
