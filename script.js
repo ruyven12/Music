@@ -159,7 +159,7 @@ function ensureTopMessageAndSeparator() {
   if (!controlsFixed) return;
 
   // prevent duplicates
-  if (document.getElementById("top-message")) return;
+  if (document.getElementById("top-message") || document.getElementById("top-sep")) return;
 
   // --- text block ---
   const msg = document.createElement("div");
