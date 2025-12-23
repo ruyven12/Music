@@ -168,7 +168,7 @@ if (controlsFixed && !document.getElementById("top-message")) {
 
   // --- separator ---
   const sep = document.createElement("div");
-  sep.style.height = "1px";
+  sep.style.height = "3px";
   sep.style.width = "100%";
   sep.style.maxWidth = "480px";
   sep.style.margin = "6px auto 8px auto";
