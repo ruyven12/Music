@@ -152,14 +152,17 @@ function initTopTabs() {
   }
 }
 
-const controlsFixed = document.getElementById("controls-fixed");
+function ensureTopMessageAndSeparator() {
+  const controlsFixed = document.getElementById("controls-fixed");
+  if (!controlsFixed) return;
 
-if (controlsFixed && !document.getElementById("top-message")) {
+  // prevent duplicates
+  if (document.getElementById("top-message")) return;
+
   // --- text block ---
   const msg = document.createElement("div");
   msg.id = "top-message";
   msg.textContent = "test";
-
   msg.style.textAlign = "center";
   msg.style.fontSize = "14px";
   msg.style.fontWeight = "600";
@@ -168,6 +171,7 @@ if (controlsFixed && !document.getElementById("top-message")) {
 
   // --- separator ---
   const sep = document.createElement("div");
+  sep.id = "top-sep";
   sep.style.height = "3px";
   sep.style.width = "100%";
   sep.style.maxWidth = "480px";
@@ -175,10 +179,11 @@ if (controlsFixed && !document.getElementById("top-message")) {
   sep.style.background =
     "linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent)";
 
-  // insert in correct order
-  controlsFixed.insertBefore(sep, controlsFixed.firstChild);
-  controlsFixed.insertBefore(msg, sep);
+  // insert ABOVE crumbs (crumbs is already inside controls-fixed)
+  controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+  controlsFixed.insertBefore(sep, msg.nextSibling);
 }
+
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
@@ -2926,6 +2931,7 @@ Promise.all([loadBandsFromCsv(), loadShowsFromCsv()]).then(
     BANDS = builtBands;
     SHOWS = shows;
     initTopTabs();
+	ensureTopMessageAndSeparator();
     initRegionPills();
     buildTree();
     crumbsEl.textContent = "Select a band from the list.";
