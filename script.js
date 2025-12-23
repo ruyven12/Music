@@ -154,20 +154,43 @@ function initTopTabs() {
 
 const controlsFixed = document.getElementById("controls-fixed");
 
-if (controlsFixed && !document.getElementById("top-message")) {
-  const msg = document.createElement("div");
-  msg.id = "top-message";
-  msg.textContent = "Welcome to the Music Archives for Voodoo Media! This is a work in progress and things are constantly moving around in this.";
+if (controlsFixed) {
+  // ---- top message ----
+  let msg = document.getElementById("top-message");
+  if (!msg) {
+    msg = document.createElement("div");
+    msg.id = "top-message";
+    msg.textContent =
+      "Welcome to the Music Archives for Voodoo Media! This is a work in progress and things are constantly moving around in this.";
 
-  msg.style.textAlign = "center";
-  msg.style.fontSize = "14px";
-  msg.style.fontWeight = "600";
-  msg.style.color = "rgba(226,232,240,0.9)";
-  msg.style.marginBottom = "6px";
+    msg.style.textAlign = "center";
+    msg.style.fontSize = "14px";
+    msg.style.fontWeight = "600";
+    msg.style.color = "rgba(226,232,240,0.9)";
+    msg.style.marginBottom = "6px";
 
-  // insert above the crumbs line
-  controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+    controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+  }
+
+  // ---- UNIQUE separator for controls area ----
+  if (!document.getElementById("controls-top-sep")) {
+    const topSep = document.createElement("div");
+    topSep.id = "controls-top-sep";
+
+    // 🔁 reused style from band-detail separator
+    topSep.style.height = "5px";
+    topSep.style.width = "100%";
+    topSep.style.margin = "14px auto 20px";
+    topSep.style.background =
+      "linear-gradient(to right, rgba(200,163,184,0.05), rgba(200,0,0,0.45), rgba(200,163,184,0.02))";
+
+    // insert directly AFTER the message
+    controlsFixed.insertBefore(topSep, msg.nextSibling);
+  }
 }
+
+
+
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
