@@ -161,7 +161,7 @@ if (controlsFixed) {
     msg = document.createElement("div");
     msg.id = "top-message";
     msg.textContent =
-      "Welcome to the Music Archives for Voodoo Media! This is a work in progress and things are constantly moving around in this.";
+      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
 
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
