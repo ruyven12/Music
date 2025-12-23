@@ -2670,27 +2670,26 @@ function renderShowListForYear(year, shows) {
     }
 	
 	// 📷 Camera used line (camera_used_1 / camera_used_2 from CSV)
-const cam1 = (show.camera_used_1 || "").trim();
-const cam2 = (show.camera_used_2 || "").trim();
+	const cam1 = (show.camera_used_1 || "").trim();
+	const cam2 = (show.camera_used_2 || "").trim();
 
-let cameraText = "";
+	let cameraText = "";
 
-if (cam1 && cam2) {
-  cameraText = `Cameras Used: ${cam1} and ${cam2}`;
-} else if (cam1) {
-  cameraText = `Camera Used: ${cam1}`;
-}
+	if (cam1 && cam2) {
+	  cameraText = `Cameras Used: ${cam1} and ${cam2}`;
+	} else if (cam1) {
+      cameraText = `Camera Used: ${cam1}`;
+	}
 
-let cameraBox = null;
+	let cameraBox = null;
 
-if (cameraText) {
-  cameraBox = document.createElement("div");
-  cameraBox.textContent = cameraText;
-  cameraBox.style.fontSize = "13px";
-  cameraBox.style.color = "rgba(148,163,184,0.95)";
-  cameraBox.style.fontStyle = "italic"; // optional, remove if unwanted
-}
-
+	if (cameraText) {
+		cameraBox = document.createElement("div");
+		cameraBox.textContent = cameraText;
+		cameraBox.style.fontSize = "13px";
+		cameraBox.style.color = "rgba(148,163,184,0.95)";
+		cameraBox.style.fontStyle = "italic"; // optional, remove if unwanted
+	}
 
     const details = document.createElement("div");
 
