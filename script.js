@@ -157,7 +157,7 @@ const controlsFixed = document.getElementById("controls-fixed");
 if (controlsFixed && !document.getElementById("top-message")) {
   const msg = document.createElement("div");
   msg.id = "top-message";
-  msg.textContent = "test"; // change later
+  msg.textContent = "Welcome to the Music Archives for Voodoo Media! This is a work in progress and things are constantly moving around in this.";
 
   msg.style.textAlign = "center";
   msg.style.fontSize = "14px";
