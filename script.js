@@ -2602,6 +2602,8 @@ function renderShowListForYear(year, shows) {
     const right = document.createElement("div");
     right.style.display = "grid";
     right.style.gridTemplateRows = "auto auto auto auto auto";
+	right.style.alignItems = "center";
+	right.style.textAlign = "center";
     right.style.gap = "4px";
 
     // Mobile: stack poster above text
