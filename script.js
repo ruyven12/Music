@@ -155,6 +155,7 @@ function initTopTabs() {
 const controlsFixed = document.getElementById("controls-fixed");
 
 if (controlsFixed && !document.getElementById("top-message")) {
+  // --- text block ---
   const msg = document.createElement("div");
   msg.id = "top-message";
   msg.textContent = "test";
@@ -165,8 +166,18 @@ if (controlsFixed && !document.getElementById("top-message")) {
   msg.style.color = "rgba(226,232,240,0.9)";
   msg.style.marginBottom = "6px";
 
-  // insert ABOVE the crumbs line
-  controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+  // --- separator ---
+  const sep = document.createElement("div");
+  sep.style.height = "1px";
+  sep.style.width = "100%";
+  sep.style.maxWidth = "480px";
+  sep.style.margin = "6px auto 8px auto";
+  sep.style.background =
+    "linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent)";
+
+  // insert in correct order
+  controlsFixed.insertBefore(sep, controlsFixed.firstChild);
+  controlsFixed.insertBefore(msg, sep);
 }
 
 function loadRegion(regionKey) {
