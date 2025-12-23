@@ -152,6 +152,23 @@ function initTopTabs() {
   }
 }
 
+const controlsFixed = document.getElementById("controls-fixed");
+
+if (controlsFixed && !document.getElementById("top-message")) {
+  const msg = document.createElement("div");
+  msg.id = "top-message";
+  msg.textContent = "test";
+
+  msg.style.textAlign = "center";
+  msg.style.fontSize = "14px";
+  msg.style.fontWeight = "600";
+  msg.style.color = "rgba(226,232,240,0.9)";
+  msg.style.marginBottom = "6px";
+
+  // insert ABOVE the crumbs line
+  controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+}
+
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
 
