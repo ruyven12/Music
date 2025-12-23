@@ -158,33 +158,49 @@ function ensureTopMessageAndSeparator() {
   const controlsFixed = document.getElementById("controls-fixed");
   if (!controlsFixed) return;
 
-  // prevent duplicates
-  if (document.getElementById("top-message") || document.getElementById("top-sep")) return;
+  // --- message ---
+  let msg = document.getElementById("top-message");
+  if (!msg) {
+    msg = document.createElement("div");
+    msg.id = "top-message";
+    msg.textContent = "test"; // change later
 
-  // --- text block ---
-  const msg = document.createElement("div");
-  msg.id = "top-message";
-  msg.textContent = "test";
-  msg.style.textAlign = "center";
-  msg.style.fontSize = "14px";
-  msg.style.fontWeight = "600";
-  msg.style.color = "rgba(226,232,240,0.9)";
-  msg.style.marginBottom = "6px";
+    msg.style.textAlign = "center";
+    msg.style.fontSize = "14px";
+    msg.style.fontWeight = "600";
+    msg.style.color = "rgba(226,232,240,0.9)";
+    msg.style.marginBottom = "6px";
+  }
 
   // --- separator ---
-  const sep = document.createElement("div");
-  sep.id = "top-sep";
-  sep.style.height = "3px";
-  sep.style.width = "100%";
-  sep.style.maxWidth = "480px";
-  sep.style.margin = "6px auto 8px auto";
-  sep.style.background =
-    "linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent)";
+  let sep = document.getElementById("top-sep");
+  if (!sep) {
+    sep = document.createElement("div");
+    sep.id = "top-sep";
+    sep.style.height = "3px";
+    sep.style.width = "100%";
+    sep.style.maxWidth = "480px";
+    sep.style.margin = "6px auto 8px auto";
+    sep.style.background =
+      "linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent)";
+  }
 
-  // insert ABOVE crumbs (crumbs is already inside controls-fixed)
-  controlsFixed.insertBefore(msg, controlsFixed.firstChild);
-  controlsFixed.insertBefore(sep, msg.nextSibling);
+  // Ensure correct order: msg -> sep -> (existing stuff like crumbs/region pills/letters)
+  // Put msg at top if it isn't already inside controlsFixed
+  if (msg.parentNode !== controlsFixed) {
+    controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+  } else if (controlsFixed.firstChild !== msg) {
+    controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+  }
+
+  // Put sep right after msg
+  if (sep.parentNode !== controlsFixed) {
+    controlsFixed.insertBefore(sep, msg.nextSibling);
+  } else if (msg.nextSibling !== sep) {
+    controlsFixed.insertBefore(sep, msg.nextSibling);
+  }
 }
+
 
 
 function loadRegion(regionKey) {
