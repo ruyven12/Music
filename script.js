@@ -152,9 +152,10 @@ function initTopTabs() {
   }
 }
 
-const controlsFixed = document.getElementById("controls-fixed");
+function initControlsHeader() {
+  const controlsFixed = document.getElementById("controls-fixed");
+  if (!controlsFixed) return;
 
-if (controlsFixed) {
   // ---- top message ----
   let msg = document.getElementById("top-message");
   if (!msg) {
@@ -173,24 +174,23 @@ if (controlsFixed) {
   }
 
   // ---- UNIQUE separator for controls area ----
-  if (!document.getElementById("controls-top-sep")) {
-    const topSep = document.createElement("div");
+  let topSep = document.getElementById("controls-top-sep");
+  if (!topSep) {
+    topSep = document.createElement("div");
     topSep.id = "controls-top-sep";
-
-    // 🔁 reused style from band-detail separator
     topSep.style.height = "5px";
     topSep.style.width = "100%";
     topSep.style.margin = "14px auto 20px";
     topSep.style.background =
       "linear-gradient(to right, rgba(200,163,184,0.05), rgba(200,0,0,0.45), rgba(200,163,184,0.02))";
+  }
 
-    // insert directly AFTER the message
+  // ensure correct placement: directly after the message
+ref
+  if (msg.nextSibling !== topSep) {
     controlsFixed.insertBefore(topSep, msg.nextSibling);
   }
 }
-
-
-
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
@@ -2938,6 +2938,7 @@ Promise.all([loadBandsFromCsv(), loadShowsFromCsv()]).then(
     BANDS = builtBands;
     SHOWS = shows;
     initTopTabs();
+	initControlsHeader();
     initRegionPills();
     buildTree();
     crumbsEl.textContent = "Select a band from the list.";
