@@ -156,59 +156,58 @@ const controlsFixed = document.getElementById("controls-fixed");
 
 if (controlsFixed) {
   // ---- top message (click to expand/collapse) ----
-let msg = document.getElementById("top-message");
-if (!msg) {
-  msg = document.createElement("div");
-  msg.id = "top-message";
+  let msg = document.getElementById("top-message");
+  if (!msg) {
+    msg = document.createElement("div");
+    msg.id = "top-message";
 
-  // Full text (same text you already use)
-  const fullText =
-    "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
+    // Full text (same text you already use)
+    const fullText =
+      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
 
-  // Use the first sentence as the clickable header
-  const splitAt = fullText.indexOf("! ");
-  const headerText = "Introduction";
-    splitAt > -1 ? fullText.slice(0,splitAt + 1) : "Welcome";
-  const bodyText = splitAt > -1 ? fullText.slice(splitAt + 2) : fullText;
+    // Use the first sentence as the clickable header
+    const splitAt = fullText.indexOf("! ");
+    const headerText = "Introduction";
+    const bodyText = fullText;
 
-  // Header (always visible)
-  const header = document.createElement("div");
-  header.textContent = headerText + " ▾";
-  header.style.cursor = "pointer";
-  header.style.userSelect = "none";
+    // Header (always visible)
+    const header = document.createElement("div");
+    header.textContent = headerText + " ▾";
+    header.style.cursor = "pointer";
+	header.style.fontSize = "22px";
+	header.style.fontWeight = "600";
+    header.style.userSelect = "none";
 
-  // Body (toggle)
-  const body = document.createElement("div");
-  body.textContent = bodyText;
-  body.style.display = "none";
-  body.style.marginTop = "6px";
-  body.style.fontSize = "13px";
-  body.style.fontWeight = "500";
-  body.style.color = "rgba(226,232,240,0.75)";
-  body.style.lineHeight = "1.35";
+    // Body (toggle)
+    const body = document.createElement("div");
+    body.textContent = bodyText;
+    body.style.display = "none";
+    body.style.marginTop = "6px";
+    body.style.fontSize = "13px";
+    body.style.fontWeight = "500";
+    body.style.color = "rgba(226,232,240,0.75)";
+    body.style.lineHeight = "1.35";
 
-  // Match your current message styling
-  msg.style.textAlign = "center";
-  msg.style.fontSize = "14px";
-  msg.style.fontWeight = "600";
-  msg.style.color = "rgba(226,232,240,0.9)";
-  msg.style.marginBottom = "6px";
+    // Match your current message styling
+    msg.style.textAlign = "center";
+    msg.style.fontSize = "14px";
+    msg.style.fontWeight = "600";
+    msg.style.color = "rgba(226,232,240,0.9)";
+    msg.style.marginBottom = "6px";
 
-  let open = false;
-  header.addEventListener("click", () => {
-    open = !open;
-    body.style.display = open ? "block" : "none";
-    header.textContent = headerText + (open ? " ▴" : " ▾");
-  });
+    let open = false;
+    header.addEventListener("click", () => {
+      open = !open;
+      body.style.display = open ? "block" : "none";
+      header.textContent = headerText + (open ? " ▴" : " ▾");
+    });
 
-  msg.appendChild(header);
-  msg.appendChild(body);
+    msg.appendChild(header);
+    msg.appendChild(body);
 
-  controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+    controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+  }
 }
-
-}
-
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
@@ -2660,8 +2659,8 @@ function renderShowListForYear(year, shows) {
     const right = document.createElement("div");
     right.style.display = "grid";
     right.style.gridTemplateRows = "auto auto auto auto auto";
-	right.style.alignItems = "center";
-	right.style.textAlign = "center";
+    right.style.alignItems = "center";
+    right.style.textAlign = "center";
     right.style.gap = "4px";
 
     // Mobile: stack poster above text
@@ -2726,28 +2725,28 @@ function renderShowListForYear(year, shows) {
       descBox.style.webkitBoxOrient = "vertical";
       descBox.style.overflow = "hidden";
     }
-	
-	// 📷 Camera used line (camera_used_1 / camera_used_2 from CSV)
-	const cam1 = (show.camera_used_1 || "").trim();
-	const cam2 = (show.camera_used_2 || "").trim();
 
-	let cameraText = "";
+    // 📷 Camera used line (camera_used_1 / camera_used_2 from CSV)
+    const cam1 = (show.camera_used_1 || "").trim();
+    const cam2 = (show.camera_used_2 || "").trim();
 
-	if (cam1 && cam2) {
-	  cameraText = `Cameras Used: ${cam1} and ${cam2}`;
-	} else if (cam1) {
+    let cameraText = "";
+
+    if (cam1 && cam2) {
+      cameraText = `Cameras Used: ${cam1} and ${cam2}`;
+    } else if (cam1) {
       cameraText = `Camera Used: ${cam1}`;
-	}
+    }
 
-	let cameraBox = null;
+    let cameraBox = null;
 
-	if (cameraText) {
-		cameraBox = document.createElement("div");
-		cameraBox.textContent = cameraText;
-		cameraBox.style.fontSize = "13px";
-		cameraBox.style.color = "rgba(148,163,184,0.95)";
-		cameraBox.style.fontStyle = "italic"; // optional, remove if unwanted
-	}
+    if (cameraText) {
+      cameraBox = document.createElement("div");
+      cameraBox.textContent = cameraText;
+      cameraBox.style.fontSize = "13px";
+      cameraBox.style.color = "rgba(148,163,184,0.95)";
+      cameraBox.style.fontStyle = "italic"; // optional, remove if unwanted
+    }
 
     const details = document.createElement("div");
 
@@ -2933,7 +2932,7 @@ function renderShowListForYear(year, shows) {
     right.appendChild(titleBox);
     right.appendChild(dateBox);
     right.appendChild(venueBox);
-	if (cameraBox) right.appendChild(cameraBox);
+    if (cameraBox) right.appendChild(cameraBox);
     if (descText) right.appendChild(descBox);
     right.appendChild(details);
 
