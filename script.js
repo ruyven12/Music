@@ -207,7 +207,7 @@ function initTopTabs() {
 
     const header1Text = "Introduction";
     const header2Text = "How It Started";
-    const header3Text = "Notes/FAQ";
+    const header3Text = "Notes-FAQ";
 
     const header1 = createHeader(header1Text);
     const header2 = createHeader(header2Text);
