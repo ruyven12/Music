@@ -273,8 +273,8 @@ function initTopTabs() {
       body3.style.display = "none";
       spacer1.style.display = "none";
       body4.style.display = "none";
-      body5.style.display = "none";
       spacer2.style.display = "none";
+      body5.style.display = "none";
       header1.textContent = header1Text + " ▾";
       header2.textContent = header2Text + " ▾";
       header3.textContent = header3Text + " ▾";
@@ -285,6 +285,7 @@ function initTopTabs() {
       header3.style.background = "rgba(255,255,255,0.06)";
     }
 
+    // One and only one set of click handlers (prevents double-toggle cancelling)
     header1.addEventListener("click", () => {
       const next = !open1;
       closeAll();
@@ -319,30 +320,6 @@ function initTopTabs() {
         body5.style.display = "block";
         header3.textContent = header3Text + " ▴";
         header3.style.background = "rgba(255,255,255,0.12)";
-      }
-    });
-
-    header2.addEventListener("click", () => {
-      const next = !open2;
-      closeAll();
-      if (next) {
-        open2 = true;
-        body2.style.display = "block";
-        body3.style.display = "block";
-        spacer1.style.display = "block";
-        header2.textContent = header2Text + " ▴";
-      }
-    });
-
-    header3.addEventListener("click", () => {
-      const next = !open3;
-      closeAll();
-      if (next) {
-        open3 = true;
-        body4.style.display = "block";
-        body5.style.display = "block";
-        spacer2.style.display = "block";
-        header3.textContent = header3Text + " ▴";
       }
     });
 
