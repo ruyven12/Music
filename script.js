@@ -189,6 +189,17 @@ if (controlsFixed) {
     spacer.style.height = "10px";
     spacer.style.display = "none";
 
+    // Body 2 (toggle)
+    const body2Text = "Test";
+    const body2 = document.createElement("div");
+    body2.textContent = body2Text;
+    body2.style.display = "none";
+    body2.style.marginTop = "6px";
+    body2.style.fontSize = "13px";
+    body2.style.fontWeight = "500";
+    body2.style.color = "rgba(226,232,240,0.75)";
+    body2.style.lineHeight = "1.35";
+
     // Match your current message styling
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
@@ -201,18 +212,18 @@ if (controlsFixed) {
       open = !open;
       body1.style.display = open ? "block" : "none";
       spacer.style.display = open ? "block" : "none";
+      body2.style.display = open ? "block" : "none";
       header1.textContent = headerText + (open ? " ▴" : " ▾");
     });
 
     msg.appendChild(header1);
     msg.appendChild(body1);
     msg.appendChild(spacer);
+    msg.appendChild(body2);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
-
-
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
