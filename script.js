@@ -232,14 +232,18 @@ if (controlsFixed) {
     const body2 = createBody(body2Text);
 
     // Separator (between headers)
+    const separator1 = createSeparator();
+
+    // Header 2 (always visible)
+    const header2Text = "How It Started";
+    const header2 = createHeader(header2Text);
+
+    // Body 3 (toggle)
+    const body3Text = "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.";
+    const body3 = createBody(body3Text);
+	
+	// Separator (between headers)
     const separator2 = createSeparator();
-
-    // Body 4 (toggle)
-    const body4Text = "Test";
-    const body4 = createBody(body4Text);
-
-    // Spacer 4 (blank line after body4)
-    const spacer4 = createSpacer("10px");
 
     // Match your current message styling
     msg.style.textAlign = "center";
@@ -263,9 +267,6 @@ if (controlsFixed) {
     function setSection2(isOpen) {
       open2 = isOpen;
       body3.style.display = open2 ? "block" : "none";
-      spacer3.style.display = open2 ? "block" : "none";
-      body4.style.display = open2 ? "block" : "none";
-      spacer4.style.display = open2 ? "block" : "none";
       header2.textContent = header2Text + (open2 ? " ▴" : " ▾");
     }
 
@@ -292,9 +293,6 @@ if (controlsFixed) {
 
     msg.appendChild(header2);
     msg.appendChild(body3);
-    msg.appendChild(spacer3);
-    msg.appendChild(body4);
-    msg.appendChild(spacer4);
 
     msg.appendChild(separator2);
 
