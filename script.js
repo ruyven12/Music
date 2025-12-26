@@ -190,6 +190,13 @@ function initTopTabs() {
       return body;
     }
 
+    function createSpacer(height = "10px") {
+      const sp = document.createElement("div");
+      sp.style.height = height;
+      sp.style.display = "none";
+      return sp;
+    }
+
     function createSeparator() {
       const sep = document.createElement("div");
       sep.style.width = "100%";
@@ -217,9 +224,16 @@ function initTopTabs() {
     const body2 = createBody("Test");
 
     const body3 = createBody("Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.");
+
+    const spacer1 = createSpacer("10px");
+
     const body4 = createBody("Back then, I started to just take pictures (albeit not the best, but gotta start somewhere) for keepsakes of what I've seen and been through. From going to a lot of the 13 High shows between 2011 and a lot of 2012, I was hooked. And as through those shows, most of those bands from there became life-long friends of mine, and I wouldn't trade it for the world. Fast forward now to 2025 and 14 years later it is still a prevalent force in my life. Without that one decision back then, who knows where I would be today! This page is dedicated to the vast journey that it has been and will continue to be until I can no longer do it anymore.");
 
     const body5 = createBody("Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If anything looks wrong, please let me know.");
+
+    const body6 = createBody("Test");
+
+    const spacer2 = createSpacer("10px");
 
     const separator1 = createSeparator();
     const separator2 = createSeparator();
@@ -239,7 +253,10 @@ function initTopTabs() {
       body2.style.display = "none";
       body3.style.display = "none";
       body4.style.display = "none";
+      spacer1.style.display = "none";
       body5.style.display = "none";
+      body6.style.display = "none";
+      spacer2.style.display = "none";
       header1.textContent = header1Text + " ▾";
       header2.textContent = header2Text + " ▾";
       header3.textContent = header3Text + " ▾";
@@ -263,6 +280,7 @@ function initTopTabs() {
         open2 = true;
         body3.style.display = "block";
         body4.style.display = "block";
+        spacer1.style.display = "block";
         header2.textContent = header2Text + " ▴";
       }
     });
@@ -273,6 +291,8 @@ function initTopTabs() {
       if (next) {
         open3 = true;
         body5.style.display = "block";
+        body6.style.display = "block";
+        spacer2.style.display = "block";
         header3.textContent = header3Text + " ▴";
       }
     });
@@ -288,11 +308,14 @@ function initTopTabs() {
 
     msg.appendChild(header2);
     msg.appendChild(body3);
+    msg.appendChild(spacer1);
     msg.appendChild(body4);
     msg.appendChild(separator2);
 
     msg.appendChild(header3);
     msg.appendChild(body5);
+    msg.appendChild(spacer2);
+    msg.appendChild(body6);
     msg.appendChild(separator3);
 
     msg.style.textAlign = "center";
@@ -306,6 +329,7 @@ function initTopTabs() {
     console.error("Top message script error:", err);
   }
 })();
+
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
