@@ -224,7 +224,7 @@ if (controlsFixed) {
 
     // Body 3 (toggle)
     const body3 = document.createElement("div");
-    const body3Text = "TestTESTESTZGDFDDF";
+    const body3Text = "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.";
     body3.textContent = body3Text;
     body3.style.display = "none";
     body3.style.marginTop = "6px";
@@ -283,6 +283,7 @@ if (controlsFixed) {
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
+
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
