@@ -168,8 +168,7 @@ if (!msg) {
 
   // Use the first sentence as the clickable header
   const splitAt = fullText.indexOf("! ");
-  const headerText =
-    splitAt > -1 ? fullText.slice(0, splitAt + 1) : "Welcome";
+  const headerText = "Introduction";
   const bodyText = splitAt > -1 ? fullText.slice(splitAt + 2) : fullText;
 
   // Header (always visible)
