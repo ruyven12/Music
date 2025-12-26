@@ -228,9 +228,33 @@ function initTopTabs() {
 
     const body4 = createBody("1: As you get further back in the Show tab, the quality of the shots does drop off as well - especially 2013 backwards.");
     const spacer2 = createSpacer("10px");
-	const body5 = createBody("2: This is a complete work in progress and things will change throughout. If you see something that looks off, please let me know.");
+    const body5 = createBody("2: This is a complete work in progress and things will change throughout. If you see something that looks off, please let me know.");
 
     const separator1 = createSeparator();
+    const headerBar = document.createElement("div");
+    headerBar.style.display = "flex";
+    headerBar.style.justifyContent = "center";
+    headerBar.style.alignItems = "center";
+    headerBar.style.gap = "16px";
+    headerBar.style.flexWrap = "wrap";
+
+    // Make headers behave like tabs
+    [header1, header2, header3].forEach((h) => {
+      h.style.display = "inline-flex";
+      h.style.alignItems = "center";
+      h.style.justifyContent = "center";
+      h.style.padding = "6px 10px";
+      h.style.borderRadius = "999px";
+      h.style.fontSize = "16px";
+      h.style.fontWeight = "600";
+      h.style.whiteSpace = "nowrap";
+      h.style.background = "rgba(255,255,255,0.06)";
+      h.style.border = "1px solid rgba(255,255,255,0.12)";
+    });
+
+    headerBar.appendChild(header1);
+    headerBar.appendChild(header2);
+    headerBar.appendChild(header3);
     const separator2 = createSeparator();
     const separator3 = createSeparator();
 
@@ -254,6 +278,11 @@ function initTopTabs() {
       header1.textContent = header1Text + " ▾";
       header2.textContent = header2Text + " ▾";
       header3.textContent = header3Text + " ▾";
+
+      // "inactive" tab styling
+      header1.style.background = "rgba(255,255,255,0.06)";
+      header2.style.background = "rgba(255,255,255,0.06)";
+      header3.style.background = "rgba(255,255,255,0.06)";
     }
 
     header1.addEventListener("click", () => {
@@ -262,7 +291,34 @@ function initTopTabs() {
       if (next) {
         open1 = true;
         body1.style.display = "block";
-                header1.textContent = header1Text + " ▴";
+        header1.textContent = header1Text + " ▴";
+        header1.style.background = "rgba(255,255,255,0.12)";
+      }
+    });
+
+    header2.addEventListener("click", () => {
+      const next = !open2;
+      closeAll();
+      if (next) {
+        open2 = true;
+        body2.style.display = "block";
+        spacer1.style.display = "block";
+        body3.style.display = "block";
+        header2.textContent = header2Text + " ▴";
+        header2.style.background = "rgba(255,255,255,0.12)";
+      }
+    });
+
+    header3.addEventListener("click", () => {
+      const next = !open3;
+      closeAll();
+      if (next) {
+        open3 = true;
+        body4.style.display = "block";
+        spacer2.style.display = "block";
+        body5.style.display = "block";
+        header3.textContent = header3Text + " ▴";
+        header3.style.background = "rgba(255,255,255,0.12)";
       }
     });
 
@@ -291,23 +347,26 @@ function initTopTabs() {
     });
 
     // =========================
-    // DOM order (EXACT per your spec)
+    // DOM order
     // =========================
 
-    msg.appendChild(header1);
-	msg.appendChild(body1);
+    // Tab bar (headers side-by-side)
+    msg.appendChild(headerBar);
     msg.appendChild(separator1);
 
-    msg.appendChild(header2);
+    // Content (shows directly under the tab bar)
+    msg.appendChild(body1);
+
     msg.appendChild(body2);
     msg.appendChild(spacer1);
     msg.appendChild(body3);
+
     msg.appendChild(separator2);
 
-    msg.appendChild(header3);
     msg.appendChild(body4);
     msg.appendChild(spacer2);
     msg.appendChild(body5);
+
     msg.appendChild(separator3);
 
     msg.style.textAlign = "center";
