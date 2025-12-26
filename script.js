@@ -158,36 +158,10 @@ if (controlsFixed) {
   // ---- top message ----
   let msg = document.getElementById("top-message");
   if (!msg) {
-    // Build a collapsible "Welcome" message (click to expand/collapse)
-const fullMessage =
-  "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
-
-// Split into a short header + body (fallback if punctuation changes)
-const splitIdx = fullMessage.indexOf("! ");
-const headerText =
-  splitIdx > -1 ? fullMessage.slice(0, splitIdx + 1) : "Welcome";
-const bodyText =
-  splitIdx > -1 ? fullMessage.slice(splitIdx + 2) : fullMessage;
-
-msg = document.createElement("details");
-msg.id = "top-message";
-msg.className = "top-collapsible";
-
-const sum = document.createElement("summary");
-sum.className = "top-collapsible__summary";
-sum.textContent = headerText;
-
-const body = document.createElement("div");
-body.className = "top-collapsible__body";
-body.textContent = bodyText;
-
-msg.appendChild(sum);
-msg.appendChild(body);
-
-controlsFixed.insertBefore(msg, controlsFixed.firstChild);
-
-// OPTIONAL: start expanded by default
-// msg.open = true;
+    msg = document.createElement("div");
+    msg.id = "top-message";
+    msg.textContent =
+      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
 
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
