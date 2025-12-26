@@ -161,26 +161,37 @@ if (controlsFixed) {
     msg = document.createElement("div");
     msg.id = "top-message";
     
+    // Reusable header factory
+    function createHeader(titleText) {
+      const header = document.createElement("div");
+      header.textContent = titleText + " ▾";
+      header.style.cursor = "pointer";
+      header.style.fontSize = "22px";
+      header.style.fontWeight = "600";
+      header.style.userSelect = "none";
+      return header;
+    }
+
     // Header 1 (always visible)
-    const header1 = document.createElement("div");
     const header1Text = "Introduction";
-    header1.textContent = header1Text + " ▾";
-    header1.style.cursor = "pointer";
-    header1.style.fontSize = "22px";
-    header1.style.fontWeight = "600";
-    header1.style.userSelect = "none";
+    const header1 = createHeader(header1Text);
+
+    // Reusable body factory
+    function createBody(text) {
+      const body = document.createElement("div");
+      body.textContent = text;
+      body.style.display = "none";
+      body.style.marginTop = "6px";
+      body.style.fontSize = "13px";
+      body.style.fontWeight = "500";
+      body.style.color = "rgba(226,232,240,0.75)";
+      body.style.lineHeight = "1.35";
+      return body;
+    }
 
     // Body 1 (toggle)
-    const body1 = document.createElement("div");
-    const body1Text =
-      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site.";
-    body1.textContent = body1Text;
-    body1.style.display = "none";
-    body1.style.marginTop = "6px";
-    body1.style.fontSize = "13px";
-    body1.style.fontWeight = "500";
-    body1.style.color = "rgba(226,232,240,0.75)";
-    body1.style.lineHeight = "1.35";
+    const body1Text = "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site.";
+    const body1 = createBody(body1Text);
 
     // Reusable spacer factory
     function createSpacer(height = "10px") {
@@ -198,14 +209,7 @@ if (controlsFixed) {
 
     // Body 2 (toggle)
     const body2Text = "Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
-    const body2 = document.createElement("div");
-    body2.textContent = body2Text;
-    body2.style.display = "none";
-    body2.style.marginTop = "6px";
-    body2.style.fontSize = "13px";
-    body2.style.fontWeight = "500";
-    body2.style.color = "rgba(226,232,240,0.75)";
-    body2.style.lineHeight = "1.35";
+    const body2 = createBody(body2Text);
 
     // Separator 1 (between headers)
     // Reusable separator factory
@@ -224,24 +228,12 @@ if (controlsFixed) {
     const separator = createSeparator();
 
     // Header 2 (always visible)
-    const header2 = document.createElement("div");
     const header2Text = "How It Started";
-    header2.textContent = header2Text + " ▾";
-    header2.style.cursor = "pointer";
-    header2.style.fontSize = "22px";
-    header2.style.fontWeight = "600";
-    header2.style.userSelect = "none";
+    const header2 = createHeader(header2Text);
 
     // Body 3 (toggle)
-    const body3 = document.createElement("div");
     const body3Text = "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.";
-    body3.textContent = body3Text;
-    body3.style.display = "none";
-    body3.style.marginTop = "6px";
-    body3.style.fontSize = "13px";
-    body3.style.fontWeight = "500";
-    body3.style.color = "rgba(226,232,240,0.75)";
-    body3.style.lineHeight = "1.35";
+    const body3 = createBody(body3Text);
 
     // Match your current message styling
     msg.style.textAlign = "center";
