@@ -233,6 +233,26 @@ if (controlsFixed) {
     body3.style.color = "rgba(226,232,240,0.75)";
     body3.style.lineHeight = "1.35";
 
+    // Header 3 (always visible)
+    const header3 = document.createElement("div");
+    const header3Text = "Notes/FAQ";
+    header3.textContent = header3Text + " ▾";
+    header3.style.cursor = "pointer";
+    header3.style.fontSize = "22px";
+    header3.style.fontWeight = "600";
+    header3.style.userSelect = "none";
+
+    // Body 4 (toggle)
+    const body4 = document.createElement("div");
+    const body4Text = "Test";
+    body4.textContent = body4Text;
+    body4.style.display = "none";
+    body4.style.marginTop = "6px";
+    body4.style.fontSize = "13px";
+    body4.style.fontWeight = "500";
+    body4.style.color = "rgba(226,232,240,0.75)";
+    body4.style.lineHeight = "1.35";
+
     // Match your current message styling
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
@@ -242,6 +262,7 @@ if (controlsFixed) {
 
     let open1 = false;
     let open2 = false;
+    let open3 = false;
 
     function setSection1(isOpen) {
       open1 = isOpen;
@@ -259,6 +280,18 @@ if (controlsFixed) {
       header2.textContent = header2Text + (open2 ? " ▴" : " ▾");
     }
 
+    function setSection3(isOpen) {
+      open3 = isOpen;
+      body4.style.display = open3 ? "block" : "none";
+      header3.textContent = header3Text + (open3 ? " ▴" : " ▾");
+    }
+
+(isOpen) {
+      open2 = isOpen;
+      body3.style.display = open2 ? "block" : "none";
+      header2.textContent = header2Text + (open2 ? " ▴" : " ▾");
+    }
+
     header1.addEventListener("click", () => {
       const nextOpen1 = !open1;
       setSection1(nextOpen1);
@@ -268,7 +301,19 @@ if (controlsFixed) {
     header2.addEventListener("click", () => {
       const nextOpen2 = !open2;
       setSection2(nextOpen2);
-      if (nextOpen2) setSection1(false); // accordion: close other
+      if (nextOpen2) {
+        setSection1(false);
+        setSection3(false);
+      }
+    });
+
+    header3.addEventListener("click", () => {
+      const nextOpen3 = !open3;
+      setSection3(nextOpen3);
+      if (nextOpen3) {
+        setSection1(false);
+        setSection2(false);
+      }
     });
 
     msg.appendChild(header1);
@@ -279,10 +324,13 @@ if (controlsFixed) {
     msg.appendChild(separator);
     msg.appendChild(header2);
     msg.appendChild(body3);
+    msg.appendChild(header3);
+    msg.appendChild(body4);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
+
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
