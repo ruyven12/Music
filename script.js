@@ -155,7 +155,6 @@ function initTopTabs() {
 const controlsFixed = document.getElementById("controls-fixed");
 
 if (controlsFixed) {
-  // ---- top message ----
   // ---- top message (click to expand/collapse) ----
 let msg = document.getElementById("top-message");
 if (!msg) {
@@ -174,6 +173,8 @@ if (!msg) {
   // Header (always visible)
   const header = document.createElement("div");
   header.textContent = headerText + " ▾";
+  header.fontSize = "18px";
+  header.style.fontWeight = "700";
   header.style.cursor = "pointer";
   header.style.userSelect = "none";
 
