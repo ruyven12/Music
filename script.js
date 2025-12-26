@@ -238,6 +238,7 @@ if (controlsFixed) {
     let open = false;
     header1.addEventListener("click", () => {
       open = !open;
+	  header1.textContent = header1Text + (open ? " ▴" : " ▾");
       body1.style.display = open ? "block" : "none";
       spacer.style.display = open ? "block" : "none";
       body2.style.display = open ? "block" : "none";
@@ -245,7 +246,6 @@ if (controlsFixed) {
       separator.style.display = open ? "block" : "none";
       body3.style.display = open ? "block" : "none";
       header2.textContent = header2Text + (open ? " ▴" : " ▾");
-      header1.textContent = header1Text + (open ? " ▴" : " ▾");
     });
 
     msg.appendChild(header1);
