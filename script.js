@@ -182,10 +182,15 @@ if (controlsFixed) {
     body1.style.color = "rgba(226,232,240,0.75)";
     body1.style.lineHeight = "1.35";
 
-    // Spacer (blank line after body1)
-    const spacer = document.createElement("div");
-    spacer.style.height = "10px";
-    spacer.style.display = "none";
+    // Spacer 1 (blank line after body1)
+    const spacer1 = document.createElement("div");
+    spacer1.style.height = "10px";
+    spacer1.style.display = "none";
+
+    // Spacer 2 (blank line after body2)
+    const spacer2 = document.createElement("div");
+    spacer2.style.height = "10px";
+    spacer2.style.display = "none";
 
     // Body 2 (toggle)
     const body2Text = "Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
@@ -235,24 +240,30 @@ if (controlsFixed) {
     msg.style.color = "rgba(226,232,240,0.9)";
     msg.style.marginBottom = "6px";
 
-    let open = false;
+    let open1 = false;
+    let open2 = false;
+
     header1.addEventListener("click", () => {
-      open = !open;
-	  header1.textContent = header1Text + (open ? " ▴" : " ▾");
-      body1.style.display = open ? "block" : "none";
-      spacer.style.display = open ? "block" : "none";
-      body2.style.display = open ? "block" : "none";
-      spacer.style.display = open ? "block" : "none";
-      separator.style.display = open ? "block" : "none";
-      body3.style.display = open ? "block" : "none";
-      header2.textContent = header2Text + (open ? " ▴" : " ▾");
+      open1 = !open1;
+      body1.style.display = open1 ? "block" : "none";
+      spacer1.style.display = open1 ? "block" : "none";
+      body2.style.display = open1 ? "block" : "none";
+      spacer2.style.display = open1 ? "block" : "none";
+      separator.style.display = open1 ? "block" : "none";
+      header1.textContent = header1Text + (open1 ? " ▴" : " ▾");
+    });
+
+    header2.addEventListener("click", () => {
+      open2 = !open2;
+      body3.style.display = open2 ? "block" : "none";
+      header2.textContent = header2Text + (open2 ? " ▴" : " ▾");
     });
 
     msg.appendChild(header1);
     msg.appendChild(body1);
-    msg.appendChild(spacer);
+    msg.appendChild(spacer1);
     msg.appendChild(body2);
-    msg.appendChild(spacer);
+    msg.appendChild(spacer2);
     msg.appendChild(separator);
     msg.appendChild(header2);
     msg.appendChild(body3);
