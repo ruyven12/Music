@@ -285,6 +285,7 @@ if (controlsFixed) {
     msg.appendChild(header2);
     msg.appendChild(body3);
 	const separatorUnderHeader2 = createSeparator();
+	separatorUnderHeader2.style.display = "block";
     msg.appendChild(separatorUnderHeader2);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
