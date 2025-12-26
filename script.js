@@ -213,6 +213,26 @@ if (controlsFixed) {
       "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
     separator.style.display = "none";
 
+    // Header 2 (always visible)
+    const header2 = document.createElement("div");
+    const header2Text = "Section 2";
+    header2.textContent = header2Text + " ▾";
+    header2.style.cursor = "pointer";
+    header2.style.fontSize = "22px";
+    header2.style.fontWeight = "600";
+    header2.style.userSelect = "none";
+
+    // Body 3 (toggle)
+    const body3 = document.createElement("div");
+    const body3Text = "Test";
+    body3.textContent = body3Text;
+    body3.style.display = "none";
+    body3.style.marginTop = "6px";
+    body3.style.fontSize = "13px";
+    body3.style.fontWeight = "500";
+    body3.style.color = "rgba(226,232,240,0.75)";
+    body3.style.lineHeight = "1.35";
+
     // Match your current message styling
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
@@ -228,6 +248,8 @@ if (controlsFixed) {
       body2.style.display = open ? "block" : "none";
       spacer2.style.display = open ? "block" : "none";
       separator.style.display = open ? "block" : "none";
+      body3.style.display = open ? "block" : "none";
+      header2.textContent = header2Text + (open ? " ▴" : " ▾");
       header1.textContent = header1Text + (open ? " ▴" : " ▾");
     });
 
@@ -237,10 +259,13 @@ if (controlsFixed) {
     msg.appendChild(body2);
     msg.appendChild(spacer2);
     msg.appendChild(separator);
+    msg.appendChild(header2);
+    msg.appendChild(body3);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
+
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
