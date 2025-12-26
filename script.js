@@ -198,11 +198,6 @@ if (controlsFixed) {
     body2.style.color = "rgba(226,232,240,0.75)";
     body2.style.lineHeight = "1.35";
 
-    // Spacer (blank line after body2)
-    const spacer2 = document.createElement("div");
-    spacer2.style.height = "10px";
-    spacer2.style.display = "none";
-
     // Separator
     const separator = document.createElement("div");
     separator.style.width = "100%";
@@ -246,7 +241,7 @@ if (controlsFixed) {
       body1.style.display = open ? "block" : "none";
       spacer.style.display = open ? "block" : "none";
       body2.style.display = open ? "block" : "none";
-      spacer2.style.display = open ? "block" : "none";
+      spacer.style.display = open ? "block" : "none";
       separator.style.display = open ? "block" : "none";
       body3.style.display = open ? "block" : "none";
       header2.textContent = header2Text + (open ? " ▴" : " ▾");
@@ -257,7 +252,7 @@ if (controlsFixed) {
     msg.appendChild(body1);
     msg.appendChild(spacer);
     msg.appendChild(body2);
-    msg.appendChild(spacer2);
+    msg.appendChild(spacer);
     msg.appendChild(separator);
     msg.appendChild(header2);
     msg.appendChild(body3);
