@@ -215,7 +215,7 @@ if (controlsFixed) {
 
     // Header 2 (always visible)
     const header2 = document.createElement("div");
-    const header2Text = "Section 2";
+    const header2Text = "How It Started";
     header2.textContent = header2Text + " ▾";
     header2.style.cursor = "pointer";
     header2.style.fontSize = "22px";
@@ -224,7 +224,7 @@ if (controlsFixed) {
 
     // Body 3 (toggle)
     const body3 = document.createElement("div");
-    const body3Text = "Test";
+    const body3Text = "TestTESTESTZGDFDDF";
     body3.textContent = body3Text;
     body3.style.display = "none";
     body3.style.marginTop = "6px";
