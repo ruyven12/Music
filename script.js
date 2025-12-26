@@ -152,20 +152,23 @@ function initTopTabs() {
   }
 }
 
-const controlsFixed = document.getElementById("controls-fixed");
+// Safe wrapper so a mistake here doesn't break the rest of your app
+(() => {
+  try {
+    const controlsFixed = document.getElementById("controls-fixed");
+    if (!controlsFixed) return;
 
-if (controlsFixed) {
-  // ---- top message (click to expand/collapse) ----
-  let msg = document.getElementById("top-message");
-  if (!msg) {
+    // ---- top message (click to expand/collapse) ----
+    let msg = document.getElementById("top-message");
+    if (msg) return;
+
     msg = document.createElement("div");
     msg.id = "top-message";
-    
+
     // =========================
     // Reusable element factories
     // =========================
-	
-    // Reusable header factory
+
     function createHeader(titleText) {
       const header = document.createElement("div");
       header.textContent = titleText + " ▾";
@@ -175,8 +178,7 @@ if (controlsFixed) {
       header.style.userSelect = "none";
       return header;
     }
-	
-	// Reusable body factory
+
     function createBody(text) {
       const body = document.createElement("div");
       body.textContent = text;
@@ -189,15 +191,13 @@ if (controlsFixed) {
       return body;
     }
 
-    // Reusable spacer factory
     function createSpacer(height = "10px") {
       const sp = document.createElement("div");
       sp.style.height = height;
       sp.style.display = "none";
       return sp;
     }
-	
-	// Reusable separator factory
+
     function createSeparator() {
       const sep = document.createElement("div");
       sep.style.width = "100%";
@@ -208,28 +208,42 @@ if (controlsFixed) {
         "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
       return sep;
     }
-	
-	// =========================
+
+    // =========================
     // Build for top info
     // =========================
-	
-	// Header 1 (always visible)
+
+    // Header 1 (always visible)
     const header1Text = "Introduction";
     const header1 = createHeader(header1Text);
 
     // Body 1 (toggle)
-    const body1Text = "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site.";
+    const body1Text =
+      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site.";
     const body1 = createBody(body1Text);
 
     // Spacer 1 (blank line after body1)
     const spacer1 = createSpacer("10px");
 
+    // Body 2 (toggle)
+    const body2Text =
+      "Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
+    const body2 = createBody(body2Text);
+
     // Spacer 2 (blank line after body2)
     const spacer2 = createSpacer("10px");
 
-    // Body 2 (toggle)
-    const body2Text = "Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
-    const body2 = createBody(body2Text);
+    // Separator (between headers)
+    const separator1 = createSeparator();
+
+    // Header 2 (always visible)
+    const header2Text = "How It Started";
+    const header2 = createHeader(header2Text);
+
+    // Body 3 (toggle)
+    const body3Text =
+      "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.";
+    const body3 = createBody(body3Text);
 
     // Separator (between headers)
     const separator2 = createSeparator();
@@ -280,7 +294,10 @@ if (controlsFixed) {
     header1.addEventListener("click", () => {
       const nextOpen1 = !open1;
       setSection1(nextOpen1);
-      if (nextOpen1) setSection2(false);
+      if (nextOpen1) {
+        setSection2(false);
+        setSection3(false);
+      }
     });
 
     header2.addEventListener("click", () => {
@@ -301,8 +318,8 @@ if (controlsFixed) {
       }
     });
 
+    // Build DOM
     msg.appendChild(header1);
-
     msg.appendChild(body1);
     msg.appendChild(spacer1);
     msg.appendChild(body2);
@@ -321,8 +338,10 @@ if (controlsFixed) {
     msg.appendChild(separator3);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+  } catch (err) {
+    console.error("Top message script error:", err);
   }
-}
+})();
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
