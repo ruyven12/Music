@@ -163,7 +163,7 @@ if (controlsFixed) {
     
     // Header 1 (always visible)
     const header1 = document.createElement("div");
-	const header1Text = "Introduction";
+    const header1Text = "Introduction";
     header1.textContent = header1Text + " ▾";
     header1.style.cursor = "pointer";
     header1.style.fontSize = "22px";
@@ -172,7 +172,7 @@ if (controlsFixed) {
 
     // Body 1 (toggle)
     const body1 = document.createElement("div");
-	const body1Text =
+    const body1Text =
       "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site.";
     body1.textContent = body1Text;
     body1.style.display = "none";
@@ -198,6 +198,21 @@ if (controlsFixed) {
     body2.style.color = "rgba(226,232,240,0.75)";
     body2.style.lineHeight = "1.35";
 
+    // Spacer (blank line after body2)
+    const spacer2 = document.createElement("div");
+    spacer2.style.height = "10px";
+    spacer2.style.display = "none";
+
+    // Separator
+    const separator = document.createElement("div");
+    separator.style.width = "100%";
+    separator.style.maxWidth = "1100px";
+    separator.style.height = "1px";
+    separator.style.margin = "10px auto";
+    separator.style.background =
+      "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
+    separator.style.display = "none";
+
     // Match your current message styling
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
@@ -211,6 +226,8 @@ if (controlsFixed) {
       body1.style.display = open ? "block" : "none";
       spacer.style.display = open ? "block" : "none";
       body2.style.display = open ? "block" : "none";
+      spacer2.style.display = open ? "block" : "none";
+      separator.style.display = open ? "block" : "none";
       header1.textContent = header1Text + (open ? " ▴" : " ▾");
     });
 
@@ -218,6 +235,8 @@ if (controlsFixed) {
     msg.appendChild(body1);
     msg.appendChild(spacer);
     msg.appendChild(body2);
+    msg.appendChild(spacer2);
+    msg.appendChild(separator);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
