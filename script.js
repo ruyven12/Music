@@ -245,7 +245,7 @@ function initTopTabs() {
     function closeAll() {
       open1 = open2 = open3 = false;
       body1.style.display = "none";
-            body2.style.display = "none";
+      body2.style.display = "none";
       body3.style.display = "none";
       spacer1.style.display = "none";
       body4.style.display = "none";
@@ -295,6 +295,7 @@ function initTopTabs() {
     // =========================
 
     msg.appendChild(header1);
+	msg.appendChild(body1);
     msg.appendChild(separator1);
 
     msg.appendChild(header2);
