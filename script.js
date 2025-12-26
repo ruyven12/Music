@@ -166,7 +166,7 @@ if (controlsFixed) {
       const header = document.createElement("div");
       header.textContent = titleText + " ▾";
       header.style.cursor = "pointer";
-      header.style.fontSize = "22px";
+      header.style.fontSize = "20px";
       header.style.fontWeight = "600";
       header.style.userSelect = "none";
       return header;
