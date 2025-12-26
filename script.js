@@ -211,7 +211,7 @@ if (controlsFixed) {
     separator.style.margin = "10px auto";
     separator.style.background =
       "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
-    separator.style.display = "none";
+    separator.style.display = "block";
 
     // Header 2 (always visible)
     const header2 = document.createElement("div");
@@ -249,7 +249,7 @@ if (controlsFixed) {
       spacer1.style.display = open1 ? "block" : "none";
       body2.style.display = open1 ? "block" : "none";
       spacer2.style.display = open1 ? "block" : "none";
-      separator.style.display = open1 ? "block" : "none";
+      // separator is always visible between headers
       header1.textContent = header1Text + (open1 ? " ▴" : " ▾");
     }
 
@@ -272,18 +272,20 @@ if (controlsFixed) {
     });
 
     msg.appendChild(header1);
+
     msg.appendChild(body1);
     msg.appendChild(spacer1);
     msg.appendChild(body2);
     msg.appendChild(spacer2);
+
     msg.appendChild(separator);
+
     msg.appendChild(header2);
     msg.appendChild(body3);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
-
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
