@@ -284,6 +284,8 @@ if (controlsFixed) {
 
     msg.appendChild(header2);
     msg.appendChild(body3);
+	const separatorUnderHeader2 = createSeparator();
+    msg.appendChild(separatorUnderHeader2);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
