@@ -182,15 +182,19 @@ if (controlsFixed) {
     body1.style.color = "rgba(226,232,240,0.75)";
     body1.style.lineHeight = "1.35";
 
+    // Reusable spacer factory
+    function createSpacer(height = "10px") {
+      const sp = document.createElement("div");
+      sp.style.height = height;
+      sp.style.display = "none";
+      return sp;
+    }
+
     // Spacer 1 (blank line after body1)
-    const spacer1 = document.createElement("div");
-    spacer1.style.height = "10px";
-    spacer1.style.display = "none";
+    const spacer1 = createSpacer("10px");
 
     // Spacer 2 (blank line after body2)
-    const spacer2 = document.createElement("div");
-    spacer2.style.height = "10px";
-    spacer2.style.display = "none";
+    const spacer2 = createSpacer("10px");
 
     // Body 2 (toggle)
     const body2Text = "Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
@@ -292,8 +296,6 @@ if (controlsFixed) {
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
-
-
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
