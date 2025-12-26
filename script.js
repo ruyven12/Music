@@ -158,7 +158,6 @@ function initTopTabs() {
     const controlsFixed = document.getElementById("controls-fixed");
     if (!controlsFixed) return;
 
-    // ---- top message (click to expand/collapse) ----
     let msg = document.getElementById("top-message");
     if (msg) return;
 
@@ -191,13 +190,6 @@ function initTopTabs() {
       return body;
     }
 
-    function createSpacer(height = "10px") {
-      const sp = document.createElement("div");
-      sp.style.height = height;
-      sp.style.display = "none";
-      return sp;
-    }
-
     function createSeparator() {
       const sep = document.createElement("div");
       sep.style.width = "100%";
@@ -210,132 +202,104 @@ function initTopTabs() {
     }
 
     // =========================
-    // Build for top info
+    // Content
     // =========================
 
-    // Header 1 (always visible)
     const header1Text = "Introduction";
-    const header1 = createHeader(header1Text);
-
-    // Body 1 (toggle)
-    const body1Text =
-      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site.";
-    const body1 = createBody(body1Text);
-
-    // Spacer 1 (blank line after body1)
-    const spacer1 = createSpacer("10px");
-
-    // Body 2 (toggle)
-    const body2Text =
-      "Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
-    const body2 = createBody(body2Text);
-
-    // Spacer 2 (blank line after body2)
-    const spacer2 = createSpacer("10px");
-
-    // Separator (between headers)
-    const separator1 = createSeparator();
-
-    // Header 2 (always visible)
     const header2Text = "How It Started";
-    const header2 = createHeader(header2Text);
-
-    // Body 3 (toggle)
-    const body3Text =
-      "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.";
-    const body3 = createBody(body3Text);
-
-    // Separator (between headers)
-    const separator2 = createSeparator();
-
-    // Header 3 (always visible)
     const header3Text = "Test";
+
+    const header1 = createHeader(header1Text);
+    const header2 = createHeader(header2Text);
     const header3 = createHeader(header3Text);
 
-    // Body 4 (toggle)
-    const body4Text = "Test";
-    const body4 = createBody(body4Text);
+    const body1 = createBody("Welcome to the Music Archives for Voodoo Media! This script/app houses the information for the entire music catalog loaded into my SmugMug site.");
+    const body2 = createBody("Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If anything looks wrong, please let me know.");
 
-    // Separator (after header 3)
+    const body3 = createBody("Personally, I've always been a concert goer throughout my life, starting with Korn, Disturbed and Sevendust in 2001, eventually leading into the full music archive you see today.");
+    const body4 = createBody("Test");
+
+    const body5 = createBody("Test");
+
+    const separator1 = createSeparator();
+    const separator2 = createSeparator();
     const separator3 = createSeparator();
 
-    // Match your current message styling
-    msg.style.textAlign = "center";
-    msg.style.fontSize = "14px";
-    msg.style.fontWeight = "600";
-    msg.style.color = "rgba(226,232,240,0.9)";
-    msg.style.marginBottom = "6px";
+    // =========================
+    // State + toggle logic
+    // =========================
 
     let open1 = false;
     let open2 = false;
     let open3 = false;
 
-    function setSection1(isOpen) {
-      open1 = isOpen;
-      body1.style.display = open1 ? "block" : "none";
-      spacer1.style.display = open1 ? "block" : "none";
-      body2.style.display = open1 ? "block" : "none";
-      spacer2.style.display = open1 ? "block" : "none";
-      header1.textContent = header1Text + (open1 ? " ▴" : " ▾");
-    }
-
-    function setSection2(isOpen) {
-      open2 = isOpen;
-      body3.style.display = open2 ? "block" : "none";
-      header2.textContent = header2Text + (open2 ? " ▴" : " ▾");
-    }
-
-    function setSection3(isOpen) {
-      open3 = isOpen;
-      body4.style.display = open3 ? "block" : "none";
-      header3.textContent = header3Text + (open3 ? " ▴" : " ▾");
+    function closeAll() {
+      open1 = open2 = open3 = false;
+      body1.style.display = "none";
+      body2.style.display = "none";
+      body3.style.display = "none";
+      body4.style.display = "none";
+      body5.style.display = "none";
+      header1.textContent = header1Text + " ▾";
+      header2.textContent = header2Text + " ▾";
+      header3.textContent = header3Text + " ▾";
     }
 
     header1.addEventListener("click", () => {
-      const nextOpen1 = !open1;
-      setSection1(nextOpen1);
-      if (nextOpen1) {
-        setSection2(false);
-        setSection3(false);
+      const next = !open1;
+      closeAll();
+      if (next) {
+        open1 = true;
+        body1.style.display = "block";
+        body2.style.display = "block";
+        header1.textContent = header1Text + " ▴";
       }
     });
 
     header2.addEventListener("click", () => {
-      const nextOpen2 = !open2;
-      setSection2(nextOpen2);
-      if (nextOpen2) {
-        setSection1(false);
-        setSection3(false);
+      const next = !open2;
+      closeAll();
+      if (next) {
+        open2 = true;
+        body3.style.display = "block";
+        body4.style.display = "block";
+        header2.textContent = header2Text + " ▴";
       }
     });
 
     header3.addEventListener("click", () => {
-      const nextOpen3 = !open3;
-      setSection3(nextOpen3);
-      if (nextOpen3) {
-        setSection1(false);
-        setSection2(false);
+      const next = !open3;
+      closeAll();
+      if (next) {
+        open3 = true;
+        body5.style.display = "block";
+        header3.textContent = header3Text + " ▴";
       }
     });
 
-    // Build DOM
+    // =========================
+    // DOM order (EXACT per your spec)
+    // =========================
+
     msg.appendChild(header1);
     msg.appendChild(body1);
-    msg.appendChild(spacer1);
     msg.appendChild(body2);
-    msg.appendChild(spacer2);
-
     msg.appendChild(separator1);
 
     msg.appendChild(header2);
     msg.appendChild(body3);
-
+    msg.appendChild(body4);
     msg.appendChild(separator2);
 
     msg.appendChild(header3);
-    msg.appendChild(body4);
-
+    msg.appendChild(body5);
     msg.appendChild(separator3);
+
+    msg.style.textAlign = "center";
+    msg.style.fontSize = "14px";
+    msg.style.fontWeight = "600";
+    msg.style.color = "rgba(226,232,240,0.9)";
+    msg.style.marginBottom = "6px";
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   } catch (err) {
