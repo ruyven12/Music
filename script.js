@@ -173,7 +173,7 @@ if (!msg) {
   // Header (always visible)
   const header = document.createElement("div");
   header.textContent = headerText + " ▾";
-  header.fontSize = "18px";
+  header.fontSize = "22px";
   header.style.fontWeight = "700";
   header.style.cursor = "pointer";
   header.style.userSelect = "none";
