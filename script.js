@@ -173,7 +173,7 @@ if (controlsFixed) {
     // Body 1 (toggle)
     const body1 = document.createElement("div");
 	const body1Text =
-      "Welcome to the Music Archives for Voodoo Media!";
+      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site.";
     body1.textContent = body1Text;
     body1.style.display = "none";
     body1.style.marginTop = "6px";
@@ -188,7 +188,7 @@ if (controlsFixed) {
     spacer.style.display = "none";
 
     // Body 2 (toggle)
-    const body2Text = "This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
+    const body2Text = "Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
     const body2 = document.createElement("div");
     body2.textContent = body2Text;
     body2.style.display = "none";
