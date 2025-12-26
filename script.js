@@ -232,18 +232,18 @@ if (controlsFixed) {
     const body2 = createBody(body2Text);
 
     // Separator (between headers)
-    const separator1 = createSeparator();
-
-    // Header 2 (always visible)
-    const header2Text = "How It Started";
-    const header2 = createHeader(header2Text);
-
-    // Body 3 (toggle)
-    const body3Text = "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.";
-    const body3 = createBody(body3Text);
-	
-	// Separator (between headers)
     const separator2 = createSeparator();
+
+    // Header 3 (always visible)
+    const header3Text = "Test";
+    const header3 = createHeader(header3Text);
+
+    // Body 4 (toggle)
+    const body4Text = "Test";
+    const body4 = createBody(body4Text);
+
+    // Separator (after header 3)
+    const separator3 = createSeparator();
 
     // Match your current message styling
     msg.style.textAlign = "center";
@@ -254,6 +254,7 @@ if (controlsFixed) {
 
     let open1 = false;
     let open2 = false;
+    let open3 = false;
 
     function setSection1(isOpen) {
       open1 = isOpen;
@@ -270,6 +271,12 @@ if (controlsFixed) {
       header2.textContent = header2Text + (open2 ? " ▴" : " ▾");
     }
 
+    function setSection3(isOpen) {
+      open3 = isOpen;
+      body4.style.display = open3 ? "block" : "none";
+      header3.textContent = header3Text + (open3 ? " ▴" : " ▾");
+    }
+
     header1.addEventListener("click", () => {
       const nextOpen1 = !open1;
       setSection1(nextOpen1);
@@ -279,7 +286,19 @@ if (controlsFixed) {
     header2.addEventListener("click", () => {
       const nextOpen2 = !open2;
       setSection2(nextOpen2);
-      if (nextOpen2) setSection1(false);
+      if (nextOpen2) {
+        setSection1(false);
+        setSection3(false);
+      }
+    });
+
+    header3.addEventListener("click", () => {
+      const nextOpen3 = !open3;
+      setSection3(nextOpen3);
+      if (nextOpen3) {
+        setSection1(false);
+        setSection2(false);
+      }
     });
 
     msg.appendChild(header1);
@@ -293,6 +312,11 @@ if (controlsFixed) {
 
     msg.appendChild(header2);
     msg.appendChild(body3);
+
+    msg.appendChild(separator2);
+
+    msg.appendChild(header3);
+    msg.appendChild(body4);
 
     msg.appendChild(separator2);
 
