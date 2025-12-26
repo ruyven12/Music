@@ -400,6 +400,56 @@
       width: 100%;
     }
   }
+  
+  /* ===========================
+      TOP WELCOME DROPDOWN
+============================ */
+#top-message.top-collapsible {
+  margin: 0 0 6px 0;
+  text-align: center;
+}
+
+#top-message.top-collapsible summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.9);
+}
+
+/* Hide native marker */
+#top-message.top-collapsible summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Custom caret */
+#top-message.top-collapsible summary::after {
+  content: "▾";
+  font-size: 12px;
+  opacity: 0.9;
+  transform: translateY(1px);
+  transition: transform 160ms ease;
+}
+
+#top-message.top-collapsible[open] summary::after {
+  transform: rotate(180deg) translateY(-1px);
+}
+
+#top-message .top-collapsible__body {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(226, 232, 240, 0.75);
+  line-height: 1.35;
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 </style>
 
 </head>
