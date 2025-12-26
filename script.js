@@ -283,6 +283,8 @@ if (controlsFixed) {
     msg.appendChild(header2);
     msg.appendChild(body3);
 
+	msg.appendChild(separator);
+
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
