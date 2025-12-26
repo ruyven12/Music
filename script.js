@@ -184,15 +184,10 @@ if (controlsFixed) {
     body1.style.color = "rgba(226,232,240,0.75)";
     body1.style.lineHeight = "1.35";
 
-    // Separator (place AFTER body1)
-    const separator = document.createElement("div");
-    separator.style.width = "100%";
-    separator.style.maxWidth = "1100px";
-    separator.style.height = "1px";
-    separator.style.margin = "10px auto";
-    separator.style.background =
-      "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
-    separator.style.display = "none";
+    // Spacer (blank line after body1)
+    const spacer = document.createElement("div");
+    spacer.style.height = "10px";
+    spacer.style.display = "none";
 
     // Match your current message styling
     msg.style.textAlign = "center";
@@ -205,17 +200,18 @@ if (controlsFixed) {
     header1.addEventListener("click", () => {
       open = !open;
       body1.style.display = open ? "block" : "none";
-      separator.style.display = open ? "block" : "none";
+      spacer.style.display = open ? "block" : "none";
       header1.textContent = headerText + (open ? " ▴" : " ▾");
     });
 
     msg.appendChild(header1);
     msg.appendChild(body1);
-    msg.appendChild(separator);
+    msg.appendChild(spacer);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
+
 
 
 function loadRegion(regionKey) {
