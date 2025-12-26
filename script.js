@@ -168,13 +168,12 @@ if (!msg) {
   // Use the first sentence as the clickable header
   const splitAt = fullText.indexOf("! ");
   const headerText = "Introduction";
+    splitAt > -1 ? fullText.slice(0,splitAt + 1) : "Welcome";
   const bodyText = splitAt > -1 ? fullText.slice(splitAt + 2) : fullText;
 
   // Header (always visible)
   const header = document.createElement("div");
   header.textContent = headerText + " ▾";
-  header.style.fontSize = "24px";
-  header.style.fontWeight = "700";
   header.style.cursor = "pointer";
   header.style.userSelect = "none";
 
