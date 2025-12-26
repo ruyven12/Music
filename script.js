@@ -204,24 +204,20 @@ if (controlsFixed) {
     body2.style.lineHeight = "1.35";
 
     // Separator 1 (between headers)
-    const separator1 = document.createElement("div");
-    separator1.style.width = "100%";
-    separator1.style.maxWidth = "1100px";
-    separator1.style.height = "1px";
-    separator1.style.margin = "10px auto";
-    separator1.style.background =
-      "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
-    separator1.style.display = "block";
+    // Reusable separator factory
+    function createSeparator() {
+      const sep = document.createElement("div");
+      sep.style.width = "100%";
+      sep.style.maxWidth = "1100px";
+      sep.style.height = "1px";
+      sep.style.margin = "10px auto";
+      sep.style.background =
+        "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
+      return sep;
+    }
 
-    // Separator 2 (after body3)
-    const separator2 = document.createElement("div");
-    separator2.style.width = "100%";
-    separator2.style.maxWidth = "1100px";
-    separator2.style.height = "1px";
-    separator2.style.margin = "10px auto";
-    separator2.style.background =
-      "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
-    separator2.style.display = "block";
+    // Separator (between headers)
+    const separator = createSeparator();
 
     // Header 2 (always visible)
     const header2 = document.createElement("div");
@@ -259,7 +255,7 @@ if (controlsFixed) {
       spacer1.style.display = open1 ? "block" : "none";
       body2.style.display = open1 ? "block" : "none";
       spacer2.style.display = open1 ? "block" : "none";
-      // separator1 is always visible between headers
+      // separator is always visible between headers
       header1.textContent = header1Text + (open1 ? " ▴" : " ▾");
     }
 
@@ -288,15 +284,15 @@ if (controlsFixed) {
     msg.appendChild(body2);
     msg.appendChild(spacer2);
 
-    msg.appendChild(separator1);
+    msg.appendChild(separator);
 
     msg.appendChild(header2);
     msg.appendChild(body3);
-    msg.appendChild(separator2);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
+
 
 
 function loadRegion(regionKey) {
