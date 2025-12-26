@@ -207,7 +207,7 @@ function initTopTabs() {
 
     const header1Text = "Introduction";
     const header2Text = "How It Started";
-    const header3Text = "Test";
+    const header3Text = "Notes/FAQ";
 
     const header1 = createHeader(header1Text);
     const header2 = createHeader(header2Text);
@@ -216,8 +216,8 @@ function initTopTabs() {
     const body1 = createBody("Welcome to the Music Archives for Voodoo Media! This script/app houses the information for the entire music catalog loaded into my SmugMug site.");
     const body2 = createBody("Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If anything looks wrong, please let me know.");
 
-    const body3 = createBody("Personally, I've always been a concert goer throughout my life, starting with Korn, Disturbed and Sevendust in 2001, eventually leading into the full music archive you see today.");
-    const body4 = createBody("Test");
+    const body3 = createBody("Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.");
+    const body4 = createBody("Back then, I started to just take pictures (albeit not the best, but gotta start somewhere) for keepsakes of what I've seen and been through. From going to a lot of the 13 High shows between 2011 and a lot of 2012, I was hooked. And as through those shows, most of those bands from there became life-long friends of mine, and I wouldn't trade it for the world. Fast forward now to 2025 and 14 years later it is still a prevalent force in my life. Without that one decision back then, who knows where I would be today! This page is dedicated to the vast journey that it has been and will continue to be until I can no longer do it anymore.");
 
     const body5 = createBody("Test");
 
