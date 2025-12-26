@@ -162,18 +162,18 @@ if (!msg) {
   msg.id = "top-message";
 
   // Full text (same text you already use)
-  const fullText =
+  const fullTextIntro =
     "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
 
   // Use the first sentence as the clickable header
-  const splitAt = fullText.indexOf("! ");
+  const splitAt = fullTextIntro.indexOf("! ");
   const headerText = "Introduction";
-  const bodyText = splitAt > -1 ? fullText.slice(splitAt + 2) : fullText;
+  const bodyText = fullTextfullTextIntro;
 
   // Header (always visible)
   const header = document.createElement("div");
   header.textContent = headerText + " ▾";
-  header.fontSize = "22px";
+  header.style.fontSize = "22px";
   header.style.fontWeight = "700";
   header.style.cursor = "pointer";
   header.style.userSelect = "none";
