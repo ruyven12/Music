@@ -156,37 +156,58 @@ const controlsFixed = document.getElementById("controls-fixed");
 
 if (controlsFixed) {
   // ---- top message ----
-  let msg = document.getElementById("top-message");
-  if (!msg) {
-    msg = document.createElement("div");
-    msg.id = "top-message";
-    msg.textContent =
-      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
+  // ---- top message (click to expand/collapse) ----
+let msg = document.getElementById("top-message");
+if (!msg) {
+  msg = document.createElement("div");
+  msg.id = "top-message";
 
-    msg.style.textAlign = "center";
-    msg.style.fontSize = "14px";
-    msg.style.fontWeight = "600";
-    msg.style.color = "rgba(226,232,240,0.9)";
-    msg.style.marginBottom = "6px";
+  // Full text (same text you already use)
+  const fullText =
+    "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
 
-    controlsFixed.insertBefore(msg, controlsFixed.firstChild);
-  }
+  // Use the first sentence as the clickable header
+  const splitAt = fullText.indexOf("! ");
+  const headerText =
+    splitAt > -1 ? fullText.slice(0, splitAt + 1) : "Welcome";
+  const bodyText = splitAt > -1 ? fullText.slice(splitAt + 2) : fullText;
 
-  // ---- UNIQUE separator for controls area ----
-  if (!document.getElementById("controls-top-sep")) {
-    const topSep = document.createElement("div");
-    topSep.id = "controls-top-sep";
+  // Header (always visible)
+  const header = document.createElement("div");
+  header.textContent = headerText + " ▾";
+  header.style.cursor = "pointer";
+  header.style.userSelect = "none";
 
-    // 🔁 reused style from band-detail separator
-    topSep.style.height = "5px";
-    topSep.style.width = "100%";
-    topSep.style.margin = "14px auto 20px";
-    topSep.style.background =
-      "linear-gradient(to right, rgba(200,163,184,0.05), rgba(200,0,0,0.45), rgba(200,163,184,0.02))";
+  // Body (toggle)
+  const body = document.createElement("div");
+  body.textContent = bodyText;
+  body.style.display = "none";
+  body.style.marginTop = "6px";
+  body.style.fontSize = "13px";
+  body.style.fontWeight = "500";
+  body.style.color = "rgba(226,232,240,0.75)";
+  body.style.lineHeight = "1.35";
 
-    // insert directly AFTER the message
-    controlsFixed.insertBefore(topSep, msg.nextSibling);
-  }
+  // Match your current message styling
+  msg.style.textAlign = "center";
+  msg.style.fontSize = "14px";
+  msg.style.fontWeight = "600";
+  msg.style.color = "rgba(226,232,240,0.9)";
+  msg.style.marginBottom = "6px";
+
+  let open = false;
+  header.addEventListener("click", () => {
+    open = !open;
+    body.style.display = open ? "block" : "none";
+    header.textContent = headerText + (open ? " ▴" : " ▾");
+  });
+
+  msg.appendChild(header);
+  msg.appendChild(body);
+
+  controlsFixed.insertBefore(msg, controlsFixed.firstChild);
+}
+
 }
 
 
