@@ -161,32 +161,38 @@ if (controlsFixed) {
     msg = document.createElement("div");
     msg.id = "top-message";
 
-    // Full text (same text you already use)
-    const fullText =
+    // Body text
+    const body1Text =
       "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
-
-    // Use the first sentence as the clickable header
-    const splitAt = fullText.indexOf("! ");
     const headerText = "Introduction";
-    const bodyText = fullText;
 
-    // Header (always visible)
-    const header = document.createElement("div");
-    header.textContent = headerText + " ▾";
-    header.style.cursor = "pointer";
-	header.style.fontSize = "22px";
-	header.style.fontWeight = "600";
-    header.style.userSelect = "none";
+    // Header 1 (always visible)
+    const header1 = document.createElement("div");
+    header1.textContent = headerText + " ▾";
+    header1.style.cursor = "pointer";
+    header1.style.fontSize = "22px";
+    header1.style.fontWeight = "600";
+    header1.style.userSelect = "none";
 
-    // Body (toggle)
-    const body = document.createElement("div");
-    body.textContent = bodyText;
-    body.style.display = "none";
-    body.style.marginTop = "6px";
-    body.style.fontSize = "13px";
-    body.style.fontWeight = "500";
-    body.style.color = "rgba(226,232,240,0.75)";
-    body.style.lineHeight = "1.35";
+    // Body 1 (toggle)
+    const body1 = document.createElement("div");
+    body1.textContent = body1Text;
+    body1.style.display = "none";
+    body1.style.marginTop = "6px";
+    body1.style.fontSize = "13px";
+    body1.style.fontWeight = "500";
+    body1.style.color = "rgba(226,232,240,0.75)";
+    body1.style.lineHeight = "1.35";
+
+    // Separator (place AFTER body1)
+    const separator = document.createElement("div");
+    separator.style.width = "100%";
+    separator.style.maxWidth = "1100px";
+    separator.style.height = "1px";
+    separator.style.margin = "10px auto";
+    separator.style.background =
+      "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)";
+    separator.style.display = "none";
 
     // Match your current message styling
     msg.style.textAlign = "center";
@@ -196,18 +202,21 @@ if (controlsFixed) {
     msg.style.marginBottom = "6px";
 
     let open = false;
-    header.addEventListener("click", () => {
+    header1.addEventListener("click", () => {
       open = !open;
-      body.style.display = open ? "block" : "none";
-      header.textContent = headerText + (open ? " ▴" : " ▾");
+      body1.style.display = open ? "block" : "none";
+      separator.style.display = open ? "block" : "none";
+      header1.textContent = headerText + (open ? " ▴" : " ▾");
     });
 
-    msg.appendChild(header);
-    msg.appendChild(body);
+    msg.appendChild(header1);
+    msg.appendChild(body1);
+    msg.appendChild(separator);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
+
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
