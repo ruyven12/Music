@@ -318,7 +318,7 @@ if (controlsFixed) {
     msg.appendChild(header3);
     msg.appendChild(body4);
 
-    msg.appendChild(separator2);
+    msg.appendChild(separator3);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
