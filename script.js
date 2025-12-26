@@ -232,7 +232,7 @@ if (controlsFixed) {
     const body2 = createBody(body2Text);
 
     // Separator (between headers)
-    const separator = createSeparator();
+    const separator1 = createSeparator();
 
     // Header 2 (always visible)
     const header2Text = "How It Started";
@@ -241,6 +241,9 @@ if (controlsFixed) {
     // Body 3 (toggle)
     const body3Text = "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.";
     const body3 = createBody(body3Text);
+	
+	// Separator (between headers)
+    const separator2 = createSeparator();
 
     // Match your current message styling
     msg.style.textAlign = "center";
@@ -286,14 +289,12 @@ if (controlsFixed) {
     msg.appendChild(body2);
     msg.appendChild(spacer2);
 
-    msg.appendChild(separator);
+    msg.appendChild(separator1);
 
     msg.appendChild(header2);
-    const separatorUnderHeader2 = createSeparator();
-    separatorUnderHeader2.style.display = "block";
-    msg.appendChild(separatorUnderHeader2);
-
     msg.appendChild(body3);
+
+    msg.appendChild(separator2);
 
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
