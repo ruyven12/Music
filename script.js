@@ -243,20 +243,32 @@ if (controlsFixed) {
     let open1 = false;
     let open2 = false;
 
-    header1.addEventListener("click", () => {
-      open1 = !open1;
+    function setSection1(isOpen) {
+      open1 = isOpen;
       body1.style.display = open1 ? "block" : "none";
       spacer1.style.display = open1 ? "block" : "none";
       body2.style.display = open1 ? "block" : "none";
       spacer2.style.display = open1 ? "block" : "none";
       separator.style.display = open1 ? "block" : "none";
       header1.textContent = header1Text + (open1 ? " ▴" : " ▾");
+    }
+
+    function setSection2(isOpen) {
+      open2 = isOpen;
+      body3.style.display = open2 ? "block" : "none";
+      header2.textContent = header2Text + (open2 ? " ▴" : " ▾");
+    }
+
+    header1.addEventListener("click", () => {
+      const nextOpen1 = !open1;
+      setSection1(nextOpen1);
+      if (nextOpen1) setSection2(false); // accordion: close other
     });
 
     header2.addEventListener("click", () => {
-      open2 = !open2;
-      body3.style.display = open2 ? "block" : "none";
-      header2.textContent = header2Text + (open2 ? " ▴" : " ▾");
+      const nextOpen2 = !open2;
+      setSection2(nextOpen2);
+      if (nextOpen2) setSection1(false); // accordion: close other
     });
 
     msg.appendChild(header1);
@@ -271,7 +283,6 @@ if (controlsFixed) {
     controlsFixed.insertBefore(msg, controlsFixed.firstChild);
   }
 }
-
 
 function loadRegion(regionKey) {
   CURRENT_REGION = regionKey;
