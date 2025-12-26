@@ -160,15 +160,11 @@ if (controlsFixed) {
   if (!msg) {
     msg = document.createElement("div");
     msg.id = "top-message";
-
-    // Body text
-    const body1Text =
-      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
-    const headerText = "Introduction";
-
+    
     // Header 1 (always visible)
     const header1 = document.createElement("div");
-    header1.textContent = headerText + " ▾";
+	const header1Text = "Introduction";
+    header1.textContent = header1Text + " ▾";
     header1.style.cursor = "pointer";
     header1.style.fontSize = "22px";
     header1.style.fontWeight = "600";
@@ -176,6 +172,8 @@ if (controlsFixed) {
 
     // Body 1 (toggle)
     const body1 = document.createElement("div");
+	const body1Text =
+      "Welcome to the Music Archives for Voodoo Media! This script/app that you see here houses the information for the entire music catalog that I have loaded into my Smugmug site. Key note: As you get further back in the Show tab, the quality of the shots does drop off as well. If there is anything that is displayed wrong or doesn't look right, please let me know!";
     body1.textContent = body1Text;
     body1.style.display = "none";
     body1.style.marginTop = "6px";
@@ -213,7 +211,7 @@ if (controlsFixed) {
       body1.style.display = open ? "block" : "none";
       spacer.style.display = open ? "block" : "none";
       body2.style.display = open ? "block" : "none";
-      header1.textContent = headerText + (open ? " ▴" : " ▾");
+      header1.textContent = header1Text + (open ? " ▴" : " ▾");
     });
 
     msg.appendChild(header1);
