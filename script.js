@@ -159,7 +159,8 @@ function initTopTabs() {
     if (!controlsFixed) return;
 
     let msg = document.getElementById("top-message");
-    if (msg) return;
+    // If a previous/broken copy left an empty #top-message behind, remove it so we can rebuild cleanly
+    if (msg) msg.remove();
 
     msg = document.createElement("div");
     msg.id = "top-message";
@@ -247,7 +248,6 @@ function initTopTabs() {
     );
 
     const body6 = createBody("Albums/Shows added:");
-
     const spacer3 = createSpacer("6px");
     const body7 = createBody("12/30/25 - TSO at the SNHU Arena (11/28/25)");
 
@@ -308,13 +308,49 @@ function initTopTabs() {
       const next = !open1;
       closeAll();
       if (next) {
+        open1 = true;
+        body1.style.display = "block";
+        header1.textContent = header1Text + " ▴";
+        header1.style.background = "rgba(255,255,255,0.12)";
+      }
+    });
+
+    header2.addEventListener("click", () => {
+      const next = !open2;
+      closeAll();
+      if (next) {
+        open2 = true;
+        body2.style.display = "block";
+        spacer1.style.display = "block";
+        body3.style.display = "block";
+        header2.textContent = header2Text + " ▴";
+        header2.style.background = "rgba(255,255,255,0.12)";
+      }
+    });
+
+    header3.addEventListener("click", () => {
+      const next = !open3;
+      closeAll();
+      if (next) {
+        open3 = true;
+        body4.style.display = "block";
+        spacer2.style.display = "block";
+        body5.style.display = "block";
+        header3.textContent = header3Text + " ▴";
+        header3.style.background = "rgba(255,255,255,0.12)";
+      }
+    });
+
+    header4.addEventListener("click", () => {
+      const next = !open4;
+      closeAll();
+      if (next) {
         open4 = true;
         body6.style.display = "block";
         spacer3.style.display = "block";
         body7.style.display = "block";
         header4.textContent = header4Text + " ▴";
         header4.style.background = "rgba(255,255,255,0.12)";
-      }
       }
     });
 
