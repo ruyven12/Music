@@ -299,9 +299,11 @@ function initTopTabs() {
       spacer3.style.display = "none";
       body7.style.display = "none";
 
-      // hide content frame
-      separatorTop.style.display = "none";
+      // content frame
+      // Top separator stays visible; bottom separator hides when nothing is open
       separatorBottom.style.display = "none";
+    // Bottom separator only appears when a tab is open
+    separatorBottom.style.display = "none";
 
       // reset tab labels + styling
       header1.textContent = header1Text + " ▾";
@@ -371,8 +373,9 @@ function initTopTabs() {
 
     msg.appendChild(headerBar);
 
-    // content frame (only shown when a tab is open)
-    separatorTop.style.display = "none";
+    // content frame
+    // Top separator should ALWAYS be visible (even when no tab is open)
+    separatorTop.style.display = "block";
     separatorBottom.style.display = "none";
     msg.appendChild(separatorTop);
 
