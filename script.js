@@ -251,9 +251,8 @@ function initTopTabs() {
     const spacer3 = createSpacer("6px");
     const body7 = createBody("12/30/25 - TSO at the SNHU Arena (11/28/25)");
 
-    const separator1 = createSeparator();
-    const separator2 = createSeparator();
-    const separator3 = createSeparator();
+    const separatorTop = createSeparator();
+    const separatorBottom = createSeparator();
 
     const headerBar = document.createElement("div");
     headerBar.style.display = "flex";
@@ -287,6 +286,8 @@ function initTopTabs() {
 
     function closeAll() {
       open1 = open2 = open3 = open4 = false;
+
+      // hide all content
       body1.style.display = "none";
       body2.style.display = "none";
       body3.style.display = "none";
@@ -297,6 +298,12 @@ function initTopTabs() {
       body6.style.display = "none";
       spacer3.style.display = "none";
       body7.style.display = "none";
+
+      // hide content frame
+      separatorTop.style.display = "none";
+      separatorBottom.style.display = "none";
+
+      // reset tab labels + styling
       header1.textContent = header1Text + " ▾";
       header2.textContent = header2Text + " ▾";
       header3.textContent = header3Text + " ▾";
@@ -309,6 +316,8 @@ function initTopTabs() {
       closeAll();
       if (next) {
         open1 = true;
+        separatorTop.style.display = "block";
+        separatorBottom.style.display = "block";
         body1.style.display = "block";
         header1.textContent = header1Text + " ▴";
         header1.style.background = "rgba(255,255,255,0.12)";
@@ -320,6 +329,8 @@ function initTopTabs() {
       closeAll();
       if (next) {
         open2 = true;
+        separatorTop.style.display = "block";
+        separatorBottom.style.display = "block";
         body2.style.display = "block";
         spacer1.style.display = "block";
         body3.style.display = "block";
@@ -333,6 +344,8 @@ function initTopTabs() {
       closeAll();
       if (next) {
         open3 = true;
+        separatorTop.style.display = "block";
+        separatorBottom.style.display = "block";
         body4.style.display = "block";
         spacer2.style.display = "block";
         body5.style.display = "block";
@@ -346,6 +359,8 @@ function initTopTabs() {
       closeAll();
       if (next) {
         open4 = true;
+        separatorTop.style.display = "block";
+        separatorBottom.style.display = "block";
         body6.style.display = "block";
         spacer3.style.display = "block";
         body7.style.display = "block";
@@ -355,18 +370,28 @@ function initTopTabs() {
     });
 
     msg.appendChild(headerBar);
+
+    // content frame (only shown when a tab is open)
+    separatorTop.style.display = "none";
+    separatorBottom.style.display = "none";
+    msg.appendChild(separatorTop);
+
+    // all content blocks live inside the same frame
     msg.appendChild(body1);
+
     msg.appendChild(body2);
     msg.appendChild(spacer1);
     msg.appendChild(body3);
-    msg.appendChild(separator2);
+
     msg.appendChild(body4);
     msg.appendChild(spacer2);
     msg.appendChild(body5);
-    msg.appendChild(separator3);
+
     msg.appendChild(body6);
     msg.appendChild(spacer3);
     msg.appendChild(body7);
+
+    msg.appendChild(separatorBottom);
 
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
