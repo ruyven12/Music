@@ -179,7 +179,7 @@ function initTopTabs() {
       return header;
     }
 
-    function createBody(text) {
+    function createBodyRegular(text) {
       const body = document.createElement("div");
       body.textContent = text;
       body.style.display = "none";
@@ -187,6 +187,18 @@ function initTopTabs() {
       body.style.fontSize = "13px";
       body.style.fontWeight = "500";
       body.style.color = "rgba(226,232,240,0.75)";
+      body.style.lineHeight = "1.35";
+      return body;
+    }
+
+    function createBodyStrong(text) {
+      const body = document.createElement("div");
+      body.textContent = text;
+      body.style.display = "none";
+      body.style.marginTop = "6px";
+      body.style.fontSize = "15px";
+      body.style.fontWeight = "800";
+      body.style.color = "rgba(226,232,240,0.9)";
       body.style.lineHeight = "1.35";
       return body;
     }
@@ -223,33 +235,33 @@ function initTopTabs() {
     const header3 = createHeader(header3Text);
     const header4 = createHeader(header4Text);
 
-    const body1 = createBody(
+    const body1 = createBodyRegular(
       "Welcome to the Music Archives for Voodoo Media! This script/app houses the information for the entire music catalog loaded into my SmugMug site."
     );
 
-    const body2 = createBody(
+    const body2 = createBodyRegular(
       "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today."
     );
 
     const spacer1 = createSpacer("10px");
 
-    const body3 = createBody(
+    const body3 = createBodyRegular(
       "Back then, I started to just take pictures (albeit not the best, but gotta start somewhere) for keepsakes of what I've seen and been through. From going to a lot of the 13 High shows between 2011 and a lot of 2012, I was hooked. And as through those shows, most of those bands from there became life-long friends of mine, and I wouldn't trade it for the world. Fast forward now to 2025 and 14 years later it is still a prevalent force in my life. Without that one decision back then, who knows where I would be today! This page is dedicated to the vast journey that it has been and will continue to be until I can no longer do it anymore."
     );
 
-    const body4 = createBody(
+    const body4 = createBodyRegular(
       "1: As you get further back in the Show tab, the quality of the shots does drop off as well - especially 2013 backwards."
     );
 
     const spacer2 = createSpacer("10px");
 
-    const body5 = createBody(
+    const body5 = createBodyRegular(
       "2: This is a complete work in progress and things will change throughout. If you see something that looks off, please let me know."
     );
 
-    const body6 = createBody("Albums/Shows added:");
+    const body6 = createBodyStrong("Albums/Shows added:");
     const spacer3 = createSpacer("6px");
-    const body7 = createBody("12/30/25 - TSO at the SNHU Arena (11/28/25)");
+    const body7 = createBodyRegular("12/30/25 - TSO at the SNHU Arena (11/28/25)");
 
     const separatorTop = createSeparator();
     const separatorBottom = createSeparator();
