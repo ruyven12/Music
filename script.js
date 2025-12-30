@@ -355,7 +355,6 @@ function initTopTabs() {
     });
 
     msg.appendChild(headerBar);
-    msg.appendChild(separator1);
     msg.appendChild(body1);
     msg.appendChild(body2);
     msg.appendChild(spacer1);
