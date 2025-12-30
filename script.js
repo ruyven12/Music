@@ -215,22 +215,43 @@ function initTopTabs() {
     const header1Text = "Introduction";
     const header2Text = "How It Started";
     const header3Text = "Notes-FAQ";
+    const header4Text = "Updates";
 
     const header1 = createHeader(header1Text);
     const header2 = createHeader(header2Text);
     const header3 = createHeader(header3Text);
+    const header4 = createHeader(header4Text);
 
-    const body1 = createBody("Welcome to the Music Archives for Voodoo Media! This script/app houses the information for the entire music catalog loaded into my SmugMug site.");
-    
-    const body2 = createBody("Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today.");
+    const body1 = createBody(
+      "Welcome to the Music Archives for Voodoo Media! This script/app houses the information for the entire music catalog loaded into my SmugMug site."
+    );
+
+    const body2 = createBody(
+      "Personally, I've been always a concert goer throughout my life (with my first ever music-related show was Korn, Disturbed and Sev (the Pop Sucks 2 Tour) back in 2001 when they visited Maine. From there, my shows were fewer and far between for a stretch of time. However, the music project really ramped up in mid-2011 when I checked out a set from 3 bands - Dark Rain, Fifth Freedom and 13 High - at a local bar and thoroughly enjoyed the music. Flash forward a couple months to Sept 2011, where I was invited to check out 13 High once more. Their sound was definitely I was grooving to at that time - in which after helping with equipment load in and out for my buddy Eric at the time (had an injury), it evolved into going another, and another, and another.....until it became what it is today."
+    );
+
     const spacer1 = createSpacer("10px");
-    const body3 = createBody("Back then, I started to just take pictures (albeit not the best, but gotta start somewhere) for keepsakes of what I've seen and been through. From going to a lot of the 13 High shows between 2011 and a lot of 2012, I was hooked. And as through those shows, most of those bands from there became life-long friends of mine, and I wouldn't trade it for the world. Fast forward now to 2025 and 14 years later it is still a prevalent force in my life. Without that one decision back then, who knows where I would be today! This page is dedicated to the vast journey that it has been and will continue to be until I can no longer do it anymore.");
 
-    const body4 = createBody("1: As you get further back in the Show tab, the quality of the shots does drop off as well - especially 2013 backwards.");
+    const body3 = createBody(
+      "Back then, I started to just take pictures (albeit not the best, but gotta start somewhere) for keepsakes of what I've seen and been through. From going to a lot of the 13 High shows between 2011 and a lot of 2012, I was hooked. And as through those shows, most of those bands from there became life-long friends of mine, and I wouldn't trade it for the world. Fast forward now to 2025 and 14 years later it is still a prevalent force in my life. Without that one decision back then, who knows where I would be today! This page is dedicated to the vast journey that it has been and will continue to be until I can no longer do it anymore."
+    );
+
+    const body4 = createBody(
+      "1: As you get further back in the Show tab, the quality of the shots does drop off as well - especially 2013 backwards."
+    );
+
     const spacer2 = createSpacer("10px");
-    const body5 = createBody("2: This is a complete work in progress and things will change throughout. If you see something that looks off, please let me know.");
+
+    const body5 = createBody(
+      "2: This is a complete work in progress and things will change throughout. If you see something that looks off, please let me know."
+    );
+
+    const body6 = createBody("");
 
     const separator1 = createSeparator();
+    const separator2 = createSeparator();
+    const separator3 = createSeparator();
+
     const headerBar = document.createElement("div");
     headerBar.style.display = "flex";
     headerBar.style.justifyContent = "center";
@@ -238,8 +259,7 @@ function initTopTabs() {
     headerBar.style.gap = "16px";
     headerBar.style.flexWrap = "wrap";
 
-    // Make headers behave like tabs
-    [header1, header2, header3].forEach((h) => {
+    [header1, header2, header3, header4].forEach((h) => {
       h.style.display = "inline-flex";
       h.style.alignItems = "center";
       h.style.justifyContent = "center";
@@ -255,19 +275,15 @@ function initTopTabs() {
     headerBar.appendChild(header1);
     headerBar.appendChild(header2);
     headerBar.appendChild(header3);
-    const separator2 = createSeparator();
-    const separator3 = createSeparator();
-
-    // =========================
-    // State + toggle logic
-    // =========================
+    headerBar.appendChild(header4);
 
     let open1 = false;
     let open2 = false;
     let open3 = false;
+    let open4 = false;
 
     function closeAll() {
-      open1 = open2 = open3 = false;
+      open1 = open2 = open3 = open4 = false;
       body1.style.display = "none";
       body2.style.display = "none";
       body3.style.display = "none";
@@ -275,17 +291,14 @@ function initTopTabs() {
       body4.style.display = "none";
       spacer2.style.display = "none";
       body5.style.display = "none";
+      body6.style.display = "none";
       header1.textContent = header1Text + " ▾";
       header2.textContent = header2Text + " ▾";
       header3.textContent = header3Text + " ▾";
-
-      // "inactive" tab styling
-      header1.style.background = "rgba(255,255,255,0.06)";
-      header2.style.background = "rgba(255,255,255,0.06)";
-      header3.style.background = "rgba(255,255,255,0.06)";
+      header4.textContent = header4Text + " ▾";
+      header1.style.background = header2.style.background = header3.style.background = header4.style.background = "rgba(255,255,255,0.06)";
     }
 
-    // One and only one set of click handlers (prevents double-toggle cancelling)
     header1.addEventListener("click", () => {
       const next = !open1;
       closeAll();
@@ -323,28 +336,30 @@ function initTopTabs() {
       }
     });
 
-    // =========================
-    // DOM order
-    // =========================
+    header4.addEventListener("click", () => {
+      const next = !open4;
+      closeAll();
+      if (next) {
+        open4 = true;
+        body6.style.display = "block";
+        header4.textContent = header4Text + " ▴";
+        header4.style.background = "rgba(255,255,255,0.12)";
+      }
+    });
 
-    // Tab bar (headers side-by-side)
     msg.appendChild(headerBar);
     msg.appendChild(separator1);
-
-    // Content (shows directly under the tab bar)
     msg.appendChild(body1);
-
     msg.appendChild(body2);
     msg.appendChild(spacer1);
     msg.appendChild(body3);
-
     msg.appendChild(separator2);
-
     msg.appendChild(body4);
     msg.appendChild(spacer2);
     msg.appendChild(body5);
-
     msg.appendChild(separator3);
+    msg.appendChild(body6);
+    msg.appendChild(header4);
 
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
