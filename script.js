@@ -359,7 +359,6 @@ function initTopTabs() {
     msg.appendChild(body5);
     msg.appendChild(separator3);
     msg.appendChild(body6);
-    msg.appendChild(header4);
 
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
