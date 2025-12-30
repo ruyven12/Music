@@ -246,7 +246,10 @@ function initTopTabs() {
       "2: This is a complete work in progress and things will change throughout. If you see something that looks off, please let me know."
     );
 
-    const body6 = createBody("");
+    const body6 = createBody("Albums/Shows added:");
+
+    const spacer3 = createSpacer("6px");
+    const body7 = createBody("12/30/25 - TSO at the SNHU Arena (11/28/25)");
 
     const separator1 = createSeparator();
     const separator2 = createSeparator();
@@ -292,6 +295,8 @@ function initTopTabs() {
       spacer2.style.display = "none";
       body5.style.display = "none";
       body6.style.display = "none";
+      spacer3.style.display = "none";
+      body7.style.display = "none";
       header1.textContent = header1Text + " ▾";
       header2.textContent = header2Text + " ▾";
       header3.textContent = header3Text + " ▾";
@@ -303,47 +308,13 @@ function initTopTabs() {
       const next = !open1;
       closeAll();
       if (next) {
-        open1 = true;
-        body1.style.display = "block";
-        header1.textContent = header1Text + " ▴";
-        header1.style.background = "rgba(255,255,255,0.12)";
-      }
-    });
-
-    header2.addEventListener("click", () => {
-      const next = !open2;
-      closeAll();
-      if (next) {
-        open2 = true;
-        body2.style.display = "block";
-        spacer1.style.display = "block";
-        body3.style.display = "block";
-        header2.textContent = header2Text + " ▴";
-        header2.style.background = "rgba(255,255,255,0.12)";
-      }
-    });
-
-    header3.addEventListener("click", () => {
-      const next = !open3;
-      closeAll();
-      if (next) {
-        open3 = true;
-        body4.style.display = "block";
-        spacer2.style.display = "block";
-        body5.style.display = "block";
-        header3.textContent = header3Text + " ▴";
-        header3.style.background = "rgba(255,255,255,0.12)";
-      }
-    });
-
-    header4.addEventListener("click", () => {
-      const next = !open4;
-      closeAll();
-      if (next) {
         open4 = true;
         body6.style.display = "block";
+        spacer3.style.display = "block";
+        body7.style.display = "block";
         header4.textContent = header4Text + " ▴";
         header4.style.background = "rgba(255,255,255,0.12)";
+      }
       }
     });
 
@@ -359,6 +330,8 @@ function initTopTabs() {
     msg.appendChild(body5);
     msg.appendChild(separator3);
     msg.appendChild(body6);
+    msg.appendChild(spacer3);
+    msg.appendChild(body7);
 
     msg.style.textAlign = "center";
     msg.style.fontSize = "14px";
