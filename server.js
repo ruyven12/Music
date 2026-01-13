@@ -2,6 +2,9 @@ console.log(">>> SERVER FILE VERSION: PATCHED-FULL-1 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
+const http = require("http");
+const https = require("https");
+const { URL } = require("url");
 const app = express();
 
 app.use(express.static(__dirname));
@@ -276,6 +279,49 @@ app.get("/smug/image/:imageKey", async (req, res) => {
 });
 
 
+
+function fetchStreamWithRedirects(inputUrl, redirectsLeft = 5) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!inputUrl || redirectsLeft < 0) return reject(new Error("Too many redirects"));
+      const u = new URL(inputUrl);
+      const lib = u.protocol === "https:" ? https : http;
+
+      const req = lib.get(
+        inputUrl,
+        {
+          headers: {
+            "User-Agent": "MusicArchiveZip/1.0",
+            "Accept": "*/*",
+          },
+        },
+        (res) => {
+          const code = res.statusCode || 0;
+
+          // Redirects
+          if (code >= 300 && code < 400 && res.headers.location) {
+            const next = new URL(res.headers.location, inputUrl).toString();
+            res.resume();
+            return resolve(fetchStreamWithRedirects(next, redirectsLeft - 1));
+          }
+
+          if (code < 200 || code >= 300) {
+            res.resume();
+            return reject(new Error(`HTTP ${code} for ${inputUrl}`));
+          }
+
+          return resolve(res);
+        }
+      );
+
+      req.on("error", reject);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+
 // =========================================================
 // ✔ NEW: ZIP BUILDER (multi-download)
 // Expects: { items: [{ url, filename }, ...] }
@@ -321,14 +367,16 @@ app.post("/zip", async (req, res) => {
 
       if (!/^https?:\/\//i.test(url)) continue;
 
-      // Server-to-server fetch; avoids browser CORS issues
-      const r = await fetch(url);
-      if (!r.ok || !r.body) {
-        console.warn("zip fetch failed:", r.status, url);
+      // Server-to-server fetch as stream (no global fetch needed)
+      let stream;
+      try {
+        stream = await fetchStreamWithRedirects(url);
+      } catch (e) {
+        console.warn("zip fetch failed:", String(e && e.message ? e.message : e), url);
         continue;
       }
 
-      archive.append(r.body, { name: filename });
+      archive.append(stream, { name: filename });
     }
 
     await archive.finalize();
