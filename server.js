@@ -1,9 +1,12 @@
 console.log(">>> SERVER FILE VERSION: PATCHED-FULL-1 <<<");
 
 const express = require("express");
+const archiver = require("archiver");
 const app = express();
 
 app.use(express.static(__dirname));
+app.use(express.json({ limit: "2mb" }));
+
 
 // SmugMug API Key
 const SMUG_API_KEY = "SQLhhqgXZJd7MzqgVX563bkbjdCfXt9T";
@@ -20,6 +23,8 @@ const SHOWS_SHEET_URL =
 // =========================================================
 function allowCors(res) {
   res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
 }
 
 // =========================================================
@@ -267,6 +272,74 @@ app.get("/smug/image/:imageKey", async (req, res) => {
     console.error("error fetching image detail:", err);
     allowCors(res);
     return res.status(500).json({ error: "image detail fetch failed" });
+  }
+});
+
+
+// =========================================================
+// ✔ NEW: ZIP BUILDER (multi-download)
+// Expects: { items: [{ url, filename }, ...] }
+// Returns: application/zip stream
+// =========================================================
+app.options("/zip", (req, res) => {
+  allowCors(res);
+  return res.status(204).send("");
+});
+
+app.post("/zip", async (req, res) => {
+  try {
+    allowCors(res);
+
+    const items = Array.isArray(req.body?.items) ? req.body.items : [];
+    if (!items.length) return res.status(400).send("No items provided");
+    if (items.length > 120) return res.status(400).send("Too many items (max 120)");
+
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", 'attachment; filename="photos.zip"');
+
+    const archive = archiver("zip", { zlib: { level: 9 } });
+
+    archive.on("warning", (err) => {
+      console.warn("zip warning:", err);
+    });
+
+    archive.on("error", (err) => {
+      console.error("zip error:", err);
+      try { if (!res.headersSent) res.status(500).send("ZIP error"); } catch (_) {}
+      try { res.end(); } catch (_) {}
+    });
+
+    archive.pipe(res);
+
+    for (let i = 0; i < items.length; i++) {
+      const it = items[i] || {};
+      const url = String(it.url || "").trim();
+      let filename = String(it.filename || `photo-${i + 1}.jpg`).trim();
+
+      // basic sanitization
+      filename = filename.replace(/[\/\\:*?"<>|]+/g, "-").slice(0, 160) || `photo-${i + 1}.jpg`;
+
+      if (!/^https?:\/\//i.test(url)) continue;
+
+      // Server-to-server fetch; avoids browser CORS issues
+      const r = await fetch(url);
+      if (!r.ok || !r.body) {
+        console.warn("zip fetch failed:", r.status, url);
+        continue;
+      }
+
+      archive.append(r.body, { name: filename });
+    }
+
+    await archive.finalize();
+  } catch (err) {
+    console.error("POST /zip failed:", err);
+    try {
+      allowCors(res);
+      return res.status(500).send("ZIP failed");
+    } catch (_) {
+      try { res.end(); } catch (_) {}
+    }
   }
 });
 
