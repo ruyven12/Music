@@ -7,6 +7,23 @@ const https = require("https");
 const { URL } = require("url");
 const app = express();
 
+// =========================================================
+// UNIVERSAL CORS
+// =========================================================
+function allowCors(res) {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+}
+
+// Always attach CORS headers (including for static files) and handle OPTIONS fast
+app.use((req, res, next) => {
+  allowCors(res);
+  if (req.method === "OPTIONS") return res.status(204).send("");
+  next();
+});
+
+
 app.use(express.static(__dirname));
 app.use(express.json({ limit: "2mb" }));
 
@@ -21,14 +38,12 @@ const BANDS_SHEET_URL =
 const SHOWS_SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdi19qTDyPeBGzq0PpkdlDS_bNg34XpdRiXy8aBa-Jlu-jg2Wzkj1SnLXtRVFU4TGOh5KHJPK8Lwhc/pub?gid=1306635885&single=true&output=csv";
 
-// =========================================================
-// UNIVERSAL CORS
-// =========================================================
-function allowCors(res) {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type");
-}
+// Stats tab (Fix / Metadata) – gid provided by Chris
+// NOTE: Uses the Google Sheet "export?format=csv" URL style.
+// This will work as long as the sheet (or at least this tab) is readable without auth.
+const STATS_SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/12P8b85K24dcyy9jubil_h4DN6xXr3wYFsILz-5LkGkk/export?format=csv&gid=1973247444";
+
 
 // =========================================================
 // ✔ FIXED: SmugMug API helper (must be ABOVE all routes)
@@ -78,6 +93,27 @@ app.get("/sheet/shows", async (req, res) => {
     res.status(500).send("shows sheet error");
   }
 });
+
+// Stats tab (Fix / Metadata)
+// Aliases included to match different frontend endpoint names used over time.
+async function sendStatsCsv(req, res) {
+  try {
+    const r = await fetch(STATS_SHEET_URL);
+    const csv = await r.text();
+    allowCors(res);
+    res.type("text/plain").send(csv);
+  } catch (err) {
+    console.error("sheet /stats fetch failed:", err);
+    allowCors(res);
+    res.status(500).send("stats sheet error");
+  }
+}
+
+app.get("/sheet/stats", sendStatsCsv);
+app.get("/sheet/fix_metadata", sendStatsCsv);
+app.get("/sheet/fix-metadata", sendStatsCsv);
+app.get("/sheet/fixmetadata", sendStatsCsv);
+app.get("/sheet/fix", sendStatsCsv);
 
 // =========================================================
 // IMAGE PROXY (posters)
