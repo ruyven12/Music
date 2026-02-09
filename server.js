@@ -110,10 +110,15 @@ async function sendStatsCsv(req, res) {
 }
 
 app.get("/sheet/stats", sendStatsCsv);
+app.get("/sheet/stats/", sendStatsCsv);
 app.get("/sheet/fix_metadata", sendStatsCsv);
+app.get("/sheet/fix_metadata/", sendStatsCsv);
 app.get("/sheet/fix-metadata", sendStatsCsv);
+app.get("/sheet/fix-metadata/", sendStatsCsv);
 app.get("/sheet/fixmetadata", sendStatsCsv);
+app.get("/sheet/fixmetadata/", sendStatsCsv);
 app.get("/sheet/fix", sendStatsCsv);
+app.get("/sheet/fix/", sendStatsCsv);
 
 // =========================================================
 // IMAGE PROXY (posters)
