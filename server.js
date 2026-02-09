@@ -11,9 +11,13 @@ const app = express();
 // UNIVERSAL CORS
 // =========================================================
 function allowCors(res) {
+  // Allow embedding/requests from anywhere (frontend is hosted separately)
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type");
+  // Include common headers used by fetch() and browsers
+  res.set("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization, X-Requested-With");
+  // Optional: make it easier to debug in DevTools
+  res.set("Access-Control-Expose-Headers", "Content-Type, Content-Length");
 }
 
 // Always attach CORS headers (including for static files) and handle OPTIONS fast
@@ -430,6 +434,14 @@ app.post("/zip", async (req, res) => {
       try { res.end(); } catch (_) {}
     }
   }
+});
+
+// =========================================================
+// 404 (keep CORS headers on missing routes too)
+// =========================================================
+app.use((req, res) => {
+  allowCors(res);
+  res.status(404).json({ error: "Not found", path: req.originalUrl });
 });
 
 // =========================================================
