@@ -480,24 +480,37 @@ app.post("/track", async (req, res) => {
 
     const body = req.body && typeof req.body === "object" ? req.body : {};
     const eventName = String(body.event || "").trim();
-    if (!eventName) return;
+    if (!eventName) return;    // Keep payload small + predictable (matches your Sheet headers)
+    const sessionid = (body.sessionid || body.sessionId || body.sessionID) ? String(body.sessionid || body.sessionId || body.sessionID) : '';
 
-    // Keep payload small + predictable
+    // Extra is optional; if provided as an object, keep it.
+    // We also tuck request context into extra._ctx so it never breaks column mapping.
+    let extra = undefined;
+    if (body.extra && typeof body.extra === 'object') {
+      extra = body.extra;
+    }
+    if (extra && typeof extra === 'object') {
+      extra._ctx = Object.assign({}, extra._ctx || {}, {
+        ip: String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '').slice(0, 64),
+        ua: String(req.headers['user-agent'] || '').slice(0, 220)
+      });
+    }
+
     const payload = {
       event: eventName.slice(0, 64),
-      band: body.band ? String(body.band).slice(0, 120) : "",
-      show: body.show ? String(body.show).slice(0, 160) : "",
-      year: body.year ? String(body.year).slice(0, 16) : "",
-      category: body.category ? String(body.category).slice(0, 48) : "",
-      page: body.page ? String(body.page).slice(0, 400) : "",
-      referrer: body.referrer ? String(body.referrer).slice(0, 400) : "",
-      sessionId: body.sessionId ? String(body.sessionId).slice(0, 80) : "",
-      // Optional extra object; will be JSON-stringified by Apps Script
-      extra: body.extra && typeof body.extra === "object" ? body.extra : undefined,
-
-      // Lightweight request context (useful later)
-      ip: String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "").slice(0, 64),
-      ua: String(req.headers["user-agent"] || "").slice(0, 220)
+      route: body.route ? String(body.route).slice(0, 120) : '',
+      view: body.view ? String(body.view).slice(0, 64) : '',
+      band: body.band ? String(body.band).slice(0, 120) : '',
+      show: body.show ? String(body.show).slice(0, 160) : '',
+      album: body.album ? String(body.album).slice(0, 180) : '',
+      photo: body.photo ? String(body.photo).slice(0, 220) : '',
+      year: body.year ? String(body.year).slice(0, 16) : '',
+      category: body.category ? String(body.category).slice(0, 48) : '',
+      source: body.source ? String(body.source).slice(0, 48) : '',
+      page: body.page ? String(body.page).slice(0, 400) : '',
+      referrer: body.referrer ? String(body.referrer).slice(0, 400) : '',
+      sessionid: sessionid.slice(0, 80),
+      extra: extra
     };
 
     const headers = { "Content-Type": "application/json" };

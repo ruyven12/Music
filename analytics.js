@@ -32,14 +32,35 @@
   function trackEvent(event, fields) {
     try {
       if (!event) return;
+
+      const fIn = (fields && typeof fields === 'object') ? Object.assign({}, fields) : {};
+      // Back-compat: accept sessionId camelCase from older callers
+      if (!('sessionid' in fIn) && ('sessionId' in fIn)) {
+        try { fIn.sessionid = fIn.sessionId; } catch (_) {}
+      }
+      try { delete fIn.sessionId; } catch (_) {}
+
+      const inferredRoute = (() => {
+        try {
+          const h = String(window.location.hash || '').trim();
+          if (h) return h.replace(/^#/, '').split('?')[0];
+          return String(window.location.pathname || '').trim();
+        } catch (_) {
+          return '';
+        }
+      })();
+
       const payload = Object.assign(
         {
           event: String(event),
+          route: inferredRoute || '',
+          view: '',
+          source: '',
           page: window.location.href,
-          referrer: document.referrer || "",
-          sessionId: getSessionId()
+          referrer: document.referrer || '',
+          sessionid: getSessionId()
         },
-        fields || {}
+        fIn
       );
 
       const body = JSON.stringify(payload);
