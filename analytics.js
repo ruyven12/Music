@@ -44,7 +44,14 @@
 
       const body = JSON.stringify(payload);
 
-      if (navigator.sendBeacon) {
+      const isCrossOrigin = (() => {
+    try { return (new URL(ENDPOINT)).origin !== window.location.origin; }
+    catch (_) { return true; }
+  })();
+
+      // sendBeacon is great, but in some cross-site contexts it can behave like "credentials: include".
+      // For cross-origin logging, we use fetch with credentials:'omit' to avoid CORS credential issues.
+      if (navigator.sendBeacon && !isCrossOrigin) {
         const blob = new Blob([body], { type: "application/json" });
         navigator.sendBeacon(ENDPOINT, blob);
         return;
@@ -52,6 +59,8 @@
 
       fetch(ENDPOINT, {
         method: "POST",
+        mode: "cors",
+        credentials: "omit",
         headers: { "Content-Type": "application/json" },
         body,
         keepalive: true

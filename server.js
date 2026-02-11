@@ -10,19 +10,36 @@ const app = express();
 // =========================================================
 // UNIVERSAL CORS
 // =========================================================
-function allowCors(res) {
-  // Allow embedding/requests from anywhere (frontend is hosted separately)
-  res.set("Access-Control-Allow-Origin", "*");
+function allowCors(res, req) {
+  // If the browser sends credentials (cookies), we cannot use "*" for ACAO.
+  // We keep a small allowlist for known frontends, and fall back to "*" otherwise.
+  const origin = req && req.headers ? req.headers.origin : "";
+  const allowList = String(process.env.CORS_ALLOW_ORIGINS || "https://vmpix.onrender.com,https://vmpix.smugmug.com")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const isAllowed = origin && allowList.includes(origin);
+
+  if (isAllowed) {
+    res.set("Access-Control-Allow-Origin", origin);
+    res.set("Vary", "Origin");
+    res.set("Access-Control-Allow-Credentials", "true");
+  } else {
+    // Public, non-credentialed requests
+    res.set("Access-Control-Allow-Origin", "*");
+  }
+
   res.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   // Include common headers used by fetch() and browsers
-  res.set("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization, X-Requested-With");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization, X-Requested-With, X-Analytics-Key");
   // Optional: make it easier to debug in DevTools
   res.set("Access-Control-Expose-Headers", "Content-Type, Content-Length");
 }
 
 // Always attach CORS headers (including for static files) and handle OPTIONS fast
 app.use((req, res, next) => {
-  allowCors(res);
+  allowCors(res, req);
   if (req.method === "OPTIONS") return res.status(204).send("");
   next();
 });
