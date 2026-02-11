@@ -27,7 +27,7 @@ function trackEvent(event, fields = {}) {
     if (!event) return;
 
     const payload = {
-      event,
+      event: String(event),
       page: window.location.href,
       referrer: document.referrer || "",
       sessionId: getSessionId(),
@@ -36,16 +36,26 @@ function trackEvent(event, fields = {}) {
 
     const body = JSON.stringify(payload);
 
-    // Beacon is best for click/navigation events
-    if (navigator.sendBeacon) {
+    const isCrossOrigin = (() => {
+      try {
+        return new URL(ANALYTICS_ENDPOINT).origin !== window.location.origin;
+      } catch (_) {
+        return true;
+      }
+    })();
+
+    // sendBeacon is great, but in some cross-site contexts it can behave like "credentials: include".
+    // For cross-origin logging, use fetch with credentials:'omit' to avoid CORS credential issues.
+    if (navigator.sendBeacon && !isCrossOrigin) {
       const blob = new Blob([body], { type: "application/json" });
       navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
       return;
     }
 
-    // Fallback
     fetch(ANALYTICS_ENDPOINT, {
       method: "POST",
+      mode: "cors",
+      credentials: "omit",
       headers: { "Content-Type": "application/json" },
       body,
       keepalive: true
@@ -1215,6 +1225,15 @@ function findPosterForAlbumName(albName) {
   return show.poster_url || show.show_url || show.image || null;
 }
 
+function yearFromShowDate(raw) {
+  const parts = (raw || "").trim().split("/");
+  if (parts.length !== 3) return "";
+  let y = (parts[2] || "").trim();
+  if (!y) return "";
+  if (y.length === 2) return "20" + y;
+  return y;
+}
+
 function formatShowDate(raw) {
   if (!raw) return "";
   const parts = raw.split("/");
@@ -1360,7 +1379,16 @@ function showLetter(region, letter) {
     titleBtn.style.cursor = "pointer";
 
     // clicking anywhere still opens the card
-    card.addEventListener("click", () => showBandCard(region, letter, bandObj));
+    card.addEventListener("click", () => {
+      if (typeof window.trackEvent === "function") {
+        window.trackEvent("band_click", {
+          band: bandDisplay,
+          category: region,
+          extra: { source: "bands_list", letter }
+        });
+      }
+      showBandCard(region, letter, bandObj);
+    });
 
     card.append(thumb, titleBtn);
     resultsEl.appendChild(card);
@@ -2689,7 +2717,17 @@ function showBandCard(region, letter, bandObj) {
               backToAlbumsBtn.style.display = "inline-flex";
             }
 
-            loadAndShowAlbumPhotos(albumKey, albumsArea, albumName, nodeKey);
+            if (typeof window.trackEvent === "function") {
+            window.trackEvent("album_open", {
+              band: bandDisplay,
+              show: show ? (show.show_title || show.title || show.event_name || show.venue || "").toString().slice(0, 160) : "",
+              year: show ? yearFromShowDate(show.date || show.show_date || "") : "",
+              category: region,
+              extra: { albumKey, albumName }
+            });
+          }
+
+          loadAndShowAlbumPhotos(albumKey, albumsArea, albumName, nodeKey);
           });
         } else {
           // no key → visually "disabled"
@@ -3058,6 +3096,20 @@ function renderShowListForYear(year, shows) {
 
       details.classList.add("open");
 
+      if (typeof window.trackEvent === "function") {
+        window.trackEvent("show_open", {
+          show: (show.show_title || show.title || show.event_name || show.venue || "").toString().slice(0, 160),
+          year: String(year),
+          category: "Shows",
+          extra: {
+            date: (show.date || show.show_date || "").toString(),
+            venue: (show.venue || "").toString(),
+            city: (show.city || "").toString(),
+            state: (show.state || "").toString()
+          }
+        });
+      }
+
       // 🧩 NEW: responsive grid so all bands fit in canvas
       const wrap = document.createElement("div");
       wrap.style.display = "grid";
@@ -3139,6 +3191,16 @@ function renderShowListForYear(year, shows) {
           // ✅ Show → Band click should switch to full Bands mode
           if (info) {
             card.addEventListener("click", () => {
+              if (typeof window.trackEvent === "function") {
+                window.trackEvent("band_click", {
+                  band: info.band.name,
+                  show: (show.show_title || show.title || show.event_name || show.venue || "").toString().slice(0, 160),
+                  year: yearFromShowDate(show.date || show.show_date || "") || String(year),
+                  category: info.region,
+                  extra: { source: "shows_band_list" }
+                });
+              }
+
               // 1) Switch top tab highlight to "Bands"
               const tabsBar = document.querySelector(".top-tabs");
               if (tabsBar) {
