@@ -437,6 +437,68 @@ app.post("/zip", async (req, res) => {
 });
 
 // =========================================================
+// ✔ NEW: ANALYTICS EVENT LOGGER (no Google Analytics)
+//
+// Frontend calls: POST /track (or navigator.sendBeacon to /track)
+// Server forwards the payload to a Google Apps Script Web App
+// that appends the row into your Google Sheet tab (e.g. "Analytics").
+//
+// Env vars:
+//   ANALYTICS_WEBAPP_URL  (required to enable logging)
+//   ANALYTICS_KEY         (optional shared secret; if you add checks in Apps Script)
+// =========================================================
+
+const ANALYTICS_WEBAPP_URL = process.env.ANALYTICS_WEBAPP_URL || "";
+const ANALYTICS_KEY = process.env.ANALYTICS_KEY || "";
+
+app.post("/track", async (req, res) => {
+  allowCors(res);
+
+  // Always respond quickly so the UI never feels slow.
+  // (We still try to forward the event to Sheets in the background.)
+  res.status(204).send("");
+
+  try {
+    if (!ANALYTICS_WEBAPP_URL) return; // logging disabled if not configured
+
+    const body = req.body && typeof req.body === "object" ? req.body : {};
+    const eventName = String(body.event || "").trim();
+    if (!eventName) return;
+
+    // Keep payload small + predictable
+    const payload = {
+      event: eventName.slice(0, 64),
+      band: body.band ? String(body.band).slice(0, 120) : "",
+      show: body.show ? String(body.show).slice(0, 160) : "",
+      year: body.year ? String(body.year).slice(0, 16) : "",
+      category: body.category ? String(body.category).slice(0, 48) : "",
+      page: body.page ? String(body.page).slice(0, 400) : "",
+      referrer: body.referrer ? String(body.referrer).slice(0, 400) : "",
+      sessionId: body.sessionId ? String(body.sessionId).slice(0, 80) : "",
+      // Optional extra object; will be JSON-stringified by Apps Script
+      extra: body.extra && typeof body.extra === "object" ? body.extra : undefined,
+
+      // Lightweight request context (useful later)
+      ip: String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "").slice(0, 64),
+      ua: String(req.headers["user-agent"] || "").slice(0, 220)
+    };
+
+    const headers = { "Content-Type": "application/json" };
+    if (ANALYTICS_KEY) headers["X-Analytics-Key"] = ANALYTICS_KEY;
+
+    // Forward to your Apps Script Web App endpoint
+    await fetch(ANALYTICS_WEBAPP_URL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    // Don't throw; analytics should never break the site.
+    console.warn("/track forward failed:", err && err.message ? err.message : err);
+  }
+});
+
+// =========================================================
 // 404 (keep CORS headers on missing routes too)
 // =========================================================
 app.use((req, res) => {

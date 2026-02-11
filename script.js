@@ -2,6 +2,70 @@
 const API_BASE = "https://music-archive-3lfa.onrender.com";
 const CSV_ENDPOINT = `${API_BASE}/sheet/bands`;
 const SHOWS_ENDPOINT = `${API_BASE}/sheet/shows`;
+// Self-hosted analytics endpoint (server forwards to your Google Sheet "Analytics" tab)
+const ANALYTICS_ENDPOINT = `${API_BASE}/track`;
+
+// =========================================================
+// ANALYTICS (no GA)
+// =========================================================
+function getSessionId() {
+  try {
+    const key = "vmpix_session_id";
+    let id = sessionStorage.getItem(key);
+    if (!id) {
+      id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      sessionStorage.setItem(key, id);
+    }
+    return id;
+  } catch (_) {
+    return "";
+  }
+}
+
+function trackEvent(event, fields = {}) {
+  try {
+    if (!event) return;
+
+    const payload = {
+      event,
+      page: window.location.href,
+      referrer: document.referrer || "",
+      sessionId: getSessionId(),
+      ...fields
+    };
+
+    const body = JSON.stringify(payload);
+
+    // Beacon is best for click/navigation events
+    if (navigator.sendBeacon) {
+      const blob = new Blob([body], { type: "application/json" });
+      navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
+      return;
+    }
+
+    // Fallback
+    fetch(ANALYTICS_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+      keepalive: true
+    }).catch(() => {});
+  } catch (_) {
+    // never break the UI
+  }
+}
+
+// Expose for quick testing in DevTools:
+//   trackEvent('test_event', { band: 'Test Band' })
+window.trackEvent = trackEvent;
+
+// Minimal baseline event (helps confirm wiring without spamming clicks)
+document.addEventListener("DOMContentLoaded", () => {
+  trackEvent("page_load", {
+    path: window.location.pathname || "",
+    hash: window.location.hash || ""
+  });
+});
 
 const REGION_IMAGES = {
   Local:
