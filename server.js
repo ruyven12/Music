@@ -1,4 +1,4 @@
-console.log(">>> SERVER FILE VERSION: PATCHED-FULL-2 <<<");
+console.log(">>> SERVER FILE VERSION: PATCHED-FULL-4 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
@@ -104,7 +104,7 @@ function normKeyword(s) {
     .trim()
     .replace(/\s+/g, " ")
     .toLowerCase();
-}
+
 
 function normalizeSmugEndpointFromUri(uri) {
   // SmugMug often provides URIs like "/api/v2/image/XYZ!keywords"
@@ -116,8 +116,13 @@ function normalizeSmugEndpointFromUri(uri) {
   // strip /api/v2 prefix if present
   if (u.startsWith("/api/v2")) u = u.slice("/api/v2".length);
   // ensure querystring exists so smug() can safely append &APIKey=
-  if (!u.includes("?")) u += "?";
+  if (u.includes("?")) {
+    // no-op
+  } else {
+    u += "?";
+  }
   return u;
+}
 }
 
 const CURATED_INDEX_TTL_MS = Math.max(
@@ -267,25 +272,6 @@ async function computeCuratedIndex(albumKey) {
     for (const ai of images) {
       totalImagesSeen.n++;
       let kws = extractImageKeywordsFromAlbumImage(ai);
-      // Fallback: some responses don't include keywords even with expands.
-      // If SmugMug provides a Keywords URI, fetch it for this image (acceptable for small/medium albums).
-      if ((!kws || kws.length === 0) && ai?.Uris?.Keywords?.Uri) {
-        const ep = normalizeSmugEndpointFromUri(ai.Uris.Keywords.Uri);
-        if (ep) {
-          const kwJson = await smug(ep + (ep.endsWith("?") ? "" : "&") + "_accept=application/json&_verbosity=1");
-          // keyword payloads are often KeywordArray or a Keywords string
-          const respKw = kwJson && kwJson.Response ? kwJson.Response : kwJson;
-          const arr = respKw?.KeywordArray || respKw?.Keywords?.KeywordArray || respKw?.Keywords;
-          if (Array.isArray(arr)) {
-            kws = arr
-              .map(k => (typeof k === "string" ? k : k && k.Name ? String(k.Name) : ""))
-              .map(s => s.trim())
-              .filter(Boolean);
-          } else if (typeof respKw?.Keywords === "string") {
-            kws = respKw.Keywords.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
-          }
-        }
-      }
 
       for (const kw of kws) {
         const nk = normKeyword(kw);
