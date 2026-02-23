@@ -1,4 +1,4 @@
-console.log(">>> SERVER FILE VERSION: PATCHED-FULL-2 <<<");
+console.log(">>> SERVER FILE VERSION: PATCHED-FULL-3 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
@@ -104,11 +104,12 @@ function normKeyword(s) {
     .trim()
     .replace(/\s+/g, " ")
     .toLowerCase();
-
+}
 
 function normalizeSmugEndpointFromUri(uri) {
-  // SmugMug often provides URIs like "/api/v2/image/XYZ!keywords"
-  // Our smug() helper expects the part AFTER "/api/v2" and MUST include a "?" (because smug appends &APIKey=...)
+  // SmugMug often provides URIs like "/api/v2/image/XYZ!keywords".
+  // Our smug() helper expects the part AFTER "/api/v2" and MUST include a "?"
+  // (because smug() appends "&APIKey=...").
   let u = String(uri || "").trim();
   if (!u) return "";
   // strip host if present
@@ -116,13 +117,22 @@ function normalizeSmugEndpointFromUri(uri) {
   // strip /api/v2 prefix if present
   if (u.startsWith("/api/v2")) u = u.slice("/api/v2".length);
   // ensure querystring exists so smug() can safely append &APIKey=
-  if (u.includes("?")) {
-    // no-op
-  } else {
-    u += "?";
-  }
+  if (!u.includes("?")) u += "?";
   return u;
 }
+
+function pickImageKeywordsUri(albumImage) {
+  // SmugMug URI keys can vary by shape / expansions.
+  const u = albumImage && albumImage.Uris ? albumImage.Uris : null;
+  return (
+    u?.Keywords?.Uri ||
+    u?.ImageKeywords?.Uri ||
+    u?.KeywordArray?.Uri ||
+    u?.ImageKeywordArray?.Uri ||
+    u?.Image?.Keywords?.Uri ||
+    u?.Image?.ImageKeywords?.Uri ||
+    ""
+  );
 }
 
 const CURATED_INDEX_TTL_MS = Math.max(
@@ -274,16 +284,17 @@ async function computeCuratedIndex(albumKey) {
       let kws = extractImageKeywordsFromAlbumImage(ai);
       // Fallback: some responses don't include keywords even with expands.
       // If SmugMug provides a Keywords URI, fetch it for this image (acceptable for small/medium albums).
-      if ((!kws || kws.length === 0) && ai?.Uris?.Keywords?.Uri) {
-        const ep = normalizeSmugEndpointFromUri(ai.Uris.Keywords.Uri);
+      const kwUri = pickImageKeywordsUri(ai);
+      if ((!kws || kws.length === 0) && kwUri) {
+        const ep = normalizeSmugEndpointFromUri(kwUri);
         if (ep) {
-          const kwJson = await smug(ep + (ep.endsWith("?") ? "" : "&") + "_accept=application/json&_verbosity=1");
+          const kwJson = await smug(ep + "_accept=application/json&_verbosity=1");
           // keyword payloads are often KeywordArray or a Keywords string
           const respKw = kwJson && kwJson.Response ? kwJson.Response : kwJson;
-          const arr = respKw?.KeywordArray || respKw?.Keywords?.KeywordArray || respKw?.Keywords;
+          const arr = respKw?.KeywordArray || respKw?.Keywords?.KeywordArray || respKw?.Keyword || respKw?.Keywords;
           if (Array.isArray(arr)) {
             kws = arr
-              .map(k => (typeof k === "string" ? k : k && k.Name ? String(k.Name) : ""))
+              .map(k => (typeof k === "string" ? k : k && k.Name ? String(k.Name) : k && k.Keyword ? String(k.Keyword) : ""))
               .map(s => s.trim())
               .filter(Boolean);
           } else if (typeof respKw?.Keywords === "string") {
