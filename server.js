@@ -529,6 +529,19 @@ app.post("/track", async (req, res) => {
 });
 
 // =========================================================
+// PEOPLE INDEX (stub for now)
+// =========================================================
+app.get("/index/people", (req, res) => {
+  allowCors(res, req);
+
+  return res.json({
+    generatedAt: new Date().toISOString(),
+    mode: "stub",
+    people: {}
+  });
+});
+
+// =========================================================
 // 404 (keep CORS headers on missing routes too)
 // =========================================================
 app.use((req, res) => {
