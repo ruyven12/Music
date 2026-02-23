@@ -1,4 +1,4 @@
-console.log(">>> SERVER FILE VERSION: PATCHED-FULL-6 <<<");
+console.log(">>> SERVER FILE VERSION: PATCHED-FULL-7 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
@@ -256,15 +256,13 @@ function extractImageKeywordsFromAlbumImage(albumImage) {
 }
 
 async function computeCuratedIndex(albumKey) {
-  // 1) Fetch album keywords (curated)
-  const meta = await smug(
-    `/album/${encodeURIComponent(albumKey)}?_expand=Keywords&_expand=KeywordArray`
-  );
-  const albumKeywords = extractAlbumKeywords(meta);
-
-  // 2) Fetch all album images (paged) and build keyword frequency map
+  // We intentionally avoid calling /album/:albumKey directly because some public albums
+  // can return 404 on that route with APIKey-only auth, even though !images works.
+  // So: fetch the first !images page and extract Album keywords from that response.
   const imageKeywordCounts = Object.create(null);
   const totalImagesSeen = { n: 0 };
+
+  let albumKeywords = [];
 
   let start = 1;
   const count = 200;
@@ -272,16 +270,24 @@ async function computeCuratedIndex(albumKey) {
   while (true) {
     const endpoint =
       `/album/${encodeURIComponent(albumKey)}!images?count=${count}&start=${start}` +
-      `&_accept=application/json&_verbosity=1&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray`;
+      `&_accept=application/json&_verbosity=1` +
+      `&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray` +
+      (start === 1 ? `&_expand=Album&_expand=Album.Keywords&_expand=Album.KeywordArray` : ``);
 
     const page = await smug(endpoint);
     const resp = page && page.Response ? page.Response : page;
+
+    // Only the first page includes Album expansion; extract curated keywords there.
+    if (start === 1 && (!albumKeywords || albumKeywords.length === 0)) {
+      albumKeywords = extractAlbumKeywords(page);
+    }
+
     const images = resp?.AlbumImage || resp?.Image || [];
     if (!Array.isArray(images) || images.length === 0) break;
 
     for (const ai of images) {
       totalImagesSeen.n++;
-      let kws = extractImageKeywordsFromAlbumImage(ai);
+      const kws = extractImageKeywordsFromAlbumImage(ai);
 
       for (const kw of kws) {
         const nk = normKeyword(kw);
@@ -294,8 +300,8 @@ async function computeCuratedIndex(albumKey) {
     start += count;
   }
 
-  // 3) Verify curated keywords against image metadata
-  const keywords = albumKeywords.map((k) => {
+  // Verify curated keywords (album-level) against image metadata keywords
+  const keywords = (albumKeywords || []).map((k) => {
     const nk = normKeyword(k);
     const c = imageKeywordCounts[nk] || 0;
     return { keyword: k, verified: c > 0, imageCount: c };
@@ -309,13 +315,12 @@ async function computeCuratedIndex(albumKey) {
     computedAt: new Date().toISOString(),
     ttlMs: CURATED_INDEX_TTL_MS,
     stats: {
-      curatedKeywordCount: albumKeywords.length,
+      curatedKeywordCount: (albumKeywords || []).length,
       imagesScanned: totalImagesSeen.n
     },
     keywords,
     verifiedKeywords,
     missingKeywords,
-    // helpful for debugging; normalized map
     imageKeywordCounts
   };
 }
