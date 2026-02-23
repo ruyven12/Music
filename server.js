@@ -104,25 +104,6 @@ function normKeyword(s) {
     .trim()
     .replace(/\s+/g, " ")
     .toLowerCase();
-
-
-function normalizeSmugEndpointFromUri(uri) {
-  // SmugMug often provides URIs like "/api/v2/image/XYZ!keywords"
-  // Our smug() helper expects the part AFTER "/api/v2" and MUST include a "?" (because smug appends &APIKey=...)
-  let u = String(uri || "").trim();
-  if (!u) return "";
-  // strip host if present
-  u = u.replace(/^https?:\/\/api\.smugmug\.com/, "");
-  // strip /api/v2 prefix if present
-  if (u.startsWith("/api/v2")) u = u.slice("/api/v2".length);
-  // ensure querystring exists so smug() can safely append &APIKey=
-  if (u.includes("?")) {
-    // no-op
-  } else {
-    u += "?";
-  }
-  return u;
-}
 }
 
 const CURATED_INDEX_TTL_MS = Math.max(
