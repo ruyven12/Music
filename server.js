@@ -5,6 +5,8 @@ const archiver = require("archiver");
 const http = require("http");
 const https = require("https");
 const { URL } = require("url");
+const fs = require("fs");
+const path = require("path");
 const app = express();
 
 // =========================================================
@@ -85,6 +87,254 @@ async function smug(endpoint) {
 
   return r.json();
 }
+
+// =========================================================
+// ✔ NEW: CURATED INDEX (album keywords verified against image metadata)
+//
+// Computes per-album keyword verification and caches result.
+//
+// Endpoint:
+//   GET /smug/curated-index/:albumKey
+// Query:
+//   refresh=1  (forces recompute, bypass cache)
+// =========================================================
+
+function normKeyword(s) {
+  return String(s || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+}
+
+const CURATED_INDEX_TTL_MS = Math.max(
+  60_000,
+  Number(process.env.CURATED_INDEX_TTL_MS || "21600000") // default 6h
+);
+
+const CURATED_CACHE_DIR = path.join(__dirname, ".cache-curated-index");
+const curatedMemCache = new Map();
+
+function curatedCacheKey(albumKey) {
+  // bump v1 when logic changes
+  return `curated-index:v1:${albumKey}`;
+}
+
+function safeJsonParse(s) {
+  try {
+    return JSON.parse(s);
+  } catch (_) {
+    return null;
+  }
+}
+
+async function ensureCuratedCacheDir() {
+  try {
+    await fs.promises.mkdir(CURATED_CACHE_DIR, { recursive: true });
+  } catch (_) {}
+}
+
+function curatedCacheFile(albumKey) {
+  // keep filename safe
+  const safe = String(albumKey || "").replace(/[^a-zA-Z0-9_-]+/g, "_");
+  return path.join(CURATED_CACHE_DIR, `${safe}.json`);
+}
+
+async function readCuratedDiskCache(albumKey) {
+  try {
+    const p = curatedCacheFile(albumKey);
+    const raw = await fs.promises.readFile(p, "utf8");
+    const parsed = safeJsonParse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    return parsed;
+  } catch (_) {
+    return null;
+  }
+}
+
+async function writeCuratedDiskCache(albumKey, payload) {
+  try {
+    await ensureCuratedCacheDir();
+    const p = curatedCacheFile(albumKey);
+    await fs.promises.writeFile(p, JSON.stringify(payload), "utf8");
+  } catch (e) {
+    // cache write failures should never break endpoint
+    console.warn("curated-index cache write failed:", e && e.message ? e.message : e);
+  }
+}
+
+function isCacheFresh(storedAtIso, ttlMs) {
+  const t = Date.parse(String(storedAtIso || ""));
+  if (!Number.isFinite(t)) return false;
+  return Date.now() - t < ttlMs;
+}
+
+function extractAlbumKeywords(metaJson) {
+  // Be resilient to varying SmugMug shapes.
+  // Prefer a keyword array if present; fall back to comma-delimited string.
+  const resp = metaJson && metaJson.Response ? metaJson.Response : metaJson;
+
+  const maybeArray =
+    resp?.KeywordArray ||
+    resp?.Album?.KeywordArray ||
+    resp?.Album?.Keywords?.KeywordArray ||
+    resp?.Album?.Keywords ||
+    resp?.Album?.Keyword;
+
+  if (Array.isArray(maybeArray)) {
+    return maybeArray
+      .map(k => (typeof k === "string" ? k : k && k.Name ? String(k.Name) : ""))
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+
+  const maybeString =
+    resp?.Keywords || resp?.Album?.Keywords || (resp?.Album && resp.Album.Keywords);
+
+  if (typeof maybeString === "string") {
+    return maybeString
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+function extractImageKeywordsFromAlbumImage(albumImage) {
+  // We request _expand=Image.Keywords and _expand=KeywordArray where possible.
+  // Try multiple shapes, then fall back to comma-delimited string.
+  const maybeArray =
+    albumImage?.KeywordArray ||
+    albumImage?.Image?.KeywordArray ||
+    albumImage?.Image?.Keywords?.KeywordArray ||
+    albumImage?.Image?.Keywords;
+
+  if (Array.isArray(maybeArray)) {
+    return maybeArray
+      .map(k => (typeof k === "string" ? k : k && k.Name ? String(k.Name) : ""))
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+
+  const maybeString = albumImage?.Keywords || albumImage?.Image?.Keywords;
+  if (typeof maybeString === "string") {
+    return maybeString
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+async function computeCuratedIndex(albumKey) {
+  // 1) Fetch album keywords (curated)
+  const meta = await smug(
+    `/album/${encodeURIComponent(albumKey)}?_expand=Keywords&_expand=KeywordArray`
+  );
+  const albumKeywords = extractAlbumKeywords(meta);
+
+  // 2) Fetch all album images (paged) and build keyword frequency map
+  const imageKeywordCounts = Object.create(null);
+  const totalImagesSeen = { n: 0 };
+
+  let start = 1;
+  const count = 200;
+
+  while (true) {
+    const endpoint =
+      `/album/${encodeURIComponent(albumKey)}!images?count=${count}&start=${start}` +
+      `&_accept=application/json&_verbosity=1&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray`;
+
+    const page = await smug(endpoint);
+    const resp = page && page.Response ? page.Response : page;
+    const images = resp?.AlbumImage || resp?.Image || [];
+    if (!Array.isArray(images) || images.length === 0) break;
+
+    for (const ai of images) {
+      totalImagesSeen.n++;
+      const kws = extractImageKeywordsFromAlbumImage(ai);
+      for (const kw of kws) {
+        const nk = normKeyword(kw);
+        if (!nk) continue;
+        imageKeywordCounts[nk] = (imageKeywordCounts[nk] || 0) + 1;
+      }
+    }
+
+    if (images.length < count) break;
+    start += count;
+  }
+
+  // 3) Verify curated keywords against image metadata
+  const keywords = albumKeywords.map((k) => {
+    const nk = normKeyword(k);
+    const c = imageKeywordCounts[nk] || 0;
+    return { keyword: k, verified: c > 0, imageCount: c };
+  });
+
+  const verifiedKeywords = keywords.filter(k => k.verified).map(k => k.keyword);
+  const missingKeywords = keywords.filter(k => !k.verified).map(k => k.keyword);
+
+  return {
+    albumKey,
+    computedAt: new Date().toISOString(),
+    ttlMs: CURATED_INDEX_TTL_MS,
+    stats: {
+      curatedKeywordCount: albumKeywords.length,
+      imagesScanned: totalImagesSeen.n
+    },
+    keywords,
+    verifiedKeywords,
+    missingKeywords,
+    // helpful for debugging; normalized map
+    imageKeywordCounts
+  };
+}
+
+app.get("/smug/curated-index/:albumKey", async (req, res) => {
+  const albumKey = req.params.albumKey;
+  const refresh = String(req.query.refresh || "") === "1";
+
+  allowCors(res, req);
+  if (!albumKey) return res.status(400).json({ error: "missing albumKey" });
+
+  const key = curatedCacheKey(albumKey);
+
+  try {
+    if (!refresh) {
+      // 1) Memory cache
+      const memHit = curatedMemCache.get(key);
+      if (memHit && isCacheFresh(memHit?.computedAt, CURATED_INDEX_TTL_MS)) {
+        return res.json({
+          ...memHit,
+          cache: { hit: true, layer: "memory", ageSec: Math.floor((Date.now() - Date.parse(memHit.computedAt)) / 1000) }
+        });
+      }
+
+      // 2) Disk cache
+      const diskHit = await readCuratedDiskCache(albumKey);
+      if (diskHit && isCacheFresh(diskHit?.computedAt, CURATED_INDEX_TTL_MS)) {
+        curatedMemCache.set(key, diskHit);
+        return res.json({
+          ...diskHit,
+          cache: { hit: true, layer: "disk", ageSec: Math.floor((Date.now() - Date.parse(diskHit.computedAt)) / 1000) }
+        });
+      }
+    }
+
+    // Compute
+    const computed = await computeCuratedIndex(albumKey);
+    curatedMemCache.set(key, computed);
+    await writeCuratedDiskCache(albumKey, computed);
+
+    return res.json({
+      ...computed,
+      cache: { hit: false, layer: "computed", ageSec: 0 }
+    });
+  } catch (err) {
+    console.error("curated-index failed:", err && err.message ? err.message : err);
+    return res.status(500).json({ error: "curated index failed" });
+  }
+});
 
 // =========================================================
 // SHEETS → CSV
