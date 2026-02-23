@@ -1,4 +1,4 @@
-console.log(">>> SERVER FILE VERSION: PATCHED-FULL-7 <<<");
+console.log(">>> SERVER FILE VERSION: PATCHED-FULL-8 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
@@ -114,25 +114,6 @@ function normKeyword(s) {
     .trim()
     .replace(/\s+/g, " ")
     .toLowerCase();
-
-
-function normalizeSmugEndpointFromUri(uri) {
-  // SmugMug often provides URIs like "/api/v2/image/XYZ!keywords"
-  // Our smug() helper expects the part AFTER "/api/v2" and MUST include a "?" (because smug appends &APIKey=...)
-  let u = String(uri || "").trim();
-  if (!u) return "";
-  // strip host if present
-  u = u.replace(/^https?:\/\/api\.smugmug\.com/, "");
-  // strip /api/v2 prefix if present
-  if (u.startsWith("/api/v2")) u = u.slice("/api/v2".length);
-  // ensure querystring exists so smug() can safely append &APIKey=
-  if (u.includes("?")) {
-    // no-op
-  } else {
-    u += "?";
-  }
-  return u;
-}
 }
 
 const CURATED_INDEX_TTL_MS = Math.max(
@@ -256,13 +237,56 @@ function extractImageKeywordsFromAlbumImage(albumImage) {
 }
 
 async function computeCuratedIndex(albumKey) {
-  // We intentionally avoid calling /album/:albumKey directly because some public albums
-  // can return 404 on that route with APIKey-only auth, even though !images works.
-  // So: fetch the first !images page and extract Album keywords from that response.
+  // 1) Fetch album keywords (curated). Some albums may not allow /album/{key} via APIKey-only;
+  // we fall back to extracting Album keywords from the first !images page if possible.
+  let albumKeywords = [];
+  try {
+    const meta = await smug(`/album/${encodeURIComponent(albumKey)}?_expand=Keywords&_expand=KeywordArray`);
+    albumKeywords = extractAlbumKeywords(meta);
+  } catch (e) {
+    // We'll try to pull Album keywords from the first images page below.
+    console.warn("curated-index: album-meta fetch failed (will fallback):", e && e.message ? e.message : e);
+  }
+
+  // 2) Fetch all album images (paged) and build keyword frequency map
   const imageKeywordCounts = Object.create(null);
   const totalImagesSeen = { n: 0 };
 
-  let albumKeywords = [];
+  // Helper: extract keywords from image detail response
+  function extractKeywordsFromImageDetail(imageDetailJson) {
+    const resp = imageDetailJson && imageDetailJson.Response ? imageDetailJson.Response : imageDetailJson;
+    const img = resp?.Image || resp?.Response?.Image || resp;
+    const maybeArray =
+      img?.KeywordArray ||
+      img?.Keywords?.KeywordArray ||
+      img?.Keywords;
+    if (Array.isArray(maybeArray)) {
+      return maybeArray
+        .map(k => (typeof k === "string" ? k : k && k.Name ? String(k.Name) : ""))
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+    if (typeof img?.Keywords === "string") {
+      return img.Keywords.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+    }
+    return [];
+  }
+
+  // Concurrency-limited mapper (keeps SmugMug happy)
+  async function mapLimit(items, limit, fn) {
+    const out = new Array(items.length);
+    let i = 0;
+    async function worker() {
+      while (true) {
+        const idx = i++;
+        if (idx >= items.length) return;
+        out[idx] = await fn(items[idx], idx);
+      }
+    }
+    const workers = Array.from({ length: Math.max(1, limit) }, () => worker());
+    await Promise.all(workers);
+    return out;
+  }
 
   let start = 1;
   const count = 200;
@@ -270,37 +294,45 @@ async function computeCuratedIndex(albumKey) {
   while (true) {
     const endpoint =
       `/album/${encodeURIComponent(albumKey)}!images?count=${count}&start=${start}` +
-      `&_accept=application/json&_verbosity=1` +
-      `&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray` +
-      (start === 1 ? `&_expand=Album&_expand=Album.Keywords&_expand=Album.KeywordArray` : ``);
+      `&_accept=application/json&_expand=Image`;
 
     const page = await smug(endpoint);
     const resp = page && page.Response ? page.Response : page;
 
-    // Only the first page includes Album expansion; extract curated keywords there.
-    if (start === 1 && (!albumKeywords || albumKeywords.length === 0)) {
-      albumKeywords = extractAlbumKeywords(page);
+    // Fallback album keywords from images page if album-meta didn't work
+    if ((!albumKeywords || albumKeywords.length === 0) && resp?.Album) {
+      albumKeywords = extractAlbumKeywords(resp);
     }
 
-    const images = resp?.AlbumImage || resp?.Image || [];
+    const images = resp?.AlbumImage || [];
     if (!Array.isArray(images) || images.length === 0) break;
 
-    for (const ai of images) {
-      totalImagesSeen.n++;
-      const kws = extractImageKeywordsFromAlbumImage(ai);
+    totalImagesSeen.n += images.length;
 
+    // For reliability: fetch image detail for each image to get keywords.
+    // (AlbumImage payload often omits keywords when using APIKey-only.)
+    const imageKeys = images
+      .map(ai => ai?.Image?.ImageKey || ai?.ImageKey || "")
+      .map(s => String(s).trim())
+      .filter(Boolean);
+
+    await mapLimit(imageKeys, 4, async (imageKey) => {
+      const detail = await smug(
+        `/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=1&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray`
+      );
+      const kws = extractKeywordsFromImageDetail(detail);
       for (const kw of kws) {
         const nk = normKeyword(kw);
         if (!nk) continue;
         imageKeywordCounts[nk] = (imageKeywordCounts[nk] || 0) + 1;
       }
-    }
+    });
 
     if (images.length < count) break;
     start += count;
   }
 
-  // Verify curated keywords (album-level) against image metadata keywords
+  // 3) Verify curated keywords against image metadata
   const keywords = (albumKeywords || []).map((k) => {
     const nk = normKeyword(k);
     const c = imageKeywordCounts[nk] || 0;
@@ -324,6 +356,7 @@ async function computeCuratedIndex(albumKey) {
     imageKeywordCounts
   };
 }
+
 
 app.get("/smug/curated-index/:albumKey", async (req, res) => {
   const albumKey = req.params.albumKey;
