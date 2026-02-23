@@ -1,4 +1,4 @@
-console.log(">>> SERVER FILE VERSION: PATCHED-FULL-1 <<<");
+console.log(">>> SERVER FILE VERSION: PATCHED-FULL-2 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
@@ -17,7 +17,7 @@ function allowCors(res, req) {
   // We keep a small allowlist for known frontends, and fall back to "*" otherwise.
   const origin = req && req.headers ? req.headers.origin : "";
   const allowList = String(process.env.CORS_ALLOW_ORIGINS || "https://vmpix.onrender.com,https://vmpix.smugmug.com")
-    .split(",")
+    .split(/[,;]+/)
     .map(s => s.trim())
     .filter(Boolean);
 
@@ -104,6 +104,25 @@ function normKeyword(s) {
     .trim()
     .replace(/\s+/g, " ")
     .toLowerCase();
+
+
+function normalizeSmugEndpointFromUri(uri) {
+  // SmugMug often provides URIs like "/api/v2/image/XYZ!keywords"
+  // Our smug() helper expects the part AFTER "/api/v2" and MUST include a "?" (because smug appends &APIKey=...)
+  let u = String(uri || "").trim();
+  if (!u) return "";
+  // strip host if present
+  u = u.replace(/^https?:\/\/api\.smugmug\.com/, "");
+  // strip /api/v2 prefix if present
+  if (u.startsWith("/api/v2")) u = u.slice("/api/v2".length);
+  // ensure querystring exists so smug() can safely append &APIKey=
+  if (u.includes("?")) {
+    // no-op
+  } else {
+    u += "?";
+  }
+  return u;
+}
 }
 
 const CURATED_INDEX_TTL_MS = Math.max(
@@ -192,7 +211,7 @@ function extractAlbumKeywords(metaJson) {
 
   if (typeof maybeString === "string") {
     return maybeString
-      .split(",")
+      .split(/[,;]+/)
       .map(s => s.trim())
       .filter(Boolean);
   }
@@ -219,7 +238,7 @@ function extractImageKeywordsFromAlbumImage(albumImage) {
   const maybeString = albumImage?.Keywords || albumImage?.Image?.Keywords;
   if (typeof maybeString === "string") {
     return maybeString
-      .split(",")
+      .split(/[,;]+/)
       .map(s => s.trim())
       .filter(Boolean);
   }
@@ -252,7 +271,27 @@ async function computeCuratedIndex(albumKey) {
 
     for (const ai of images) {
       totalImagesSeen.n++;
-      const kws = extractImageKeywordsFromAlbumImage(ai);
+      let kws = extractImageKeywordsFromAlbumImage(ai);
+      // Fallback: some responses don't include keywords even with expands.
+      // If SmugMug provides a Keywords URI, fetch it for this image (acceptable for small/medium albums).
+      if ((!kws || kws.length === 0) && ai?.Uris?.Keywords?.Uri) {
+        const ep = normalizeSmugEndpointFromUri(ai.Uris.Keywords.Uri);
+        if (ep) {
+          const kwJson = await smug(ep + (ep.endsWith("?") ? "" : "&") + "_accept=application/json&_verbosity=1");
+          // keyword payloads are often KeywordArray or a Keywords string
+          const respKw = kwJson && kwJson.Response ? kwJson.Response : kwJson;
+          const arr = respKw?.KeywordArray || respKw?.Keywords?.KeywordArray || respKw?.Keywords;
+          if (Array.isArray(arr)) {
+            kws = arr
+              .map(k => (typeof k === "string" ? k : k && k.Name ? String(k.Name) : ""))
+              .map(s => s.trim())
+              .filter(Boolean);
+          } else if (typeof respKw?.Keywords === "string") {
+            kws = respKw.Keywords.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+          }
+        }
+      }
+
       for (const kw of kws) {
         const nk = normKeyword(kw);
         if (!nk) continue;
