@@ -1,4 +1,4 @@
-console.log(">>> SERVER FILE VERSION: PATCHED-FULL-4 <<<");
+console.log(">>> SERVER FILE VERSION: PATCHED-FULL-6 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
@@ -72,7 +72,10 @@ const STATS_SHEET_URL =
 // ✔ FIXED: SmugMug API helper (must be ABOVE all routes)
 // =========================================================
 async function smug(endpoint) {
-  const url = `https://api.smugmug.com/api/v2${endpoint}&APIKey=${SMUG_API_KEY}`;
+  // endpoint may or may not already include a querystring.
+  // Always join APIKey safely to avoid malformed URLs.
+  const joiner = String(endpoint || "").includes("?") ? "&" : "?";
+  const url = `https://api.smugmug.com/api/v2${endpoint}${joiner}APIKey=${SMUG_API_KEY}`;
 
   const r = await fetch(url, {
     headers: {
@@ -82,7 +85,14 @@ async function smug(endpoint) {
   });
 
   if (!r.ok) {
-    throw new Error(`SmugMug upstream returned ${r.status}`);
+    let body = "";
+    try {
+      body = await r.text();
+    } catch (_) {}
+    const snippet = String(body || "").slice(0, 280);
+    throw new Error(
+      `SmugMug upstream returned ${r.status} (${endpoint})${snippet ? ": " + snippet : ""}`
+    );
   }
 
   return r.json();
@@ -313,6 +323,7 @@ async function computeCuratedIndex(albumKey) {
 app.get("/smug/curated-index/:albumKey", async (req, res) => {
   const albumKey = req.params.albumKey;
   const refresh = String(req.query.refresh || "") === "1";
+  const debug = String(req.query.debug || "") === "1";
 
   allowCors(res, req);
   if (!albumKey) return res.status(400).json({ error: "missing albumKey" });
@@ -352,7 +363,10 @@ app.get("/smug/curated-index/:albumKey", async (req, res) => {
     });
   } catch (err) {
     console.error("curated-index failed:", err && err.message ? err.message : err);
-    return res.status(500).json({ error: "curated index failed" });
+    return res.status(500).json({
+      error: "curated index failed",
+      ...(debug ? { detail: String(err && err.message ? err.message : err) } : {})
+    });
   }
 });
 
