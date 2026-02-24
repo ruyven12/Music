@@ -1,4 +1,4 @@
-console.log(">>> SERVER FILE VERSION: PATCHED-FULL-10 <<<");
+console.log(">>> SERVER FILE VERSION: PATCHED-FULL-8 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
@@ -294,7 +294,7 @@ async function computeCuratedIndex(albumKey) {
   while (true) {
     const endpoint =
       `/album/${encodeURIComponent(albumKey)}!images?count=${count}&start=${start}` +
-      `&_expand=Image`;
+      `&_accept=application/json&_expand=Image`;
 
     const page = await smug(endpoint);
     const resp = page && page.Response ? page.Response : page;
@@ -318,7 +318,7 @@ async function computeCuratedIndex(albumKey) {
 
     await mapLimit(imageKeys, 4, async (imageKey) => {
       const detail = await smug(
-        `/image/${encodeURIComponent(imageKey)}-0?_verbosity=1&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray`
+        `/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=1&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray`
       );
       const kws = extractKeywordsFromImageDetail(detail);
       for (const kw of kws) {
@@ -583,7 +583,7 @@ app.get("/smug/album/:albumKey", async (req, res) => {
 
   const url = `https://api.smugmug.com/api/v2/album/${encodeURIComponent(
     albumKey
-  )}!images?APIKey=${SMUG_API_KEY}&count=${count}&start=${start}&_expand=Image`;
+  )}!images?APIKey=${SMUG_API_KEY}&count=${count}&start=${start}&_accept=application/json&_expand=Image`;
 
   console.log("PROXY ALBUM IMAGES:", url);
 
@@ -639,7 +639,7 @@ app.get("/smug/image/:imageKey", async (req, res) => {
 
   const url = `https://api.smugmug.com/api/v2/image/${encodeURIComponent(
     imageKey
-  )}-0?APIKey=${SMUG_API_KEY}&_verbosity=1&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray`;
+  )}-0?APIKey=${SMUG_API_KEY}&_accept=application/json&_verbosity=1&_expand=Image&_expand=Image.Keywords&_expand=KeywordArray`;
 
   console.log("FETCHING IMAGE DETAIL:", url);
 
