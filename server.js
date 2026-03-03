@@ -282,9 +282,38 @@ async function computePeopleIndexFromShows() {
   const { header, rows } = parseCsvSimple(csv);
   const hl = header.map((h) => String(h || "").trim().toLowerCase());
 
-  const urlIdx = hl.indexOf("show_url") !== -1 ? hl.indexOf("show_url") : hl.indexOf("poster_url");
-  const bandIdxs = [];
-  for (let n = 1; n <= 20; n++) bandIdxs.push(hl.indexOf(`band_${n}`));
+  const normalizeHeader = (s) =>
+    String(s || "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "");
+
+  const hn = header.map(normalizeHeader);
+
+  // Accept a few common variants (show_url, show url, showurl, poster_url, etc.)
+  const urlIdx = (() => {
+    const want = ["showurl", "posterurl"];
+    for (const w of want) {
+      const ix = hn.indexOf(w);
+      if (ix !== -1) return ix;
+    }
+    // Fallback: any header that looks like show*url / poster*url
+    for (let i = 0; i < hn.length; i++) {
+      const h = hn[i];
+      if (h && (h.startsWith("show") || h.startsWith("poster")) && h.endsWith("url")) return i;
+    }
+    return -1;
+  })();
+
+  // Discover all band columns dynamically: band_1, band 1, band-1, band1, etc.
+  const bandIdxs = hn
+    .map((h, idx) => {
+      const m = /^band(\d+)$/.exec(h || "");
+      return m ? { n: Number(m[1] || 0), idx } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.n - b.n)
+    .map((o) => o.idx);
 
   const showUrls = [];
   for (const cols of rows) {
