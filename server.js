@@ -851,16 +851,302 @@ app.post("/track", async (req, res) => {
 });
 
 // =========================================================
-// PEOPLE INDEX (stub for now)
+// PEOPLE INDEX (caption-delimited, disk cached)
 // =========================================================
-app.get("/index/people", (req, res) => {
-  allowCors(res, req);
+// Phase 2 goal:
+// - Build a server-side index of people -> albums by scanning ONLY albums referenced
+//   by the Shows sheet rows that have bands listed.
+// - People are read from Image caption/description using semicolon delimiter.
+// - Cache on disk (people-index.json) + memory to avoid slow client-side scanning.
 
-  return res.json({
+const PEOPLE_INDEX_PATH = path.join(__dirname, "people-index.json");
+const PEOPLE_INDEX_TTL_MS = 1000 * 60 * 60 * 24; // 24h
+
+let PEOPLE_INDEX_MEM = null;
+let PEOPLE_INDEX_MEM_AT = 0;
+let PEOPLE_INDEX_BUILDING = null;
+
+function safeJsonParse(s) {
+  try {
+    return JSON.parse(String(s || ""));
+  } catch (_) {
+    return null;
+  }
+}
+
+function parseCsvLine(line) {
+  const out = [];
+  let cur = "";
+  let inQuotes = false;
+  const s = String(line || "");
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === '"') {
+      if (inQuotes && s[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === "," && !inQuotes) {
+      out.push(cur);
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+function parseShowsCsvRows(rawCsvText) {
+  const raw = String(rawCsvText || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const lines = raw.split("\n").filter((l) => l.trim());
+  if (!lines.length) return [];
+  const headerLine = lines.shift();
+  if (!headerLine) return [];
+
+  const header = parseCsvLine(headerLine).map((h) => String(h || "").trim());
+  const headerLower = header.map((h) => h.toLowerCase());
+
+  const bandIdxs = [];
+  for (let n = 1; n <= 20; n++) bandIdxs.push(headerLower.indexOf(`band_${n}`));
+
+  const showUrlIdx = headerLower.indexOf("show_url");
+  const albumKeyIdx = (() => {
+    const candidates = [
+      "album_key",
+      "albumkey",
+      "smugmug_album_key",
+      "smugmug_albumkey",
+      "smug_album_key",
+      "smug_albumkey",
+      "gallery_key",
+      "gallerykey",
+      "photos_album_key",
+      "photos_albumkey",
+    ];
+    for (const c of candidates) {
+      const ix = headerLower.indexOf(c);
+      if (ix !== -1) return ix;
+    }
+    return -1;
+  })();
+
+  const rows = [];
+  for (const line of lines) {
+    const cols = parseCsvLine(line);
+    const bands = bandIdxs.map((ix) => (ix !== -1 ? String(cols[ix] || "").trim() : "")).filter(Boolean);
+    if (!bands.length) continue; // ONLY rows with bands listed
+
+    rows.push({
+      bands,
+      show_url: showUrlIdx !== -1 ? String(cols[showUrlIdx] || "").trim() : "",
+      album_key: albumKeyIdx !== -1 ? String(cols[albumKeyIdx] || "").trim() : "",
+    });
+  }
+
+  return rows;
+}
+
+function extractAlbumKeyFromRow(row) {
+  const direct = String(row?.album_key || "").trim();
+  if (direct) return direct;
+  const u = String(row?.show_url || "").trim();
+  if (!u) return "";
+  // Support a few patterns if you ever drop an AlbumKey into the URL.
+  const m1 = u.match(/\balbumKey=([A-Za-z0-9]+)/i);
+  if (m1 && m1[1]) return m1[1];
+  const m2 = u.match(/\/album\/([A-Za-z0-9]+)/i);
+  if (m2 && m2[1]) return m2[1];
+  return "";
+}
+
+function extractPeopleFromCaption(raw) {
+  const s = String(raw || "").trim();
+  if (!s) return [];
+  const parts = s.split(";").map((p) => p.trim()).filter(Boolean);
+  const seen = new Set();
+  const out = [];
+  for (const p of parts) {
+    const k = p.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(p);
+  }
+  return out;
+}
+
+function pickCaptionFromAlbumImage(ai) {
+  if (!ai) return "";
+  const direct = ai.Caption || ai.Description || ai.Title || "";
+  if (direct && String(direct).trim()) return String(direct);
+  const img = ai.Image || ai.ImageContent || ai.ImageInfo || null;
+  if (!img) return "";
+  return String(img.Caption || img.Description || img.Title || "");
+}
+
+async function fetchAlbumAllImages(albumKey, maxPages = 8) {
+  const out = [];
+  let start = 1;
+  const count = 200;
+
+  for (let page = 0; page < maxPages; page++) {
+    const url = `https://api.smugmug.com/api/v2/album/${encodeURIComponent(
+      albumKey
+    )}!images?APIKey=${SMUG_API_KEY}&count=${count}&start=${start}&_accept=application/json&_expand=Image`;
+
+    const r = await fetch(url, {
+      headers: { Accept: "application/json", "User-Agent": "SmugProxy/1.0" },
+    });
+    if (!r.ok) break;
+    const data = await r.json();
+    const items = (data && data.Response && (data.Response.AlbumImage || data.Response.AlbumImages)) || [];
+    const arr = Array.isArray(items) ? items : items ? [items] : [];
+    if (!arr.length) break;
+    out.push(...arr);
+    if (arr.length < count) break;
+    start += count;
+  }
+
+  return out;
+}
+
+async function fetchAlbumMetaLight(albumKey) {
+  try {
+    const result = await smug(`/album/${encodeURIComponent(albumKey)}`);
+    const album = result && result.Response && result.Response.Album;
+    if (!album) return { albumKey, title: `Album ${albumKey}`, url: "" };
+    const title = String(album.Title || album.Name || `Album ${albumKey}`);
+    const url = String(album.WebUri || album.Url || album.URL || album.Uri || "");
+    return { albumKey, title, url };
+  } catch (_) {
+    return { albumKey, title: `Album ${albumKey}`, url: "" };
+  }
+}
+
+async function buildPeopleIndexFromShows() {
+  const sheetRes = await fetch(SHOWS_SHEET_URL);
+  const raw = await sheetRes.text();
+
+  const rows = parseShowsCsvRows(raw);
+  const albumKeys = [];
+  const seen = new Set();
+  for (const row of rows) {
+    const k = extractAlbumKeyFromRow(row);
+    if (!k) continue;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    albumKeys.push(k);
+  }
+
+  const peopleToAlbumKeys = new Map();
+  const albumsMeta = new Map();
+
+  for (const albumKey of albumKeys) {
+    const meta = await fetchAlbumMetaLight(albumKey);
+    albumsMeta.set(albumKey, meta);
+
+    const images = await fetchAlbumAllImages(albumKey).catch(() => []);
+    for (const ai of images) {
+      const caption = pickCaptionFromAlbumImage(ai);
+      const people = extractPeopleFromCaption(caption);
+      if (!people.length) continue;
+      for (const name of people) {
+        if (!peopleToAlbumKeys.has(name)) peopleToAlbumKeys.set(name, new Set());
+        peopleToAlbumKeys.get(name).add(albumKey);
+      }
+    }
+  }
+
+  const people = [];
+  for (const [name, set] of peopleToAlbumKeys.entries()) {
+    const keys = Array.from(set.values());
+    const albums = keys
+      .map((k) => {
+        const m = albumsMeta.get(k) || { albumKey: k, title: `Album ${k}`, url: "" };
+        return { albumKey: k, title: m.title || `Album ${k}`, url: m.url || "" };
+      })
+      .sort((a, b) => String(a.title || "").localeCompare(String(b.title || "")));
+    people.push({ name, albums });
+  }
+  people.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+
+  return {
+    version: 1,
     generatedAt: new Date().toISOString(),
-    mode: "stub",
-    people: {}
-  });
+    albumsScanned: albumKeys.length,
+    people,
+  };
+}
+
+function readPeopleIndexFromDiskIfFresh() {
+  try {
+    if (!fs.existsSync(PEOPLE_INDEX_PATH)) return null;
+    const st = fs.statSync(PEOPLE_INDEX_PATH);
+    if (!st || !st.mtimeMs) return null;
+    const age = Date.now() - st.mtimeMs;
+    if (age > PEOPLE_INDEX_TTL_MS) return null;
+    const raw = fs.readFileSync(PEOPLE_INDEX_PATH, "utf8");
+    const parsed = safeJsonParse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    return parsed;
+  } catch (_) {
+    return null;
+  }
+}
+
+async function getPeopleIndex({ force = false } = {}) {
+  const now = Date.now();
+  if (!force && PEOPLE_INDEX_MEM && now - PEOPLE_INDEX_MEM_AT < PEOPLE_INDEX_TTL_MS) return PEOPLE_INDEX_MEM;
+
+  if (!force) {
+    const disk = readPeopleIndexFromDiskIfFresh();
+    if (disk) {
+      PEOPLE_INDEX_MEM = disk;
+      PEOPLE_INDEX_MEM_AT = now;
+      return disk;
+    }
+  }
+
+  if (PEOPLE_INDEX_BUILDING) return PEOPLE_INDEX_BUILDING;
+
+  PEOPLE_INDEX_BUILDING = (async () => {
+    const idx = await buildPeopleIndexFromShows();
+    try {
+      fs.writeFileSync(PEOPLE_INDEX_PATH, JSON.stringify(idx, null, 2), "utf8");
+    } catch (err) {
+      console.error("people index write failed:", err);
+    }
+    PEOPLE_INDEX_MEM = idx;
+    PEOPLE_INDEX_MEM_AT = Date.now();
+    return idx;
+  })()
+    .catch((err) => {
+      console.error("people index build failed:", err);
+      if (PEOPLE_INDEX_MEM) return PEOPLE_INDEX_MEM;
+      return { version: 1, generatedAt: new Date().toISOString(), albumsScanned: 0, people: [] };
+    })
+    .finally(() => {
+      PEOPLE_INDEX_BUILDING = null;
+    });
+
+  return PEOPLE_INDEX_BUILDING;
+}
+
+// GET /index/people
+// Optional query params:
+//   force=1   -> rebuild index now (ignore cache)
+app.get("/index/people", async (req, res) => {
+  allowCors(res, req);
+  const force = String(req.query.force || "").trim() === "1";
+  try {
+    const idx = await getPeopleIndex({ force });
+    return res.json(idx);
+  } catch (err) {
+    console.error("/index/people error:", err);
+    return res.status(500).json({ error: "people index failed" });
+  }
 });
 
 // =========================================================
