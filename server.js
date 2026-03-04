@@ -54,15 +54,6 @@ app.use(express.json({ limit: "2mb" }));
 // SmugMug API Key
 const SMUG_API_KEY = "SQLhhqgXZJd7MzqgVX563bkbjdCfXt9T";
 
-// SmugMug user nickname (used for folder traversal)
-const SMUG_NICKNAME = String(process.env.SMUG_NICKNAME || "vmpix").trim();
-
-// Root folder for People Index scanning (albums will be discovered under this folder recursively)
-// Example: Music/Archives/Bands
-const PEOPLE_INDEX_BANDS_ROOT = String(process.env.PEOPLE_INDEX_BANDS_ROOT || "Music/Archives/Bands").trim();
-// Optional safety cap (0 = no cap)
-const PEOPLE_INDEX_MAX_ALBUMS = Math.max(0, Number(process.env.PEOPLE_INDEX_MAX_ALBUMS || "0"));
-
 // Google Sheets (your existing CSV sources)
 const BANDS_SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdi19qTDyPeBGzq0PpkdlDS_bNg34XpdRiXy8aBa-Jlu-jg2Wzkj1SnLXtRVFU4TGOh5KHJPK8Lwhc/pub?gid=0&single=true&output=csv";
@@ -163,6 +154,15 @@ const PEOPLE_INDEX_FILE = path.join(__dirname, "people-index.json");
 let peopleIndexMem = null; // { generatedAt, albumsScanned, people:[...] }
 let peopleIndexBuildPromise = null; // prevents concurrent long rebuilds
 
+function publicPeopleIndexPayload(payload) {
+  // Do not leak private fields to the UI; keep them in cache files for incremental builds.
+  if (!payload || typeof payload !== "object") return payload;
+  const out = { ...payload };
+  try { delete out._albumKeys; } catch (_) {}
+  try { delete out._incremental; } catch (_) {}
+  return out;
+}
+
 function safeReadJsonFile(p) {
   try {
     const raw = fs.readFileSync(p, "utf8");
@@ -185,15 +185,6 @@ function isFreshGeneratedAt(iso, ttlMs) {
   const t = Date.parse(String(iso || ""));
   if (!Number.isFinite(t)) return false;
   return Date.now() - t < ttlMs;
-}
-
-function publicPeopleIndexPayload(payload) {
-  // Do not leak private fields to the UI; keep them in cache files for incremental builds.
-  if (!payload || typeof payload !== "object") return payload;
-  const out = { ...payload };
-  try { delete out._albumKeys; } catch (_) {}
-  try { delete out._incremental; } catch (_) {}
-  return out;
 }
 
 function parseCsvSimple(csvText) {
@@ -238,6 +229,66 @@ function extractImageKeyFromUrl(url) {
   // common SmugMug image URL contains /i-<ImageKey>
   const m = u.match(/\b\/i-([A-Za-z0-9]+)\b/);
   return m ? String(m[1] || "").trim() : "";
+}
+
+function extractAlbumKeyFromImageDetail(json) {
+  const resp = json && json.Response ? json.Response : json;
+  const img = resp && (resp.Image || resp.image || resp);
+  if (!img || typeof img !== "object") return "";
+
+  // Direct
+  if (img.AlbumKey) return String(img.AlbumKey);
+  if (img.Album && img.Album.AlbumKey) return String(img.Album.AlbumKey);
+
+  // Via Uris
+  const uri =
+    (img.Uris && img.Uris.Album && img.Uris.Album.Uri) ||
+    (img.Uris && img.Uris.Album && img.Uris.Album.URI) ||
+    (img.Uris && img.Uris.Album && img.Uris.Album.Url) ||
+    "";
+  const m = String(uri || "").match(/\/album\/([^/?#]+)/i);
+  if (m) return String(m[1] || "");
+
+  // Some SmugMug payloads don't include Uris.Album, but do include other
+  // Uris entries that embed the album key (e.g., AlbumImage, HighlightImage,
+  // LargestImage, etc.). Walk the Uris object and extract the first /album/<key>.
+  try {
+    const uris = img.Uris && typeof img.Uris === "object" ? img.Uris : null;
+    if (uris) {
+      const stack = [uris];
+      const seen = new Set();
+      while (stack.length) {
+        const cur = stack.pop();
+        if (!cur || typeof cur !== "object") continue;
+        if (seen.has(cur)) continue;
+        seen.add(cur);
+
+        // Common fields in SmugMug v2 payloads
+        const candidates = [cur.Uri, cur.URI, cur.Url, cur.URL];
+        for (const c of candidates) {
+          const mm = String(c || "").match(/\/album\/([^/?#]+)/i);
+          if (mm) return String(mm[1] || "");
+        }
+
+        for (const v of Object.values(cur)) {
+          if (v && typeof v === "object") stack.push(v);
+        }
+      }
+    }
+  } catch (_) {
+    // fall through
+  }
+
+  return "";
+}
+
+function extractAlbumMeta(json) {
+  const resp = json && json.Response ? json.Response : json;
+  const album = resp && (resp.Album || resp.album || resp);
+  if (!album || typeof album !== "object") return { title: "", url: "" };
+  const title = String(album.Title || album.Name || "").trim();
+  const url = String(album.WebUri || album.Url || album.URL || album.Uri || "").trim();
+  return { title, url };
 }
 
 function smugEndpointFromUri(uri) {
@@ -333,66 +384,6 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
   }
 
   return Array.from(albums.values());
-}
-
-function extractAlbumKeyFromImageDetail(json) {
-  const resp = json && json.Response ? json.Response : json;
-  const img = resp && (resp.Image || resp.image || resp);
-  if (!img || typeof img !== "object") return "";
-
-  // Direct
-  if (img.AlbumKey) return String(img.AlbumKey);
-  if (img.Album && img.Album.AlbumKey) return String(img.Album.AlbumKey);
-
-  // Via Uris
-  const uri =
-    (img.Uris && img.Uris.Album && img.Uris.Album.Uri) ||
-    (img.Uris && img.Uris.Album && img.Uris.Album.URI) ||
-    (img.Uris && img.Uris.Album && img.Uris.Album.Url) ||
-    "";
-  const m = String(uri || "").match(/\/album\/([^/?#]+)/i);
-  if (m) return String(m[1] || "");
-
-  // Some SmugMug payloads don't include Uris.Album, but do include other
-  // Uris entries that embed the album key (e.g., AlbumImage, HighlightImage,
-  // LargestImage, etc.). Walk the Uris object and extract the first /album/<key>.
-  try {
-    const uris = img.Uris && typeof img.Uris === "object" ? img.Uris : null;
-    if (uris) {
-      const stack = [uris];
-      const seen = new Set();
-      while (stack.length) {
-        const cur = stack.pop();
-        if (!cur || typeof cur !== "object") continue;
-        if (seen.has(cur)) continue;
-        seen.add(cur);
-
-        // Common fields in SmugMug v2 payloads
-        const candidates = [cur.Uri, cur.URI, cur.Url, cur.URL];
-        for (const c of candidates) {
-          const mm = String(c || "").match(/\/album\/([^/?#]+)/i);
-          if (mm) return String(mm[1] || "");
-        }
-
-        for (const v of Object.values(cur)) {
-          if (v && typeof v === "object") stack.push(v);
-        }
-      }
-    }
-  } catch (_) {
-    // fall through
-  }
-
-  return "";
-}
-
-function extractAlbumMeta(json) {
-  const resp = json && json.Response ? json.Response : json;
-  const album = resp && (resp.Album || resp.album || resp);
-  if (!album || typeof album !== "object") return { title: "", url: "" };
-  const title = String(album.Title || album.Name || "").trim();
-  const url = String(album.WebUri || album.Url || album.URL || album.Uri || "").trim();
-  return { title, url };
 }
 
 function parsePeopleFromCaption(caption) {
