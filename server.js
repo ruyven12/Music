@@ -161,6 +161,7 @@ const PEOPLE_INDEX_TTL_MS = Math.max(
 
 const PEOPLE_INDEX_FILE = path.join(__dirname, "people-index.json");
 let peopleIndexMem = null; // { generatedAt, albumsScanned, people:[...] }
+let peopleIndexBuildPromise = null; // prevents concurrent long rebuilds
 
 function safeReadJsonFile(p) {
   try {
@@ -576,7 +577,12 @@ async function computePeopleIndexFromShows() {
 
 async function computePeopleIndexFromBandsFolder() {
   const discovered = await listAlbumsAndFoldersRecursive(PEOPLE_INDEX_BANDS_ROOT);
-  const albumKeys = discovered.map((a) => a.albumKey).filter(Boolean);
+  let albumKeys = discovered.map((a) => a.albumKey).filter(Boolean);
+
+  // Safety cap to avoid upstream timeouts. If PEOPLE_INDEX_MAX_ALBUMS is 0, no cap.
+  if (PEOPLE_INDEX_MAX_ALBUMS > 0 && albumKeys.length > PEOPLE_INDEX_MAX_ALBUMS) {
+    albumKeys = albumKeys.slice(0, PEOPLE_INDEX_MAX_ALBUMS);
+  }
 
   const peopleToAlbums = new Map();
 
@@ -596,7 +602,9 @@ async function computePeopleIndexFromBandsFolder() {
     let start = 1;
     const count = 200;
     while (true) {
-      const page = await smug(`/album/${encodeURIComponent(albumKey)}!images?count=${count}&start=${start}&_accept=application/json&_expand=Image`);
+      // Request higher verbosity so captions are more likely to be present in the page payload,
+      // reducing expensive per-image detail calls.
+      const page = await smug(`/album/${encodeURIComponent(albumKey)}!images?count=${count}&start=${start}&_accept=application/json&_expand=Image&_verbosity=3`);
       const resp = page && page.Response ? page.Response : page;
       const items = resp && resp.AlbumImage ? resp.AlbumImage : [];
       if (!Array.isArray(items) || items.length === 0) break;
@@ -974,10 +982,30 @@ app.get('/index/people', async (req, res) => {
     }
 
     // 3) Compute (source of truth: recursively scan albums under PEOPLE_INDEX_BANDS_ROOT)
-    const computed = await computePeopleIndexFromBandsFolder();
-    peopleIndexMem = computed;
-    safeWriteJsonFile(PEOPLE_INDEX_FILE, computed);
-    return res.json({ ...computed, cache: { hit: false, layer: 'computed' } });
+    // Prevent multiple concurrent rebuilds from crushing the instance or timing out.
+    if (peopleIndexBuildPromise) {
+      if (!force) {
+        // Serve best-effort cached data while a build is running.
+        if (peopleIndexMem) return res.json({ ...peopleIndexMem, cache: { hit: true, layer: 'memory', building: true } });
+        const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
+        if (disk) return res.json({ ...disk, cache: { hit: true, layer: 'disk', building: true } });
+      }
+      return res.status(202).json({ status: 'building', message: 'People index rebuild already in progress.' });
+    }
+
+    peopleIndexBuildPromise = (async () => {
+      const computed = await computePeopleIndexFromBandsFolder();
+      peopleIndexMem = computed;
+      safeWriteJsonFile(PEOPLE_INDEX_FILE, computed);
+      return computed;
+    })();
+
+    try {
+      const computed = await peopleIndexBuildPromise;
+      return res.json({ ...computed, cache: { hit: false, layer: 'computed' } });
+    } finally {
+      peopleIndexBuildPromise = null;
+    }
   } catch (err) {
     console.error('people index failed:', err && err.message ? err.message : err);
     return res.status(500).json({ error: 'people index failed' });
