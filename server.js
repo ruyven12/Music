@@ -216,8 +216,13 @@ function parseCsvSimple(csvText) {
 function extractImageKeyFromUrl(url) {
   const u = String(url || "").trim();
   if (!u) return "";
-  // common SmugMug image URL contains /i-<ImageKey>
-  const m = u.match(/\b\/i-([A-Za-z0-9]+)\b/);
+  // Common SmugMug image URLs contain /i-<ImageKey>/ ... and also often end with i-<ImageKey>-XL.jpg
+  // Be tolerant: accept either path-segment or filename occurrences.
+  let m = u.match(/\b\/i-([A-Za-z0-9]+)\b/);
+  if (m) return String(m[1] || "").trim();
+
+  // Fallback: sometimes the key is present without a preceding slash (e.g. copied fragments)
+  m = u.match(/\bi-([A-Za-z0-9]+)\b/);
   return m ? String(m[1] || "").trim() : "";
 }
 
@@ -238,6 +243,11 @@ function extractAlbumKeyFromImageDetail(json) {
     "";
   const m = String(uri || "").match(/\/album\/([^/?#]+)/i);
   if (m) return String(m[1] || "");
+
+  // Some payloads expose an AlbumUri directly
+  const albumUri = img.AlbumUri || img.AlbumURL || img.AlbumUrl || "";
+  const m2 = String(albumUri || "").match(/\/album\/([^/?#]+)/i);
+  if (m2) return String(m2[1] || "");
 
   // Some SmugMug payloads don't include Uris.Album, but do include other
   // Uris entries that embed the album key (e.g., AlbumImage, HighlightImage,
@@ -267,6 +277,46 @@ function extractAlbumKeyFromImageDetail(json) {
     }
   } catch (_) {
     // fall through
+  }
+
+  return "";
+}
+
+// Resolve AlbumKey from a show_url.
+// - Primary: treat show_url as an IMAGE url, extract ImageKey, then ask SmugMug for its parent Album.
+// - Fallback: if show_url is actually an ALBUM url, parse /album/<AlbumKey>.
+async function resolveAlbumKeyFromShowUrl(showUrl) {
+  const u = String(showUrl || "").trim();
+  if (!u) return "";
+
+  // If it already looks like an album URL, parse it directly.
+  const directAlbum = u.match(/\/album\/([^/?#]+)/i);
+  if (directAlbum) return String(directAlbum[1] || "").trim();
+
+  const imageKey = extractImageKeyFromUrl(u);
+  if (!imageKey) return "";
+
+  // Try a few variants because SmugMug sometimes omits Album/Uri fields at lower verbosity.
+  const attempts = [
+    `/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=3`,
+    `/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=3&_expand=Album`,
+    `/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=3&_expand=Uris`,
+    `/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=1`
+  ];
+
+  for (const ep of attempts) {
+    try {
+      const img = await smug(ep);
+      const albumKey = extractAlbumKeyFromImageDetail(img);
+      if (albumKey) return albumKey;
+
+      // Last-ditch: search the JSON blob for /album/<key>.
+      const blob = JSON.stringify(img);
+      const m = blob.match(/\/album\/([^/?#\\"]{3,})/i);
+      if (m) return String(m[1] || "").trim();
+    } catch (_) {
+      // try next attempt
+    }
   }
 
   return "";
@@ -373,10 +423,7 @@ async function computePeopleIndexFromShows() {
 
   await mapLimit(showUrls, 3, async (showUrl) => {
     try {
-      const imageKey = extractImageKeyFromUrl(showUrl);
-      if (!imageKey) return;
-      const img = await smug(`/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=1&_expand=Image`);
-      const albumKey = extractAlbumKeyFromImageDetail(img);
+      const albumKey = await resolveAlbumKeyFromShowUrl(showUrl);
       if (!albumKey) return;
       urlToAlbumKey.set(showUrl, albumKey);
       albumKeySet.add(albumKey);
