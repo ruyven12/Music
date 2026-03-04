@@ -152,7 +152,11 @@ const curatedMemCache = new Map();
 //   then resolve the parent AlbumKey via SmugMug API.
 //
 // Output shape:
-//   { generatedAt, albumsScanned, people: [ { name, albums:[{albumKey,title,url}...] } ] }
+//   {
+//     generatedAt,
+//     albumsScanned,
+//     people: [ { name, photoCount, albums:[{albumKey,title,url}...] } ]
+//   }
 //
 // Notes:
 // - Uses disk cache (people-index.json) + memory cache.
@@ -403,10 +407,20 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
 function parsePeopleFromCaption(caption) {
   const raw = String(caption || "").trim();
   if (!raw) return [];
-  return raw
+  // Semicolon-delimited list, dedupe case-insensitively, preserve first-seen casing
+  const parts = raw
     .split(/\s*;\s*/g)
     .map((s) => String(s || "").trim())
     .filter(Boolean);
+  const seen = new Set();
+  const out = [];
+  for (const p of parts) {
+    const k = String(p || "").toLowerCase();
+    if (!k || seen.has(k)) continue;
+    seen.add(k);
+    out.push(p);
+  }
+  return out;
 }
 
 async function mapLimit(items, limit, fn) {
@@ -496,6 +510,7 @@ async function computePeopleIndexFromShows() {
 
   // 3) For each album, scan captions
   const peopleToAlbums = new Map(); // name -> Map(albumKey -> {albumKey,title,url})
+  const peopleToPhotoCount = new Map(); // name -> number of photos they appear in
 
   async function ensureAlbumMeta(albumKey) {
     try {
@@ -533,6 +548,8 @@ async function computePeopleIndexFromShows() {
             if (!key) continue;
             if (!peopleToAlbums.has(key)) peopleToAlbums.set(key, new Map());
             peopleToAlbums.get(key).set(albumKey, { albumKey, title: meta.title, url: meta.url });
+            // Photo count: increment once per photo per person (names are already deduped within caption)
+            peopleToPhotoCount.set(key, (peopleToPhotoCount.get(key) || 0) + 1);
           }
           continue;
         }
@@ -555,6 +572,7 @@ async function computePeopleIndexFromShows() {
             if (!key) continue;
             if (!peopleToAlbums.has(key)) peopleToAlbums.set(key, new Map());
             peopleToAlbums.get(key).set(albumKey, { albumKey, title: meta.title, url: meta.url });
+            peopleToPhotoCount.set(key, (peopleToPhotoCount.get(key) || 0) + 1);
           }
         } catch (_) {
           // continue
@@ -578,7 +596,7 @@ async function computePeopleIndexFromShows() {
   const people = Array.from(peopleToAlbums.entries())
     .map(([name, albumMap]) => {
       const albums = Array.from(albumMap.values());
-      return { name, albums };
+      return { name, photoCount: Number(peopleToPhotoCount.get(name) || 0), albums };
     })
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
@@ -661,6 +679,25 @@ async function computePeopleIndexFromBandsFolder(opts) {
     ? buildPeopleMapFromPayload(previous)
     : new Map();
 
+  // Best-effort incremental photo counts: seed from previous payload (if present)
+  // then add counts for newly scanned albums. If albums are later removed, counts may
+  // become slightly over-reported until a full rebuild is run.
+  function buildPhotoCountMapFromPayload(payload) {
+    const map = new Map();
+    if (!payload || !Array.isArray(payload.people)) return map;
+    for (const p of payload.people) {
+      const name = p && p.name ? String(p.name).trim() : "";
+      if (!name) continue;
+      const n = Number(p.photoCount || 0);
+      if (Number.isFinite(n) && n > 0) map.set(name, n);
+    }
+    return map;
+  }
+
+  const peopleToPhotoCount = (incremental && previous)
+    ? buildPhotoCountMapFromPayload(previous)
+    : new Map();
+
   async function ensureAlbumMeta(albumKey) {
     const pre = discovered.find((x) => x.albumKey === albumKey);
     if (pre && (pre.title || pre.url)) return { title: pre.title || "", url: pre.url || "" };
@@ -698,6 +735,7 @@ async function computePeopleIndexFromBandsFolder(opts) {
             if (!key) continue;
             if (!peopleToAlbums.has(key)) peopleToAlbums.set(key, new Map());
             peopleToAlbums.get(key).set(albumKey, { albumKey, title: meta.title, url: meta.url });
+            peopleToPhotoCount.set(key, (peopleToPhotoCount.get(key) || 0) + 1);
           }
           continue;
         }
@@ -719,6 +757,7 @@ async function computePeopleIndexFromBandsFolder(opts) {
             if (!key) continue;
             if (!peopleToAlbums.has(key)) peopleToAlbums.set(key, new Map());
             peopleToAlbums.get(key).set(albumKey, { albumKey, title: meta.title, url: meta.url });
+            peopleToPhotoCount.set(key, (peopleToPhotoCount.get(key) || 0) + 1);
           }
         } catch (_) {
           // continue
@@ -748,7 +787,11 @@ async function computePeopleIndexFromBandsFolder(opts) {
   }
 
   const people = Array.from(peopleToAlbums.entries())
-    .map(([name, albumMap]) => ({ name, albums: Array.from(albumMap.values()) }))
+    .map(([name, albumMap]) => ({
+      name,
+      photoCount: Number(peopleToPhotoCount.get(name) || 0),
+      albums: Array.from(albumMap.values())
+    }))
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
   // Store album keys privately for incremental diffs next time.
