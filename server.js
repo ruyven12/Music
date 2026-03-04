@@ -335,23 +335,36 @@ async function computePeopleIndexFromShows() {
     return -1;
   })();
 
-  // Discover all band columns dynamically: band_1, band 1, band-1, band1, etc.
+  // Discover all band columns dynamically.
+  // We accept:
+  //   band_1, band 1, band-1, band1
+  //   band_1_name, band1name, band1artist, etc.
+  // (Sheets evolve over time; people-index should not silently stop scanning.)
   const bandIdxs = hn
     .map((h, idx) => {
-      const m = /^band(\d+)$/.exec(h || "");
+      const m = /^band(\d+)/.exec(String(h || ""));
       return m ? { n: Number(m[1] || 0), idx } : null;
     })
     .filter(Boolean)
+    // Keep deterministic ordering (band1..bandN) but allow duplicates
     .sort((a, b) => a.n - b.n)
     .map((o) => o.idx);
 
   const showUrls = [];
   for (const cols of rows) {
     if (!Array.isArray(cols) || !cols.length) continue;
-    const hasBands = bandIdxs.some((ix) => ix !== -1 && String(cols[ix] || "").trim());
-    if (!hasBands) continue;
     const u = urlIdx !== -1 ? String(cols[urlIdx] || "").trim() : "";
-    if (u) showUrls.push(u);
+    if (!u) continue;
+
+    // Primary behavior: only scan rows that actually have at least one band filled in.
+    // Failsafe: if the sheet header naming changed and we can't detect any band columns,
+    // fall back to scanning all rows that contain a show URL.
+    const hasBands = (bandIdxs && bandIdxs.length)
+      ? bandIdxs.some((ix) => ix !== -1 && String(cols[ix] || "").trim())
+      : true;
+
+    if (!hasBands) continue;
+    showUrls.push(u);
   }
 
   // 2) Resolve unique album keys via show_url image keys
@@ -764,15 +777,23 @@ app.get('/index/people', async (req, res) => {
   try {
     // 1) Memory cache
     if (!force && peopleIndexMem && isFreshGeneratedAt(peopleIndexMem.generatedAt, PEOPLE_INDEX_TTL_MS)) {
-      return res.json({ ...peopleIndexMem, cache: { hit: true, layer: 'memory' } });
+      // If a previous build produced an empty result (0 albums scanned),
+      // don't let that poison the cache for a full TTL window.
+      const emptyBuild = !Number(peopleIndexMem.albumsScanned || 0) && Array.isArray(peopleIndexMem.people) && peopleIndexMem.people.length === 0;
+      if (!emptyBuild) {
+        return res.json({ ...peopleIndexMem, cache: { hit: true, layer: 'memory' } });
+      }
     }
 
     // 2) Disk cache
     if (!force) {
       const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
       if (disk && isFreshGeneratedAt(disk.generatedAt, PEOPLE_INDEX_TTL_MS)) {
-        peopleIndexMem = disk;
-        return res.json({ ...disk, cache: { hit: true, layer: 'disk' } });
+        const emptyBuild = !Number(disk.albumsScanned || 0) && Array.isArray(disk.people) && disk.people.length === 0;
+        if (!emptyBuild) {
+          peopleIndexMem = disk;
+          return res.json({ ...disk, cache: { hit: true, layer: 'disk' } });
+        }
       }
     }
 
