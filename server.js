@@ -239,6 +239,36 @@ function extractAlbumKeyFromImageDetail(json) {
   const m = String(uri || "").match(/\/album\/([^/?#]+)/i);
   if (m) return String(m[1] || "");
 
+  // Some SmugMug payloads don't include Uris.Album, but do include other
+  // Uris entries that embed the album key (e.g., AlbumImage, HighlightImage,
+  // LargestImage, etc.). Walk the Uris object and extract the first /album/<key>.
+  try {
+    const uris = img.Uris && typeof img.Uris === "object" ? img.Uris : null;
+    if (uris) {
+      const stack = [uris];
+      const seen = new Set();
+      while (stack.length) {
+        const cur = stack.pop();
+        if (!cur || typeof cur !== "object") continue;
+        if (seen.has(cur)) continue;
+        seen.add(cur);
+
+        // Common fields in SmugMug v2 payloads
+        const candidates = [cur.Uri, cur.URI, cur.Url, cur.URL];
+        for (const c of candidates) {
+          const mm = String(c || "").match(/\/album\/([^/?#]+)/i);
+          if (mm) return String(mm[1] || "");
+        }
+
+        for (const v of Object.values(cur)) {
+          if (v && typeof v === "object") stack.push(v);
+        }
+      }
+    }
+  } catch (_) {
+    // fall through
+  }
+
   return "";
 }
 
