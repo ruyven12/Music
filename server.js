@@ -187,6 +187,15 @@ function isFreshGeneratedAt(iso, ttlMs) {
   return Date.now() - t < ttlMs;
 }
 
+function publicPeopleIndexPayload(payload) {
+  // Do not leak private fields to the UI; keep them in cache files for incremental builds.
+  if (!payload || typeof payload !== "object") return payload;
+  const out = { ...payload };
+  try { delete out._albumKeys; } catch (_) {}
+  try { delete out._incremental; } catch (_) {}
+  return out;
+}
+
 function parseCsvSimple(csvText) {
   const raw = String(csvText || "").trim();
   if (!raw) return { header: [], rows: [] };
@@ -575,16 +584,77 @@ async function computePeopleIndexFromShows() {
   };
 }
 
-async function computePeopleIndexFromBandsFolder() {
+async function computePeopleIndexFromBandsFolder(opts) {
+  const o = (opts && typeof opts === "object") ? opts : {};
+  const previous = o.previous && typeof o.previous === "object" ? o.previous : null;
+  const incremental = !!o.incremental;
+
   const discovered = await listAlbumsAndFoldersRecursive(PEOPLE_INDEX_BANDS_ROOT);
-  let albumKeys = discovered.map((a) => a.albumKey).filter(Boolean);
+  let albumKeysAll = discovered.map((a) => a.albumKey).filter(Boolean);
 
   // Safety cap to avoid upstream timeouts. If PEOPLE_INDEX_MAX_ALBUMS is 0, no cap.
-  if (PEOPLE_INDEX_MAX_ALBUMS > 0 && albumKeys.length > PEOPLE_INDEX_MAX_ALBUMS) {
-    albumKeys = albumKeys.slice(0, PEOPLE_INDEX_MAX_ALBUMS);
+  if (PEOPLE_INDEX_MAX_ALBUMS > 0 && albumKeysAll.length > PEOPLE_INDEX_MAX_ALBUMS) {
+    albumKeysAll = albumKeysAll.slice(0, PEOPLE_INDEX_MAX_ALBUMS);
   }
 
-  const peopleToAlbums = new Map();
+  const albumKeySetAll = new Set(albumKeysAll);
+
+  // Build a working People map from previous payload if present (incremental mode),
+  // so we only scan NEW albums by default.
+  function buildPeopleMapFromPayload(payload) {
+    const map = new Map(); // name -> Map(albumKey -> {albumKey,title,url})
+    if (!payload || !Array.isArray(payload.people)) return map;
+    for (const p of payload.people) {
+      const name = p && p.name ? String(p.name).trim() : "";
+      if (!name) continue;
+      const albums = Array.isArray(p.albums) ? p.albums : [];
+      for (const a of albums) {
+        const k = a && a.albumKey ? String(a.albumKey).trim() : "";
+        if (!k) continue;
+        // Only keep albums that still exist under the current Bands root.
+        if (!albumKeySetAll.has(k)) continue;
+        if (!map.has(name)) map.set(name, new Map());
+        map.get(name).set(k, {
+          albumKey: k,
+          title: String(a.title || "").trim(),
+          url: String(a.url || "").trim()
+        });
+      }
+    }
+    return map;
+  }
+
+  // Prefer explicit stored album key list if available; else derive from people list.
+  function extractAlbumKeysFromPayload(payload) {
+    const out = new Set();
+    if (!payload || typeof payload !== "object") return out;
+    if (Array.isArray(payload._albumKeys)) {
+      payload._albumKeys.forEach((k) => {
+        const kk = String(k || "").trim();
+        if (kk) out.add(kk);
+      });
+      return out;
+    }
+    if (Array.isArray(payload.people)) {
+      for (const p of payload.people) {
+        const albums = p && Array.isArray(p.albums) ? p.albums : [];
+        for (const a of albums) {
+          const k = a && a.albumKey ? String(a.albumKey).trim() : "";
+          if (k) out.add(k);
+        }
+      }
+    }
+    return out;
+  }
+
+  const prevAlbumKeys = (incremental && previous) ? extractAlbumKeysFromPayload(previous) : new Set();
+  const albumKeysToScan = (incremental && previous)
+    ? albumKeysAll.filter((k) => !prevAlbumKeys.has(k))
+    : albumKeysAll;
+
+  const peopleToAlbums = (incremental && previous)
+    ? buildPeopleMapFromPayload(previous)
+    : new Map();
 
   async function ensureAlbumMeta(albumKey) {
     const pre = discovered.find((x) => x.albumKey === albumKey);
@@ -655,7 +725,8 @@ async function computePeopleIndexFromBandsFolder() {
     }
   }
 
-  await mapLimit(albumKeys, 2, async (albumKey) => {
+  // Scan only the needed albums (NEW only when incremental).
+  await mapLimit(albumKeysToScan, 2, async (albumKey) => {
     try {
       await scanAlbum(albumKey);
     } catch (e) {
@@ -663,14 +734,26 @@ async function computePeopleIndexFromBandsFolder() {
     }
   });
 
+  // Prune any albums that no longer exist and any people that ended up empty.
+  for (const [person, albumMap] of Array.from(peopleToAlbums.entries())) {
+    for (const k of Array.from(albumMap.keys())) {
+      if (!albumKeySetAll.has(k)) albumMap.delete(k);
+    }
+    if (albumMap.size === 0) peopleToAlbums.delete(person);
+  }
+
   const people = Array.from(peopleToAlbums.entries())
     .map(([name, albumMap]) => ({ name, albums: Array.from(albumMap.values()) }))
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
+  // Store album keys privately for incremental diffs next time.
+  // (Front-end safely ignores unknown fields.)
   return {
     generatedAt: new Date().toISOString(),
-    albumsScanned: albumKeys.length,
-    people
+    albumsScanned: albumKeysAll.length,
+    people,
+    _albumKeys: albumKeysAll,
+    _incremental: incremental ? { scannedNew: albumKeysToScan.length } : undefined
   };
 }
 
@@ -968,7 +1051,7 @@ app.get('/index/people', async (req, res) => {
   try {
     // 1) Memory cache
     if (!force && peopleIndexMem && isFreshGeneratedAt(peopleIndexMem.generatedAt, PEOPLE_INDEX_TTL_MS)) {
-      return res.json({ ...peopleIndexMem, cache: { hit: true, layer: 'memory' } });
+      return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory' } });
     }
 
     // 2) Disk cache (ignore cached-empty results so we don't get stuck at albumsScanned=0 forever)
@@ -977,7 +1060,7 @@ app.get('/index/people', async (req, res) => {
       const looksEmpty = disk && Number(disk.albumsScanned || 0) === 0 && Array.isArray(disk.people) && disk.people.length === 0;
       if (!looksEmpty && disk && isFreshGeneratedAt(disk.generatedAt, PEOPLE_INDEX_TTL_MS)) {
         peopleIndexMem = disk;
-        return res.json({ ...disk, cache: { hit: true, layer: 'disk' } });
+        return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk' } });
       }
     }
 
@@ -986,15 +1069,27 @@ app.get('/index/people', async (req, res) => {
     if (peopleIndexBuildPromise) {
       if (!force) {
         // Serve best-effort cached data while a build is running.
-        if (peopleIndexMem) return res.json({ ...peopleIndexMem, cache: { hit: true, layer: 'memory', building: true } });
+        if (peopleIndexMem) return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory', building: true } });
         const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
-        if (disk) return res.json({ ...disk, cache: { hit: true, layer: 'disk', building: true } });
+        if (disk) return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk', building: true } });
       }
       return res.status(202).json({ status: 'building', message: 'People index rebuild already in progress.' });
     }
 
     peopleIndexBuildPromise = (async () => {
-      const computed = await computePeopleIndexFromBandsFolder();
+      const full = String(req.query.full || "") === "1" || String(req.query.full || "").toLowerCase() === "true";
+
+      // For incremental builds, use the latest cached index (memory preferred, then disk),
+      // even if stale, as the baseline to avoid re-scanning everything.
+      const baseline = (!full)
+        ? (peopleIndexMem || safeReadJsonFile(PEOPLE_INDEX_FILE) || null)
+        : null;
+
+      const computed = await computePeopleIndexFromBandsFolder({
+        previous: baseline,
+        incremental: !full
+      });
+
       peopleIndexMem = computed;
       safeWriteJsonFile(PEOPLE_INDEX_FILE, computed);
       return computed;
@@ -1002,7 +1097,7 @@ app.get('/index/people', async (req, res) => {
 
     try {
       const computed = await peopleIndexBuildPromise;
-      return res.json({ ...computed, cache: { hit: false, layer: 'computed' } });
+      return res.json({ ...publicPeopleIndexPayload(computed), cache: { hit: false, layer: 'computed' } });
     } finally {
       peopleIndexBuildPromise = null;
     }
