@@ -54,6 +54,20 @@ app.use(express.json({ limit: "2mb" }));
 // SmugMug API Key
 const SMUG_API_KEY = "SQLhhqgXZJd7MzqgVX563bkbjdCfXt9T";
 
+// SmugMug account + People Index configuration
+// (Required by /index/people. Defaults match Chris' vmpix SmugMug structure.)
+const SMUG_NICKNAME = String(process.env.SMUG_NICKNAME || "vmpix").trim();
+
+// Root folder to recursively scan for Albums when building the People index.
+// Example: https://vmpix.smugmug.com/Music/Archives/Bands/
+const PEOPLE_INDEX_BANDS_ROOT = String(process.env.PEOPLE_INDEX_BANDS_ROOT || "Music/Archives/Bands").trim();
+
+// Safety cap (0 = no cap). Default tuned to avoid free-tier timeouts.
+const PEOPLE_INDEX_MAX_ALBUMS = Math.max(
+  0,
+  Number(process.env.PEOPLE_INDEX_MAX_ALBUMS || "800")
+);
+
 // Google Sheets (your existing CSV sources)
 const BANDS_SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdi19qTDyPeBGzq0PpkdlDS_bNg34XpdRiXy8aBa-Jlu-jg2Wzkj1SnLXtRVFU4TGOh5KHJPK8Lwhc/pub?gid=0&single=true&output=csv";
