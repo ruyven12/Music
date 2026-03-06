@@ -81,6 +81,45 @@ const SHOWS_SHEET_URL =
 const STATS_SHEET_URL =
   "https://docs.google.com/spreadsheets/d/12P8b85K24dcyy9jubil_h4DN6xXr3wYFsILz-5LkGkk/export?format=csv&gid=1973247444";
 
+// Lightweight CSV response cache (keeps Google Sheet fetches from repeating for every visitor)
+const SHEET_CACHE_TTL_MS = Math.max(15_000, Number(process.env.SHEET_CACHE_TTL_MS || String(1000 * 60 * 5)));
+const sheetResponseCache = new Map();
+
+function isPeoplePayloadEffectivelyEmpty(payload) {
+  return !!(
+    payload &&
+    Number(payload.albumsScanned || 0) === 0 &&
+    Array.isArray(payload.people) &&
+    payload.people.length === 0
+  );
+}
+
+function isSheetCacheFresh(entry) {
+  return !!(entry && Number.isFinite(Number(entry.fetchedAt)) && (Date.now() - Number(entry.fetchedAt) < SHEET_CACHE_TTL_MS));
+}
+
+async function fetchTextWithShortCache(cacheKey, url) {
+  const hit = sheetResponseCache.get(cacheKey);
+  if (isSheetCacheFresh(hit)) return hit.text;
+
+  const r = await fetch(url, { headers: { Accept: 'text/plain,text/csv;q=0.9,*/*;q=0.8' } });
+  if (!r.ok) {
+    let body = '';
+    try { body = await r.text(); } catch (_) {}
+    const snippet = String(body || '').slice(0, 180).replace(/\s+/g, ' ').trim();
+    throw new Error(`sheet upstream returned ${r.status}${snippet ? ': ' + snippet : ''}`);
+  }
+
+  const text = await r.text();
+  sheetResponseCache.set(cacheKey, { text, fetchedAt: Date.now() });
+  return text;
+}
+
+function setPublicTextCacheHeaders(res, maxAgeSec) {
+  const sec = Math.max(0, Number(maxAgeSec) || 0);
+  res.set('Cache-Control', `public, max-age=${sec}, s-maxage=${sec}, stale-while-revalidate=60`);
+}
+
 
 // =========================================================
 // ✔ FIXED: SmugMug API helper (must be ABOVE all routes)
@@ -1090,6 +1129,21 @@ app.get("/smug/curated-index/:albumKey", async (req, res) => {
 });
 
 // =========================================================
+// LIGHTWEIGHT WAKE ROUTES
+// =========================================================
+app.get('/health', (req, res) => {
+  allowCors(res, req);
+  setPublicTextCacheHeaders(res, 15);
+  return res.json({ ok: true, service: 'music-archive', ts: new Date().toISOString() });
+});
+
+app.get('/ping', (req, res) => {
+  allowCors(res, req);
+  setPublicTextCacheHeaders(res, 15);
+  return res.type('text/plain').send('ok');
+});
+
+// =========================================================
 // PEOPLE INDEX (server-cached)
 // =========================================================
 app.get('/index/people', async (req, res) => {
@@ -1098,6 +1152,9 @@ app.get('/index/people', async (req, res) => {
 
   try {
     // 1) Memory cache
+    if (!force && peopleIndexMem && isPeoplePayloadEffectivelyEmpty(peopleIndexMem)) {
+      peopleIndexMem = null;
+    }
     if (!force && peopleIndexMem && isFreshGeneratedAt(peopleIndexMem.generatedAt, PEOPLE_INDEX_TTL_MS)) {
       return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory' } });
     }
@@ -1105,7 +1162,7 @@ app.get('/index/people', async (req, res) => {
     // 2) Disk cache (ignore cached-empty results so we don't get stuck at albumsScanned=0 forever)
     if (!force) {
       const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
-      const looksEmpty = disk && Number(disk.albumsScanned || 0) === 0 && Array.isArray(disk.people) && disk.people.length === 0;
+      const looksEmpty = isPeoplePayloadEffectivelyEmpty(disk);
       if (!looksEmpty && disk && isFreshGeneratedAt(disk.generatedAt, PEOPLE_INDEX_TTL_MS)) {
         peopleIndexMem = disk;
         return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk' } });
@@ -1117,9 +1174,13 @@ app.get('/index/people', async (req, res) => {
     if (peopleIndexBuildPromise) {
       if (!force) {
         // Serve best-effort cached data while a build is running.
-        if (peopleIndexMem) return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory', building: true } });
+        if (peopleIndexMem && !isPeoplePayloadEffectivelyEmpty(peopleIndexMem)) {
+          return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory', building: true } });
+        }
         const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
-        if (disk) return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk', building: true } });
+        if (disk && !isPeoplePayloadEffectivelyEmpty(disk)) {
+          return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk', building: true } });
+        }
       }
       return res.status(202).json({ status: 'building', message: 'People index rebuild already in progress.' });
     }
@@ -1128,9 +1189,12 @@ app.get('/index/people', async (req, res) => {
       const full = String(req.query.full || "") === "1" || String(req.query.full || "").toLowerCase() === "true";
 
       // For incremental builds, use the latest cached index (memory preferred, then disk),
-      // even if stale, as the baseline to avoid re-scanning everything.
-      const baseline = (!full)
+      // even if stale, as the baseline to avoid re-scanning everything. Ignore empty baselines.
+      const baselineCandidate = (!full)
         ? (peopleIndexMem || safeReadJsonFile(PEOPLE_INDEX_FILE) || null)
+        : null;
+      const baseline = baselineCandidate && !isPeoplePayloadEffectivelyEmpty(baselineCandidate)
+        ? baselineCandidate
         : null;
 
       const computed = await computePeopleIndexFromBandsFolder({
@@ -1160,26 +1224,26 @@ app.get('/index/people', async (req, res) => {
 // =========================================================
 app.get("/sheet/bands", async (req, res) => {
   try {
-    const r = await fetch(BANDS_SHEET_URL);
-    const csv = await r.text();
-    allowCors(res);
+    const csv = await fetchTextWithShortCache('bands', BANDS_SHEET_URL);
+    allowCors(res, req);
+    setPublicTextCacheHeaders(res, 300);
     res.type("text/plain").send(csv);
   } catch (err) {
     console.error("sheet /bands fetch failed:", err);
-    allowCors(res);
+    allowCors(res, req);
     res.status(500).send("sheet error");
   }
 });
 
 app.get("/sheet/shows", async (req, res) => {
   try {
-    const r = await fetch(SHOWS_SHEET_URL);
-    const csv = await r.text();
-    allowCors(res);
+    const csv = await fetchTextWithShortCache('shows', SHOWS_SHEET_URL);
+    allowCors(res, req);
+    setPublicTextCacheHeaders(res, 300);
     res.type("text/plain").send(csv);
   } catch (err) {
     console.error("sheet /shows fetch failed:", err);
-    allowCors(res);
+    allowCors(res, req);
     res.status(500).send("shows sheet error");
   }
 });
@@ -1188,13 +1252,13 @@ app.get("/sheet/shows", async (req, res) => {
 // Aliases included to match different frontend endpoint names used over time.
 async function sendStatsCsv(req, res) {
   try {
-    const r = await fetch(STATS_SHEET_URL);
-    const csv = await r.text();
-    allowCors(res);
+    const csv = await fetchTextWithShortCache('stats', STATS_SHEET_URL);
+    allowCors(res, req);
+    setPublicTextCacheHeaders(res, 300);
     res.type("text/plain").send(csv);
   } catch (err) {
     console.error("sheet /stats fetch failed:", err);
-    allowCors(res);
+    allowCors(res, req);
     res.status(500).send("stats sheet error");
   }
 }
