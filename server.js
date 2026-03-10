@@ -1169,7 +1169,16 @@ app.get('/index/people', async (req, res) => {
 		}
 	}
 
-    // 3) Compute (source of truth: recursively scan albums under PEOPLE_INDEX_BANDS_ROOT)
+    // 3) Non-force requests must stay on cache layers only.
+    if (!force) {
+      return res.status(503).json({
+        error: 'people index cache unavailable',
+        message: 'No cached People index is available yet. Use force=1 to rebuild.',
+        cache: { hit: false, layer: 'none' }
+      });
+    }
+
+    // 4) Compute (source of truth: recursively scan albums under PEOPLE_INDEX_BANDS_ROOT)
     // Prevent multiple concurrent rebuilds from crushing the instance or timing out.
     if (peopleIndexBuildPromise) {
       if (!force) {
@@ -1731,3 +1740,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server listening on http://localhost:" + PORT);
 });
+
