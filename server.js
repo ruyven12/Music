@@ -1152,22 +1152,26 @@ app.get('/index/people', async (req, res) => {
 
   try {
     // 1) Memory cache
-    if (!force && peopleIndexMem && isPeoplePayloadEffectivelyEmpty(peopleIndexMem)) {
-      peopleIndexMem = null;
+    if (!force && peopleIndexMem) {
+      const looksEmpty = isPeoplePayloadEffectivelyEmpty(peopleIndexMem);
+      const isFresh = isFreshGeneratedAt(peopleIndexMem.generatedAt, PEOPLE_INDEX_TTL_MS);
+      if (looksEmpty || !isFresh) {
+        peopleIndexMem = null;
+      } else {
+        return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory' } });
+      }
     }
-    if (!force && peopleIndexMem && !isPeoplePayloadEffectivelyEmpty(peopleIndexMem)) {
-		return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory' } });
-	}
 
-    // 2) Disk cache (ignore cached-empty results so we don't get stuck at albumsScanned=0 forever)
+    // 2) Disk cache (ignore cached-empty or stale results so we don't get stuck on old snapshots forever)
     if (!force) {
-		const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
-		const looksEmpty = isPeoplePayloadEffectivelyEmpty(disk);
-		if (!looksEmpty && disk) {
-			peopleIndexMem = disk;
-		return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk' } });
-		}
-	}
+      const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
+      const looksEmpty = isPeoplePayloadEffectivelyEmpty(disk);
+      const isFresh = disk && isFreshGeneratedAt(disk.generatedAt, PEOPLE_INDEX_TTL_MS);
+      if (!looksEmpty && isFresh) {
+        peopleIndexMem = disk;
+        return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk' } });
+      }
+    }
 
     // 3) Non-force requests must stay on cache layers only.
     if (!force) {
