@@ -1155,19 +1155,19 @@ app.get('/index/people', async (req, res) => {
     if (!force && peopleIndexMem && isPeoplePayloadEffectivelyEmpty(peopleIndexMem)) {
       peopleIndexMem = null;
     }
-    if (!force && peopleIndexMem && isFreshGeneratedAt(peopleIndexMem.generatedAt, PEOPLE_INDEX_TTL_MS)) {
-      return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory' } });
-    }
+    if (!force && peopleIndexMem && !isPeoplePayloadEffectivelyEmpty(peopleIndexMem)) {
+		return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory' } });
+	}
 
     // 2) Disk cache (ignore cached-empty results so we don't get stuck at albumsScanned=0 forever)
     if (!force) {
-      const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
-      const looksEmpty = isPeoplePayloadEffectivelyEmpty(disk);
-      if (!looksEmpty && disk && isFreshGeneratedAt(disk.generatedAt, PEOPLE_INDEX_TTL_MS)) {
-        peopleIndexMem = disk;
-        return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk' } });
-      }
-    }
+		const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
+		const looksEmpty = isPeoplePayloadEffectivelyEmpty(disk);
+		if (!looksEmpty && disk) {
+			peopleIndexMem = disk;
+		return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk' } });
+		}
+	}
 
     // 3) Compute (source of truth: recursively scan albums under PEOPLE_INDEX_BANDS_ROOT)
     // Prevent multiple concurrent rebuilds from crushing the instance or timing out.
