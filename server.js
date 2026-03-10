@@ -206,10 +206,15 @@ const PEOPLE_INDEX_TTL_MS = Math.max(
   60_000,
   Number(process.env.PEOPLE_INDEX_TTL_MS || String(1000 * 60 * 60 * 24)) // default 24h
 );
+const PEOPLE_INDEX_BUILD_TIMEOUT_MS = Math.max(
+  60_000,
+  Number(process.env.PEOPLE_INDEX_BUILD_TIMEOUT_MS || String(1000 * 60 * 10)) // default 10m
+);
 
 const PEOPLE_INDEX_FILE = path.join(__dirname, "people-index.json");
 let peopleIndexMem = null; // { generatedAt, albumsScanned, people:[...] }
 let peopleIndexBuildPromise = null; // prevents concurrent long rebuilds
+let peopleIndexBuildStartedAt = 0;
 
 function publicPeopleIndexPayload(payload) {
   // Do not leak private fields to the UI; keep them in cache files for incremental builds.
@@ -242,6 +247,71 @@ function isFreshGeneratedAt(iso, ttlMs) {
   const t = Date.parse(String(iso || ""));
   if (!Number.isFinite(t)) return false;
   return Date.now() - t < ttlMs;
+}
+
+function withTimeout(promise, timeoutMs, label) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(`${label} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+
+    Promise.resolve(promise).then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      }
+    );
+  });
+}
+
+function resetPeopleIndexBuildState() {
+  peopleIndexBuildPromise = null;
+  peopleIndexBuildStartedAt = 0;
+}
+
+function isPeopleIndexBuildTimedOut() {
+  return !!(
+    peopleIndexBuildPromise &&
+    peopleIndexBuildStartedAt &&
+    (Date.now() - peopleIndexBuildStartedAt > PEOPLE_INDEX_BUILD_TIMEOUT_MS)
+  );
+}
+
+function startPeopleIndexBuild() {
+  if (peopleIndexBuildPromise && !isPeopleIndexBuildTimedOut()) {
+    return peopleIndexBuildPromise;
+  }
+
+  if (isPeopleIndexBuildTimedOut()) {
+    console.warn("people index rebuild timed out; resetting build state");
+    resetPeopleIndexBuildState();
+  }
+
+  peopleIndexBuildStartedAt = Date.now();
+  peopleIndexBuildPromise = (async () => {
+    try {
+      const computed = await withTimeout(
+        computePeopleIndexFromBandsFolder({
+          previous: null,
+          incremental: false
+        }),
+        PEOPLE_INDEX_BUILD_TIMEOUT_MS,
+        "people index rebuild"
+      );
+
+      peopleIndexMem = computed;
+      safeWriteJsonFile(PEOPLE_INDEX_FILE, computed);
+      return computed;
+    } finally {
+      resetPeopleIndexBuildState();
+    }
+  })();
+
+  return peopleIndexBuildPromise;
 }
 
 function parseCsvSimple(csvText) {
@@ -1183,40 +1253,18 @@ app.get('/index/people', async (req, res) => {
     }
 
     // 4) Compute (source of truth: recursively scan albums under PEOPLE_INDEX_BANDS_ROOT)
-    // Prevent multiple concurrent rebuilds from crushing the instance or timing out.
-    if (peopleIndexBuildPromise) {
-      if (!force) {
-        // Serve best-effort cached data while a build is running.
-        if (peopleIndexMem && !isPeoplePayloadEffectivelyEmpty(peopleIndexMem)) {
-          return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory', building: true } });
-        }
-        const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
-        if (disk && !isPeoplePayloadEffectivelyEmpty(disk)) {
-          return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk', building: true } });
-        }
-      }
-      return res.status(202).json({ status: 'building', message: 'People index rebuild already in progress.' });
+    // Force requests bypass stale cache and either start or attach to the current rebuild.
+    if (isPeopleIndexBuildTimedOut()) {
+      console.warn('people index rebuild exceeded timeout; resetting build state');
+      resetPeopleIndexBuildState();
     }
 
-    peopleIndexBuildPromise = (async () => {
-      // Force rebuilds should rescan all albums so caption edits and removals
-      // do not keep stale baseline data alive.
-      const computed = await computePeopleIndexFromBandsFolder({
-        previous: null,
-        incremental: false
-      });
-
-      peopleIndexMem = computed;
-      safeWriteJsonFile(PEOPLE_INDEX_FILE, computed);
-      return computed;
-    })();
-
-    try {
-      const computed = await peopleIndexBuildPromise;
-      return res.json({ ...publicPeopleIndexPayload(computed), cache: { hit: false, layer: 'computed' } });
-    } finally {
-      peopleIndexBuildPromise = null;
-    }
+    const attachedToBuild = !!peopleIndexBuildPromise;
+    const computed = await startPeopleIndexBuild();
+    return res.json({
+      ...publicPeopleIndexPayload(computed),
+      cache: { hit: false, layer: 'computed', building: attachedToBuild }
+    });
   } catch (err) {
     console.error('people index failed:', err && err.message ? err.message : err);
     return res.status(500).json({ error: 'people index failed' });
