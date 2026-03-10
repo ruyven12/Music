@@ -1186,7 +1186,9 @@ app.get('/index/people', async (req, res) => {
     }
 
     peopleIndexBuildPromise = (async () => {
-      const full = String(req.query.full || "") === "1" || String(req.query.full || "").toLowerCase() === "true";
+      // Always use incremental rebuilds for People.
+	// This keeps the rebuild button fast and uses the last saved index as baseline.
+	const full = false;
 
       // For incremental builds, use the latest cached index (memory preferred, then disk),
       // even if stale, as the baseline to avoid re-scanning everything. Ignore empty baselines.
