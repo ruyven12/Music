@@ -1384,6 +1384,24 @@ app.get("/smug/:slug", async (req, res) => {
   });
 });
 
+const ALBUM_PAGE_CACHE_TTL_MS = 15000;
+const albumPageMemCache = new Map();
+const albumPageInFlight = new Map();
+
+function albumPageCacheKey(albumKey, count, start) {
+  return `${String(albumKey || "").trim()}::${String(count || "").trim()}::${String(start || "").trim()}`;
+}
+
+function getFreshAlbumPageCache(key) {
+  const hit = albumPageMemCache.get(key);
+  if (!hit) return null;
+  if (!hit.fetchedAt || (Date.now() - hit.fetchedAt) > ALBUM_PAGE_CACHE_TTL_MS) {
+    albumPageMemCache.delete(key);
+    return null;
+  }
+  return hit.data || null;
+}
+
 // =========================================================
 // ALBUM → IMAGES (paged)
 // =========================================================
@@ -1391,6 +1409,24 @@ app.get("/smug/album/:albumKey", async (req, res) => {
   const albumKey = req.params.albumKey;
   const count = req.query.count || 200;
   const start = req.query.start || 1;
+  const cacheKey = albumPageCacheKey(albumKey, count, start);
+
+  allowCors(res, req);
+
+  const cached = getFreshAlbumPageCache(cacheKey);
+  if (cached) {
+    return res.json(cached);
+  }
+
+  if (albumPageInFlight.has(cacheKey)) {
+    try {
+      const shared = await albumPageInFlight.get(cacheKey);
+      return res.json(shared);
+    } catch (err) {
+      console.error("album images shared proxy error:", err);
+      return res.status(500).json({ error: "album images proxy failed" });
+    }
+  }
 
   const url = `https://api.smugmug.com/api/v2/album/${encodeURIComponent(
     albumKey
@@ -1398,7 +1434,7 @@ app.get("/smug/album/:albumKey", async (req, res) => {
 
   console.log("PROXY ALBUM IMAGES:", url);
 
-  try {
+  const run = (async () => {
     const upstream = await fetch(url, {
       headers: {
         Accept: "application/json",
@@ -1407,18 +1443,33 @@ app.get("/smug/album/:albumKey", async (req, res) => {
     });
 
     if (!upstream.ok) {
-      console.error("upstream album error:", upstream.status, await upstream.text());
-      res.set("Access-Control-Allow-Origin", "*");
-      return res.status(upstream.status).json({ error: "album images upstream error" });
+      const body = await upstream.text();
+      console.error("upstream album error:", upstream.status, body);
+      const err = new Error("album images upstream error");
+      err.status = upstream.status;
+      throw err;
     }
 
     const data = await upstream.json();
-    res.set("Access-Control-Allow-Origin", "*");
+    albumPageMemCache.set(cacheKey, {
+      fetchedAt: Date.now(),
+      data
+    });
+    return data;
+  })();
+
+  albumPageInFlight.set(cacheKey, run);
+
+  try {
+    const data = await run;
     return res.json(data);
   } catch (err) {
     console.error("album images proxy error:", err);
-    res.set("Access-Control-Allow-Origin", "*");
-    return res.status(500).json({ error: "album images proxy failed" });
+    return res.status(err.status || 500).json({
+      error: err.status ? "album images upstream error" : "album images proxy failed"
+    });
+  } finally {
+    albumPageInFlight.delete(cacheKey);
   }
 });
 
