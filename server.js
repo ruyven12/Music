@@ -1196,21 +1196,10 @@ app.get('/index/people', async (req, res) => {
 
     peopleIndexBuildPromise = (async () => {
       // Force rebuilds should rescan all albums so caption edits and removals
-	// do not keep stale baseline data alive.
-	const full = true;
-
-      // Full rebuilds ignore any cached baseline and recompute from SmugMug.
-      // Leave the baseline plumbing in place in case incremental mode is reintroduced.
-      const baselineCandidate = (!full)
-        ? (peopleIndexMem || safeReadJsonFile(PEOPLE_INDEX_FILE) || null)
-        : null;
-      const baseline = baselineCandidate && !isPeoplePayloadEffectivelyEmpty(baselineCandidate)
-        ? baselineCandidate
-        : null;
-
+      // do not keep stale baseline data alive.
       const computed = await computePeopleIndexFromBandsFolder({
-        previous: baseline,
-        incremental: !full
+        previous: null,
+        incremental: false
       });
 
       peopleIndexMem = computed;
