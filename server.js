@@ -75,7 +75,7 @@ const BANDS_SHEET_URL =
 const SHOWS_SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdi19qTDyPeBGzq0PpkdlDS_bNg34XpdRiXy8aBa-Jlu-jg2Wzkj1SnLXtRVFU4TGOh5KHJPK8Lwhc/pub?gid=1306635885&single=true&output=csv";
 
-// Stats tab (Fix / Metadata) – gid provided by Chris
+// Stats tab (Fix / Metadata) - gid provided by Chris
 // NOTE: Uses the Google Sheet "export?format=csv" URL style.
 // This will work as long as the sheet (or at least this tab) is readable without auth.
 const STATS_SHEET_URL =
@@ -122,7 +122,7 @@ function setPublicTextCacheHeaders(res, maxAgeSec) {
 
 
 // =========================================================
-// ✔ FIXED: SmugMug API helper (must be ABOVE all routes)
+// FIXED: SmugMug API helper (must be ABOVE all routes)
 // =========================================================
 async function smug(endpoint) {
   // endpoint may or may not already include a querystring.
@@ -152,7 +152,7 @@ async function smug(endpoint) {
 }
 
 // =========================================================
-// ✔ NEW: CURATED INDEX (album keywords verified against image metadata)
+// NEW: CURATED INDEX (album keywords verified against image metadata)
 //
 // Computes per-album keyword verification and caches result.
 //
@@ -1195,12 +1195,12 @@ app.get('/index/people', async (req, res) => {
     }
 
     peopleIndexBuildPromise = (async () => {
-      // Always use incremental rebuilds for People.
-	// This keeps the rebuild button fast and uses the last saved index as baseline.
-	const full = false;
+      // Force rebuilds should rescan all albums so caption edits and removals
+	// do not keep stale baseline data alive.
+	const full = true;
 
-      // For incremental builds, use the latest cached index (memory preferred, then disk),
-      // even if stale, as the baseline to avoid re-scanning everything. Ignore empty baselines.
+      // Full rebuilds ignore any cached baseline and recompute from SmugMug.
+      // Leave the baseline plumbing in place in case incremental mode is reintroduced.
       const baselineCandidate = (!full)
         ? (peopleIndexMem || safeReadJsonFile(PEOPLE_INDEX_FILE) || null)
         : null;
@@ -1231,7 +1231,7 @@ app.get('/index/people', async (req, res) => {
 });
 
 // =========================================================
-// SHEETS → CSV
+// SHEETS -> CSV
 // =========================================================
 app.get("/sheet/bands", async (req, res) => {
   try {
@@ -1310,7 +1310,7 @@ app.get("/show-poster", async (req, res) => {
 });
 
 // =========================================================
-// SMART FOLDER → ALBUMS
+// SMART FOLDER -> ALBUMS
 // =========================================================
 app.get("/smug/:slug", async (req, res) => {
   const slug = req.params.slug;
@@ -1414,7 +1414,7 @@ function getFreshAlbumPageCache(key) {
 }
 
 // =========================================================
-// ALBUM → IMAGES (paged)
+// ALBUM -> IMAGES (paged)
 // =========================================================
 app.get("/smug/album/:albumKey", async (req, res) => {
   const albumKey = req.params.albumKey;
@@ -1485,7 +1485,7 @@ app.get("/smug/album/:albumKey", async (req, res) => {
 });
 
 // =========================================================
-// ✔ NEW: ALBUM METADATA (album keywords)
+// NEW: ALBUM METADATA (album keywords)
 // =========================================================
 app.get("/smug/album-meta/:albumKey", async (req, res) => {
   const albumKey = req.params.albumKey;
@@ -1580,7 +1580,7 @@ function fetchStreamWithRedirects(inputUrl, redirectsLeft = 5) {
 
 
 // =========================================================
-// ✔ NEW: ZIP BUILDER (multi-download)
+// NEW: ZIP BUILDER (multi-download)
 // Expects: { items: [{ url, filename }, ...] }
 // Returns: application/zip stream
 // =========================================================
@@ -1649,7 +1649,7 @@ app.post("/zip", async (req, res) => {
 });
 
 // =========================================================
-// ✔ NEW: ANALYTICS EVENT LOGGER (no Google Analytics)
+// NEW: ANALYTICS EVENT LOGGER (no Google Analytics)
 //
 // Frontend calls: POST /track (or navigator.sendBeacon to /track)
 // Server forwards the payload to a Google Apps Script Web App
