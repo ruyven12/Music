@@ -485,7 +485,7 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
 
     // Albums in this folder
     try {
-      const page = await smugWithRetry(`/folder/user/${encodeURIComponent(SMUG_NICKNAME)}/${apiFolderPath}!albums?_accept=application/json&_verbosity=1&_expand=Album`, { retries: 2, delayMs: 400 });
+      const page = await smugWithRetry(`/folder/user/${encodeURIComponent(SMUG_NICKNAME)}/${apiFolderPath}!albums?_accept=application/json&_verbosity=1&_expand=Album`, { retries: 4, delayMs: 1500 });
       const resp = page && page.Response ? page.Response : page;
       const items = resp && (resp.FolderAlbum || resp.Albums || resp.Album)
         ? (resp.FolderAlbum || resp.Albums || resp.Album)
@@ -511,7 +511,7 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
 
     // Subfolders
     try {
-      const page = await smugWithRetry(`/folder/user/${encodeURIComponent(SMUG_NICKNAME)}/${apiFolderPath}!folders?_accept=application/json&_verbosity=1`, { retries: 2, delayMs: 400 });
+      const page = await smugWithRetry(`/folder/user/${encodeURIComponent(SMUG_NICKNAME)}/${apiFolderPath}!folders?_accept=application/json&_verbosity=1`, { retries: 4, delayMs: 1500 });
       const resp = page && page.Response ? page.Response : page;
       const folders = resp && (resp.Folder || resp.Folders) ? (resp.Folder || resp.Folders) : [];
       if (Array.isArray(folders)) {
@@ -543,6 +543,7 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
       discoveryErrorCount++;
       console.warn("people-index: folder subfolders list failed:", folderPath, e && e.message ? e.message : e);
     }
+    await delay(250);
   }
 
   if (albums.size === 0 && discoveryErrorCount > 0) {
