@@ -303,6 +303,10 @@ function startPeopleIndexBuild() {
         "people index rebuild"
       );
 
+      if (isPeoplePayloadEffectivelyEmpty(computed)) {
+        throw new Error("people index rebuild produced an empty payload; keeping existing cache");
+      }
+
       peopleIndexMem = computed;
       safeWriteJsonFile(PEOPLE_INDEX_FILE, computed);
       return computed;
@@ -440,6 +444,7 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
   const albums = new Map(); // albumKey -> { albumKey, title, url }
   const visitedFolders = new Set();
   const queue = [String(rootFolderPath || "").trim()].filter(Boolean);
+  let discoveryErrorCount = 0;
 
   while (queue.length) {
     const folderPath = queue.shift();
@@ -472,6 +477,7 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
         }
       }
     } catch (e) {
+      discoveryErrorCount++;
       console.warn("people-index: folder albums list failed:", folderPath, e && e.message ? e.message : e);
     }
 
@@ -506,8 +512,13 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
         }
       }
     } catch (e) {
+      discoveryErrorCount++;
       console.warn("people-index: folder subfolders list failed:", folderPath, e && e.message ? e.message : e);
     }
+  }
+
+  if (albums.size === 0 && discoveryErrorCount > 0) {
+    throw new Error(`people index album discovery failed after ${discoveryErrorCount} folder request errors`);
   }
 
   return Array.from(albums.values());
