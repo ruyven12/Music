@@ -294,6 +294,7 @@ function startPeopleIndexBuild() {
   peopleIndexBuildStartedAt = Date.now();
   peopleIndexBuildPromise = (async () => {
     try {
+      // Force rebuilds always regenerate the People index from scratch.
       const computed = await withTimeout(
         computePeopleIndexFromBandsFolder({
           previous: null,
@@ -1274,10 +1275,18 @@ app.get('/index/people', async (req, res) => {
     const computed = await startPeopleIndexBuild();
     return res.json({
       ...publicPeopleIndexPayload(computed),
-      cache: { hit: false, layer: 'computed', building: attachedToBuild }
+      cache: { hit: false, layer: 'computed', building: attachedToBuild, mode: 'full-rebuild' }
     });
   } catch (err) {
-    console.error('people index failed:', err && err.message ? err.message : err);
+    const detail = String(err && err.message ? err.message : err || 'unknown error');
+    console.error('people index failed:', detail);
+    if (force) {
+      return res.status(503).json({
+        error: 'people index rebuild failed',
+        message: 'Full People rebuild failed. Existing People cache and snapshot were preserved.',
+        detail
+      });
+    }
     return res.status(500).json({ error: 'people index failed' });
   }
 });
