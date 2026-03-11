@@ -525,6 +525,19 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
   return Array.from(albums.values());
 }
 
+function isLikelyCompositePersonName(name) {
+  const raw = String(name || "").trim().replace(/\s+/g, " ");
+  if (!raw) return true;
+  if (/[;\uFF1B\u037E]/.test(raw)) return true;
+
+  const commaParts = raw.split(/\s*,\s*/g).filter(Boolean);
+  if (commaParts.length >= 2 && commaParts.every((part) => /\s/.test(part))) {
+    return true;
+  }
+
+  return false;
+}
+
 function parsePeopleFromCaption(caption) {
   const raw = String(caption || "").trim();
   if (!raw) return [];
@@ -533,7 +546,6 @@ function parsePeopleFromCaption(caption) {
   const normalized = raw.replace(/[\uFF1B\u037E]/g, ";");
 
   // Semicolon-delimited list, dedupe case-insensitively, preserve first-seen casing.
-  // If a token still contains a separator, treat it as malformed and drop it.
   const parts = normalized
     .split(/\s*;\s*/g)
     .map((s) => String(s || "").trim().replace(/\s+/g, " "))
@@ -541,7 +553,7 @@ function parsePeopleFromCaption(caption) {
   const seen = new Set();
   const out = [];
   for (const p of parts) {
-    if (/[;\uFF1B\u037E]/.test(p)) continue;
+    if (isLikelyCompositePersonName(p)) continue;
     const k = String(p || "").toLowerCase();
     if (!k || seen.has(k)) continue;
     seen.add(k);
@@ -725,6 +737,7 @@ async function computePeopleIndexFromShows() {
       const albums = Array.from(albumMap.values());
       return { name, photoCount: Number(peopleToPhotoCount.get(name) || 0), albums };
     })
+    .filter((person) => !isLikelyCompositePersonName(person && person.name))
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
   return {
