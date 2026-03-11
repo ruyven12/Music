@@ -151,6 +151,33 @@ async function smug(endpoint) {
   return r.json();
 }
 
+function isSmugRateLimitError(err) {
+  return /SmugMug upstream returned 429/i.test(String(err && err.message ? err.message : err || ""));
+}
+
+async function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function smugWithRetry(endpoint, opts) {
+  const o = (opts && typeof opts === "object") ? opts : {};
+  const retries = Math.max(0, Number(o.retries || 0));
+  const delayMs = Math.max(0, Number(o.delayMs || 0));
+
+  let lastErr;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await smug(endpoint);
+    } catch (err) {
+      lastErr = err;
+      if (attempt >= retries || !isSmugRateLimitError(err)) throw err;
+      await delay(delayMs * (attempt + 1));
+    }
+  }
+
+  throw lastErr;
+}
+
 // =========================================================
 // NEW: CURATED INDEX (album keywords verified against image metadata)
 //
@@ -458,7 +485,7 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
 
     // Albums in this folder
     try {
-      const page = await smug(`/folder/user/${encodeURIComponent(SMUG_NICKNAME)}/${apiFolderPath}!albums?_accept=application/json&_verbosity=1&_expand=Album`);
+      const page = await smugWithRetry(`/folder/user/${encodeURIComponent(SMUG_NICKNAME)}/${apiFolderPath}!albums?_accept=application/json&_verbosity=1&_expand=Album`, { retries: 2, delayMs: 400 });
       const resp = page && page.Response ? page.Response : page;
       const items = resp && (resp.FolderAlbum || resp.Albums || resp.Album)
         ? (resp.FolderAlbum || resp.Albums || resp.Album)
@@ -484,7 +511,7 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
 
     // Subfolders
     try {
-      const page = await smug(`/folder/user/${encodeURIComponent(SMUG_NICKNAME)}/${apiFolderPath}!folders?_accept=application/json&_verbosity=1`);
+      const page = await smugWithRetry(`/folder/user/${encodeURIComponent(SMUG_NICKNAME)}/${apiFolderPath}!folders?_accept=application/json&_verbosity=1`, { retries: 2, delayMs: 400 });
       const resp = page && page.Response ? page.Response : page;
       const folders = resp && (resp.Folder || resp.Folders) ? (resp.Folder || resp.Folders) : [];
       if (Array.isArray(folders)) {
