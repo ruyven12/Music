@@ -528,14 +528,20 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
 function parsePeopleFromCaption(caption) {
   const raw = String(caption || "").trim();
   if (!raw) return [];
-  // Semicolon-delimited list, dedupe case-insensitively, preserve first-seen casing
-  const parts = raw
+
+  // Normalize alternate semicolon characters so caption parsing is consistent.
+  const normalized = raw.replace(/[\uFF1B\u037E]/g, ";");
+
+  // Semicolon-delimited list, dedupe case-insensitively, preserve first-seen casing.
+  // If a token still contains a separator, treat it as malformed and drop it.
+  const parts = normalized
     .split(/\s*;\s*/g)
-    .map((s) => String(s || "").trim())
+    .map((s) => String(s || "").trim().replace(/\s+/g, " "))
     .filter(Boolean);
   const seen = new Set();
   const out = [];
   for (const p of parts) {
+    if (/[;\uFF1B\u037E]/.test(p)) continue;
     const k = String(p || "").toLowerCase();
     if (!k || seen.has(k)) continue;
     seen.add(k);
