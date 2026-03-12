@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-11T03:17:32.653Z",
+  "generatedAt": "2026-03-12T00:24:49.522Z",
   "albumsScanned": 561,
   "people": [
     {
@@ -98,8 +98,13 @@
     },
     {
       "name": "Al Pike",
-      "photoCount": 104,
+      "photoCount": 105,
       "albums": [
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
+        },
         {
           "albumKey": "dSk9P7",
           "title": "8/1/25 - Herd Flock 7: Flock On (Day 1)",
@@ -225,6 +230,22 @@
       ]
     },
     {
+      "name": "Anthony Brown",
+      "photoCount": 22,
+      "albums": [
+        {
+          "albumKey": "b57LP5",
+          "title": "6/27/15 - Khaos at the Kave",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cavemanifesto/062715"
+        },
+        {
+          "albumKey": "DhXJ7c",
+          "title": "6/22/14 - Threat Signal at the Kave",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cavemanifesto/062214"
+        }
+      ]
+    },
+    {
       "name": "April Lawless",
       "photoCount": 1,
       "albums": [
@@ -274,7 +295,7 @@
     },
     {
       "name": "Ben Roberts",
-      "photoCount": 110,
+      "photoCount": 111,
       "albums": [
         {
           "albumKey": "4W6BN2",
@@ -295,6 +316,11 @@
           "albumKey": "L9J968",
           "title": "1/13/23 - I, The Conqueror CD Release Party",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/I-The-Conqueror/011323"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         }
       ]
     },
@@ -335,14 +361,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/071418"
         },
         {
-          "albumKey": "DmfWdh",
-          "title": "8/25/17 - Fred 332's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/082517"
-        },
-        {
           "albumKey": "VjL72B",
           "title": "2/17/18 - Quansigamog 475 Hogfest '18",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/021718"
+        },
+        {
+          "albumKey": "DmfWdh",
+          "title": "8/25/17 - Fred 332's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/082517"
         },
         {
           "albumKey": "H8zmnv",
@@ -350,14 +376,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/011716"
         },
         {
-          "albumKey": "HB9FtD",
-          "title": "5/20/12 - Kittie/The Agonist & Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/052012"
-        },
-        {
           "albumKey": "4VSgxB",
           "title": "4/14/17 - Rock For Brady Benefit",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/041417"
+        },
+        {
+          "albumKey": "HB9FtD",
+          "title": "5/20/12 - Kittie/The Agonist & Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/052012"
         },
         {
           "albumKey": "kVBjp7",
@@ -402,14 +428,14 @@
       "photoCount": 151,
       "albums": [
         {
-          "albumKey": "DmfWdh",
-          "title": "8/25/17 - Fred 332's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/082517"
-        },
-        {
           "albumKey": "VjL72B",
           "title": "2/17/18 - Quansigamog 475 Hogfest '18",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/021718"
+        },
+        {
+          "albumKey": "DmfWdh",
+          "title": "8/25/17 - Fred 332's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/082517"
         },
         {
           "albumKey": "4VSgxB",
@@ -430,12 +456,17 @@
     },
     {
       "name": "Bodhi Mckellick",
-      "photoCount": 3,
+      "photoCount": 4,
       "albums": [
         {
           "albumKey": "KCdQdZ",
           "title": "5/31/25 - The Benefit for Bob Brackett",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/053125"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         }
       ]
     },
@@ -500,7 +531,7 @@
     },
     {
       "name": "Brandon DuPaul",
-      "photoCount": 48,
+      "photoCount": 91,
       "albums": [
         {
           "albumKey": "QB4Lwq",
@@ -511,6 +542,16 @@
           "albumKey": "2S6RDH",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
+        },
+        {
+          "albumKey": "g3PNwf",
+          "title": "8/30/25 - 24th Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/083025"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         },
         {
           "albumKey": "d4fQRh",
@@ -621,6 +662,17 @@
       ]
     },
     {
+      "name": "Brian Storey",
+      "photoCount": 1,
+      "albums": [
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
+        }
+      ]
+    },
+    {
       "name": "Bridget Burke",
       "photoCount": 12,
       "albums": [
@@ -641,24 +693,24 @@
       "photoCount": 165,
       "albums": [
         {
-          "albumKey": "qRQZgq",
-          "title": "7/15/17 - Shenanigans Music Showcase",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
-        },
-        {
           "albumKey": "zxNrMF",
           "title": "11/10/18 - Live @ 212 Showcase Series",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111018"
         },
         {
-          "albumKey": "9kgrjQ",
-          "title": "11/5/16 - Rock in Union Church",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
+          "albumKey": "qRQZgq",
+          "title": "7/15/17 - Shenanigans Music Showcase",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
         },
         {
           "albumKey": "LsXxRX",
           "title": "4/15/17 - 2nd Annual Rock For Brady Benefit",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/041517"
+        },
+        {
+          "albumKey": "9kgrjQ",
+          "title": "11/5/16 - Rock in Union Church",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
         },
         {
           "albumKey": "GX58FV",
@@ -681,14 +733,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/092615"
         },
         {
-          "albumKey": "9h9zLm",
-          "title": "8/29/15 - Civil Disturbance w/ Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
-        },
-        {
           "albumKey": "8rdf7n",
           "title": "7/18/15 - Mountain View Music Festival",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071815"
+        },
+        {
+          "albumKey": "9h9zLm",
+          "title": "8/29/15 - Civil Disturbance w/ Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
         },
         {
           "albumKey": "wzKRFT",
@@ -698,28 +750,44 @@
       ]
     },
     {
+      "name": "Bryan Stevens",
+      "photoCount": 20,
+      "albums": [
+        {
+          "albumKey": "b57LP5",
+          "title": "6/27/15 - Khaos at the Kave",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cavemanifesto/062715"
+        },
+        {
+          "albumKey": "DhXJ7c",
+          "title": "6/22/14 - Threat Signal at the Kave",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cavemanifesto/062214"
+        }
+      ]
+    },
+    {
       "name": "Caleb Card",
       "photoCount": 245,
       "albums": [
-        {
-          "albumKey": "qRQZgq",
-          "title": "7/15/17 - Shenanigans Music Showcase",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
-        },
         {
           "albumKey": "zxNrMF",
           "title": "11/10/18 - Live @ 212 Showcase Series",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111018"
         },
         {
-          "albumKey": "9kgrjQ",
-          "title": "11/5/16 - Rock in Union Church",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
+          "albumKey": "qRQZgq",
+          "title": "7/15/17 - Shenanigans Music Showcase",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
         },
         {
           "albumKey": "LsXxRX",
           "title": "4/15/17 - 2nd Annual Rock For Brady Benefit",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/041517"
+        },
+        {
+          "albumKey": "9kgrjQ",
+          "title": "11/5/16 - Rock in Union Church",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
         },
         {
           "albumKey": "GX58FV",
@@ -742,14 +810,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/092615"
         },
         {
-          "albumKey": "9h9zLm",
-          "title": "8/29/15 - Civil Disturbance w/ Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
-        },
-        {
           "albumKey": "8rdf7n",
           "title": "7/18/15 - Mountain View Music Festival",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071815"
+        },
+        {
+          "albumKey": "9h9zLm",
+          "title": "8/29/15 - Civil Disturbance w/ Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
         },
         {
           "albumKey": "wzKRFT",
@@ -839,9 +907,9 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/110516"
         },
         {
-          "albumKey": "JgWHKN",
-          "title": "4/16/16 - Burning Time CD Release Party 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
+          "albumKey": "8wkXJB",
+          "title": "8/6/16 - Rise Above Fest 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
         },
         {
           "albumKey": "2FZrH2",
@@ -849,9 +917,9 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/092615"
         },
         {
-          "albumKey": "8wkXJB",
-          "title": "8/6/16 - Rise Above Fest 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
+          "albumKey": "JgWHKN",
+          "title": "4/16/16 - Burning Time CD Release Party 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
         },
         {
           "albumKey": "3DzDbH",
@@ -896,14 +964,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022523"
         },
         {
-          "albumKey": "js9w7Q",
-          "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
-        },
-        {
           "albumKey": "ZBzpGr",
           "title": "9/3/22 - Rikk Ashe's Birthday Bash",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
+        },
+        {
+          "albumKey": "js9w7Q",
+          "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
         },
         {
           "albumKey": "RTNrhG",
@@ -998,6 +1066,22 @@
       ]
     },
     {
+      "name": "Chris King",
+      "photoCount": 45,
+      "albums": [
+        {
+          "albumKey": "g3PNwf",
+          "title": "8/30/25 - 24th Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/083025"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
+        }
+      ]
+    },
+    {
       "name": "Chris Skehan",
       "photoCount": 69,
       "albums": [
@@ -1039,14 +1123,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/071418"
         },
         {
-          "albumKey": "DmfWdh",
-          "title": "8/25/17 - Fred 332's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/082517"
-        },
-        {
           "albumKey": "VjL72B",
           "title": "2/17/18 - Quansigamog 475 Hogfest '18",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/021718"
+        },
+        {
+          "albumKey": "DmfWdh",
+          "title": "8/25/17 - Fred 332's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/082517"
         },
         {
           "albumKey": "H8zmnv",
@@ -1156,14 +1240,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/110219"
         },
         {
-          "albumKey": "KrSX2v",
-          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
-        },
-        {
           "albumKey": "QdqVwv",
           "title": "5/20/12 - Kittie/The Agonist & Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/052012"
+        },
+        {
+          "albumKey": "KrSX2v",
+          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
         }
       ]
     },
@@ -1212,9 +1296,9 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/110516"
         },
         {
-          "albumKey": "JgWHKN",
-          "title": "4/16/16 - Burning Time CD Release Party 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
+          "albumKey": "8wkXJB",
+          "title": "8/6/16 - Rise Above Fest 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
         },
         {
           "albumKey": "2FZrH2",
@@ -1222,9 +1306,9 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/092615"
         },
         {
-          "albumKey": "8wkXJB",
-          "title": "8/6/16 - Rise Above Fest 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
+          "albumKey": "JgWHKN",
+          "title": "4/16/16 - Burning Time CD Release Party 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
         },
         {
           "albumKey": "3DzDbH",
@@ -1266,6 +1350,22 @@
       ]
     },
     {
+      "name": "David Barnes",
+      "photoCount": 23,
+      "albums": [
+        {
+          "albumKey": "b57LP5",
+          "title": "6/27/15 - Khaos at the Kave",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cavemanifesto/062715"
+        },
+        {
+          "albumKey": "DhXJ7c",
+          "title": "6/22/14 - Threat Signal at the Kave",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cavemanifesto/062214"
+        }
+      ]
+    },
+    {
       "name": "Derek Bouchard",
       "photoCount": 10,
       "albums": [
@@ -1289,7 +1389,7 @@
     },
     {
       "name": "Dom Boudreau",
-      "photoCount": 71,
+      "photoCount": 126,
       "albums": [
         {
           "albumKey": "QB4Lwq",
@@ -1310,6 +1410,16 @@
           "albumKey": "RCRrPS",
           "title": "5/30/15 - Burning Time / Venndetta / 13 High",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/053015"
+        },
+        {
+          "albumKey": "g3PNwf",
+          "title": "8/30/25 - 24th Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/083025"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         },
         {
           "albumKey": "d4fQRh",
@@ -1379,9 +1489,9 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/110516"
         },
         {
-          "albumKey": "JgWHKN",
-          "title": "4/16/16 - Burning Time CD Release Party 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
+          "albumKey": "8wkXJB",
+          "title": "8/6/16 - Rise Above Fest 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
         },
         {
           "albumKey": "2FZrH2",
@@ -1389,9 +1499,9 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/092615"
         },
         {
-          "albumKey": "8wkXJB",
-          "title": "8/6/16 - Rise Above Fest 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
+          "albumKey": "JgWHKN",
+          "title": "4/16/16 - Burning Time CD Release Party 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
         },
         {
           "albumKey": "3DzDbH",
@@ -1588,6 +1698,17 @@
       ]
     },
     {
+      "name": "Ethan Oldman",
+      "photoCount": 22,
+      "albums": [
+        {
+          "albumKey": "sTZtCd",
+          "title": "6/24/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Calibrating-the-Calamity/062422"
+        }
+      ]
+    },
+    {
       "name": "Frank McDaniel",
       "photoCount": 33,
       "albums": [
@@ -1694,14 +1815,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
         },
         {
-          "albumKey": "9kgrjQ",
-          "title": "11/5/16 - Rock in Union Church",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
-        },
-        {
           "albumKey": "LsXxRX",
           "title": "4/15/17 - 2nd Annual Rock For Brady Benefit",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/041517"
+        },
+        {
+          "albumKey": "9kgrjQ",
+          "title": "11/5/16 - Rock in Union Church",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
         },
         {
           "albumKey": "GX58FV",
@@ -1724,14 +1845,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/092615"
         },
         {
-          "albumKey": "9h9zLm",
-          "title": "8/29/15 - Civil Disturbance w/ Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
-        },
-        {
           "albumKey": "8rdf7n",
           "title": "7/18/15 - Mountain View Music Festival",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071815"
+        },
+        {
+          "albumKey": "9h9zLm",
+          "title": "8/29/15 - Civil Disturbance w/ Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
         }
       ]
     },
@@ -1854,6 +1975,17 @@
       ]
     },
     {
+      "name": "Jamie White",
+      "photoCount": 15,
+      "albums": [
+        {
+          "albumKey": "xT5B2B",
+          "title": "6/8/19 - Tyler's Graduation Jam",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Chaos-Machine/060819"
+        }
+      ]
+    },
+    {
       "name": "Jarred Desrochers",
       "photoCount": 109,
       "albums": [
@@ -1899,24 +2031,24 @@
       "photoCount": 39,
       "albums": [
         {
-          "albumKey": "GfF6H7",
-          "title": "6/22/12 - 13 High w/ Guests '12",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/062212"
-        },
-        {
           "albumKey": "GMjTJc",
           "title": "7/27/12 - Mindset X w/ Guests '12",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/072712"
         },
         {
-          "albumKey": "mCks6r",
-          "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
+          "albumKey": "GfF6H7",
+          "title": "6/22/12 - 13 High w/ Guests '12",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/062212"
         },
         {
           "albumKey": "Bth6X2",
           "title": "6/1/12 - Cougar Bait w/ Guests '12",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/060112"
+        },
+        {
+          "albumKey": "mCks6r",
+          "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
         }
       ]
     },
@@ -1952,14 +2084,14 @@
       "photoCount": 46,
       "albums": [
         {
-          "albumKey": "KrSX2v",
-          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
-        },
-        {
           "albumKey": "QdqVwv",
           "title": "5/20/12 - Kittie/The Agonist & Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/052012"
+        },
+        {
+          "albumKey": "KrSX2v",
+          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
         }
       ]
     },
@@ -2116,7 +2248,7 @@
     },
     {
       "name": "John Wagoner",
-      "photoCount": 93,
+      "photoCount": 95,
       "albums": [
         {
           "albumKey": "JPHX3q",
@@ -2137,6 +2269,11 @@
           "albumKey": "6VxDBB",
           "title": "1/31/15 - January Thrash Bash",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Alter-The-Tides/013115"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         },
         {
           "albumKey": "7V3Mtz",
@@ -2169,6 +2306,17 @@
           "albumKey": "BZx4LJ",
           "title": "2/1/25 - Prospect Hill Returns to Maine",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Regional/Prospect-Hill/020125"
+        }
+      ]
+    },
+    {
+      "name": "Jon Lugdon",
+      "photoCount": 12,
+      "albums": [
+        {
+          "albumKey": "xT5B2B",
+          "title": "6/8/19 - Tyler's Graduation Jam",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Chaos-Machine/060819"
         }
       ]
     },
@@ -2460,9 +2608,9 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/110516"
         },
         {
-          "albumKey": "JgWHKN",
-          "title": "4/16/16 - Burning Time CD Release Party 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
+          "albumKey": "8wkXJB",
+          "title": "8/6/16 - Rise Above Fest 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
         },
         {
           "albumKey": "2FZrH2",
@@ -2470,9 +2618,9 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/092615"
         },
         {
-          "albumKey": "8wkXJB",
-          "title": "8/6/16 - Rise Above Fest 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
+          "albumKey": "JgWHKN",
+          "title": "4/16/16 - Burning Time CD Release Party 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
         },
         {
           "albumKey": "3DzDbH",
@@ -2556,12 +2704,17 @@
     },
     {
       "name": "Lenny Smith",
-      "photoCount": 5,
+      "photoCount": 6,
       "albums": [
         {
           "albumKey": "QB4Lwq",
           "title": "2/22/25 - Shawn Caron's Birthday Bash '25",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022225"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         },
         {
           "albumKey": "7V3Mtz",
@@ -2650,24 +2803,24 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ashe-Madness/090322"
         },
         {
-          "albumKey": "GfF6H7",
-          "title": "6/22/12 - 13 High w/ Guests '12",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/062212"
-        },
-        {
           "albumKey": "GMjTJc",
           "title": "7/27/12 - Mindset X w/ Guests '12",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/072712"
         },
         {
-          "albumKey": "mCks6r",
-          "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
+          "albumKey": "GfF6H7",
+          "title": "6/22/12 - 13 High w/ Guests '12",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/062212"
         },
         {
           "albumKey": "Bth6X2",
           "title": "6/1/12 - Cougar Bait w/ Guests '12",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/060112"
+        },
+        {
+          "albumKey": "mCks6r",
+          "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
         }
       ]
     },
@@ -2961,24 +3114,24 @@
       "photoCount": 25,
       "albums": [
         {
-          "albumKey": "GfF6H7",
-          "title": "6/22/12 - 13 High w/ Guests '12",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/062212"
-        },
-        {
           "albumKey": "GMjTJc",
           "title": "7/27/12 - Mindset X w/ Guests '12",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/072712"
         },
         {
-          "albumKey": "mCks6r",
-          "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
+          "albumKey": "GfF6H7",
+          "title": "6/22/12 - 13 High w/ Guests '12",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/062212"
         },
         {
           "albumKey": "Bth6X2",
           "title": "6/1/12 - Cougar Bait w/ Guests '12",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/060112"
+        },
+        {
+          "albumKey": "mCks6r",
+          "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
         }
       ]
     },
@@ -3085,12 +3238,17 @@
     },
     {
       "name": "Nik Hall",
-      "photoCount": 3,
+      "photoCount": 4,
       "albums": [
         {
           "albumKey": "KCdQdZ",
           "title": "5/31/25 - The Benefit for Bob Brackett",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/053125"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         }
       ]
     },
@@ -3211,14 +3369,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/071418"
         },
         {
-          "albumKey": "DmfWdh",
-          "title": "8/25/17 - Fred 332's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/082517"
-        },
-        {
           "albumKey": "VjL72B",
           "title": "2/17/18 - Quansigamog 475 Hogfest '18",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/021718"
+        },
+        {
+          "albumKey": "DmfWdh",
+          "title": "8/25/17 - Fred 332's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/082517"
         },
         {
           "albumKey": "H8zmnv",
@@ -3226,14 +3384,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/011716"
         },
         {
-          "albumKey": "HB9FtD",
-          "title": "5/20/12 - Kittie/The Agonist & Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/052012"
-        },
-        {
           "albumKey": "4VSgxB",
           "title": "4/14/17 - Rock For Brady Benefit",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/041417"
+        },
+        {
+          "albumKey": "HB9FtD",
+          "title": "5/20/12 - Kittie/The Agonist & Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/052012"
         },
         {
           "albumKey": "kVBjp7",
@@ -3267,14 +3425,14 @@
       "photoCount": 25,
       "albums": [
         {
-          "albumKey": "KrSX2v",
-          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
-        },
-        {
           "albumKey": "QdqVwv",
           "title": "5/20/12 - Kittie/The Agonist & Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/052012"
+        },
+        {
+          "albumKey": "KrSX2v",
+          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
         }
       ]
     },
@@ -3303,14 +3461,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/110219"
         },
         {
-          "albumKey": "KrSX2v",
-          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
-        },
-        {
           "albumKey": "QdqVwv",
           "title": "5/20/12 - Kittie/The Agonist & Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/052012"
+        },
+        {
+          "albumKey": "KrSX2v",
+          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
         }
       ]
     },
@@ -3319,24 +3477,24 @@
       "photoCount": 168,
       "albums": [
         {
-          "albumKey": "qRQZgq",
-          "title": "7/15/17 - Shenanigans Music Showcase",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
-        },
-        {
           "albumKey": "zxNrMF",
           "title": "11/10/18 - Live @ 212 Showcase Series",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111018"
         },
         {
-          "albumKey": "9kgrjQ",
-          "title": "11/5/16 - Rock in Union Church",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
+          "albumKey": "qRQZgq",
+          "title": "7/15/17 - Shenanigans Music Showcase",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
         },
         {
           "albumKey": "LsXxRX",
           "title": "4/15/17 - 2nd Annual Rock For Brady Benefit",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/041517"
+        },
+        {
+          "albumKey": "9kgrjQ",
+          "title": "11/5/16 - Rock in Union Church",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
         },
         {
           "albumKey": "GX58FV",
@@ -3359,14 +3517,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/092615"
         },
         {
-          "albumKey": "9h9zLm",
-          "title": "8/29/15 - Civil Disturbance w/ Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
-        },
-        {
           "albumKey": "8rdf7n",
           "title": "7/18/15 - Mountain View Music Festival",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071815"
+        },
+        {
+          "albumKey": "9h9zLm",
+          "title": "8/29/15 - Civil Disturbance w/ Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
         },
         {
           "albumKey": "wzKRFT",
@@ -3482,6 +3640,17 @@
       ]
     },
     {
+      "name": "Ryan Porter",
+      "photoCount": 17,
+      "albums": [
+        {
+          "albumKey": "xT5B2B",
+          "title": "6/8/19 - Tyler's Graduation Jam",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Chaos-Machine/060819"
+        }
+      ]
+    },
+    {
       "name": "Sam Collins",
       "photoCount": 21,
       "albums": [
@@ -3491,14 +3660,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/062212"
         },
         {
-          "albumKey": "mCks6r",
-          "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
-        },
-        {
           "albumKey": "Bth6X2",
           "title": "6/1/12 - Cougar Bait w/ Guests '12",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/060112"
+        },
+        {
+          "albumKey": "mCks6r",
+          "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
         }
       ]
     },
@@ -3533,14 +3702,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022523"
         },
         {
-          "albumKey": "js9w7Q",
-          "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
-        },
-        {
           "albumKey": "ZBzpGr",
           "title": "9/3/22 - Rikk Ashe's Birthday Bash",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
+        },
+        {
+          "albumKey": "js9w7Q",
+          "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
         },
         {
           "albumKey": "RTNrhG",
@@ -3551,6 +3720,33 @@
           "albumKey": "X8Mh2F",
           "title": "6/11/16 - Acoustified Listening Party",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Acoustified/061116"
+        }
+      ]
+    },
+    {
+      "name": "Scott Stanley",
+      "photoCount": 48,
+      "albums": [
+        {
+          "albumKey": "g3PNwf",
+          "title": "8/30/25 - 24th Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/083025"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
+        }
+      ]
+    },
+    {
+      "name": "Scott Stetson",
+      "photoCount": 25,
+      "albums": [
+        {
+          "albumKey": "xT5B2B",
+          "title": "6/8/19 - Tyler's Graduation Jam",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Chaos-Machine/060819"
         }
       ]
     },
@@ -3630,24 +3826,24 @@
       "photoCount": 128,
       "albums": [
         {
-          "albumKey": "qRQZgq",
-          "title": "7/15/17 - Shenanigans Music Showcase",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
-        },
-        {
           "albumKey": "zxNrMF",
           "title": "11/10/18 - Live @ 212 Showcase Series",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111018"
         },
         {
-          "albumKey": "9kgrjQ",
-          "title": "11/5/16 - Rock in Union Church",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
+          "albumKey": "qRQZgq",
+          "title": "7/15/17 - Shenanigans Music Showcase",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071517"
         },
         {
           "albumKey": "LsXxRX",
           "title": "4/15/17 - 2nd Annual Rock For Brady Benefit",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/041517"
+        },
+        {
+          "albumKey": "9kgrjQ",
+          "title": "11/5/16 - Rock in Union Church",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/111516"
         },
         {
           "albumKey": "GX58FV",
@@ -3670,14 +3866,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/092615"
         },
         {
-          "albumKey": "9h9zLm",
-          "title": "8/29/15 - Civil Disturbance w/ Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
-        },
-        {
           "albumKey": "8rdf7n",
           "title": "7/18/15 - Mountain View Music Festival",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/071815"
+        },
+        {
+          "albumKey": "9h9zLm",
+          "title": "8/29/15 - Civil Disturbance w/ Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Artasin/082915"
         },
         {
           "albumKey": "wzKRFT",
@@ -3867,14 +4063,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/110219"
         },
         {
-          "albumKey": "KrSX2v",
-          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
-        },
-        {
           "albumKey": "QdqVwv",
           "title": "5/20/12 - Kittie/The Agonist & Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/052012"
+        },
+        {
+          "albumKey": "KrSX2v",
+          "title": "9/27/12 - Prospect Hill / PM5K & Guests",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/092712"
         }
       ]
     },
@@ -3896,8 +4092,18 @@
     },
     {
       "name": "Shaun Jefferey",
-      "photoCount": 26,
+      "photoCount": 74,
       "albums": [
+        {
+          "albumKey": "g3PNwf",
+          "title": "8/30/25 - 24th Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/083025"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
+        },
         {
           "albumKey": "d4fQRh",
           "title": "2/22/25 - Shawn Caron's Birthday Bash",
@@ -4046,7 +4252,7 @@
     },
     {
       "name": "TJ Itchkawich",
-      "photoCount": 169,
+      "photoCount": 224,
       "albums": [
         {
           "albumKey": "QB4Lwq",
@@ -4077,6 +4283,16 @@
           "albumKey": "L9J968",
           "title": "1/13/23 - I, The Conqueror CD Release Party",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/I-The-Conqueror/011323"
+        },
+        {
+          "albumKey": "g3PNwf",
+          "title": "8/30/25 - 24th Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/083025"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         },
         {
           "albumKey": "d4fQRh",
@@ -4200,7 +4416,7 @@
     },
     {
       "name": "Tyler Mitchell",
-      "photoCount": 130,
+      "photoCount": 131,
       "albums": [
         {
           "albumKey": "4W6BN2",
@@ -4226,6 +4442,11 @@
           "albumKey": "L9J968",
           "title": "1/13/23 - I, The Conqueror CD Release Party",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/I-The-Conqueror/011323"
+        },
+        {
+          "albumKey": "pshC24",
+          "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Paradise-Is-Cancelled/080225"
         }
       ]
     },
@@ -4249,14 +4470,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022523"
         },
         {
-          "albumKey": "js9w7Q",
-          "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
-        },
-        {
           "albumKey": "ZBzpGr",
           "title": "9/3/22 - Rikk Ashe's Birthday Bash",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
+        },
+        {
+          "albumKey": "js9w7Q",
+          "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
         },
         {
           "albumKey": "RTNrhG",
@@ -4282,6 +4503,17 @@
       ]
     },
     {
+      "name": "Wes Delaney",
+      "photoCount": 20,
+      "albums": [
+        {
+          "albumKey": "xT5B2B",
+          "title": "6/8/19 - Tyler's Graduation Jam",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Chaos-Machine/060819"
+        }
+      ]
+    },
+    {
       "name": "Zac Anderson",
       "photoCount": 62,
       "albums": [
@@ -4296,12 +4528,23 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Revision/111018"
         }
       ]
+    },
+    {
+      "name": "Zach Hall",
+      "photoCount": 31,
+      "albums": [
+        {
+          "albumKey": "sTZtCd",
+          "title": "6/24/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Calibrating-the-Calamity/062422"
+        }
+      ]
     }
   ],
   "cache": {
     "hit": false,
     "layer": "computed",
-    "building": false,
+    "building": true,
     "mode": "full-rebuild"
   }
 }
