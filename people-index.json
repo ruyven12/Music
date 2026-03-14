@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-13T12:23:23.508Z",
+  "generatedAt": "2026-03-14T22:43:17.370Z",
   "albumsScanned": 563,
   "people": [
     {
@@ -7,14 +7,14 @@
       "photoCount": 22,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -33,14 +33,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/090118"
         },
         {
-          "albumKey": "K6RX7z",
-          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
-        },
-        {
           "albumKey": "ZLkZ4p",
           "title": "1/16/16 - Trial By Stone w/ Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/011616"
+        },
+        {
+          "albumKey": "K6RX7z",
+          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
         },
         {
           "albumKey": "TkwwSx",
@@ -76,14 +76,14 @@
       "photoCount": 281,
       "albums": [
         {
-          "albumKey": "fTCfTz",
-          "title": "10/24/25 - Trawl-O-Ween 3",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102425"
-        },
-        {
           "albumKey": "7V3Mtz",
           "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/080225"
+        },
+        {
+          "albumKey": "fTCfTz",
+          "title": "10/24/25 - Trawl-O-Ween 3",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102425"
         },
         {
           "albumKey": "DLkJXG",
@@ -162,21 +162,26 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/081719"
         },
         {
-          "albumKey": "RPwp6k",
-          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
-        },
-        {
           "albumKey": "CFGw9t",
           "title": "2/10/18 - Reunion at Genos",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/021018"
+        },
+        {
+          "albumKey": "RPwp6k",
+          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
         }
       ]
     },
     {
       "name": "Alan Jones",
-      "photoCount": 40,
+      "photoCount": 56,
       "albums": [
+        {
+          "albumKey": "PVXQzV",
+          "title": "6/29/19 - 18th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-River-Rising/062919"
+        },
         {
           "albumKey": "XfxHmf",
           "title": "2/1/25 - Prospect Hill Returns to Maine",
@@ -374,14 +379,14 @@
       "photoCount": 37,
       "albums": [
         {
-          "albumKey": "h55mF4",
-          "title": "3/11/16 - Rick Servidio's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/031116"
-        },
-        {
           "albumKey": "tqkp8n",
           "title": "11/19/16 - Metal Chaos @ 212",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/111916"
+        },
+        {
+          "albumKey": "h55mF4",
+          "title": "3/11/16 - Rick Servidio's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/031116"
         },
         {
           "albumKey": "XjjVQj",
@@ -460,6 +465,37 @@
       ]
     },
     {
+      "name": "Bill True",
+      "photoCount": 119,
+      "albums": [
+        {
+          "albumKey": "KqbpGg",
+          "title": "8/10/24 - 23rd Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081024"
+        },
+        {
+          "albumKey": "bPsK48",
+          "title": "12/22/23 - The Christmas Miracle Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/122223"
+        },
+        {
+          "albumKey": "72hhhm",
+          "title": "6/24/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062422"
+        },
+        {
+          "albumKey": "L3skWd",
+          "title": "8/15/20 - 10th Annual Dark Rain BBQ",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081520"
+        },
+        {
+          "albumKey": "fBqsGX",
+          "title": "6/29/19 - 18th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062919"
+        }
+      ]
+    },
+    {
       "name": "Bo Davis",
       "photoCount": 3,
       "albums": [
@@ -505,14 +541,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/052012"
         },
         {
-          "albumKey": "4VSgxB",
-          "title": "4/14/17 - Rock For Brady Benefit",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/041417"
-        },
-        {
           "albumKey": "kVBjp7",
           "title": "3/10/12 - Motor Creeps / The Hollow Glow / 13 High",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/031012"
+        },
+        {
+          "albumKey": "4VSgxB",
+          "title": "4/14/17 - Rock For Brady Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/041417"
         },
         {
           "albumKey": "b92pzL",
@@ -704,14 +740,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/090118"
         },
         {
-          "albumKey": "K6RX7z",
-          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
-        },
-        {
           "albumKey": "ZLkZ4p",
           "title": "1/16/16 - Trial By Stone w/ Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/011616"
+        },
+        {
+          "albumKey": "K6RX7z",
+          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
         },
         {
           "albumKey": "TkwwSx",
@@ -724,14 +760,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/092912"
         },
         {
-          "albumKey": "nGTmtJ",
-          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
-        },
-        {
           "albumKey": "fkQWjS",
           "title": "6/8/12 - Widow Sunday w/ Guests 2012 - Round 2",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/060812"
+        },
+        {
+          "albumKey": "nGTmtJ",
+          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
         },
         {
           "albumKey": "dSk9P7",
@@ -755,14 +791,14 @@
       "photoCount": 127,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         },
         {
           "albumKey": "M6vQR3",
@@ -778,6 +814,17 @@
           "albumKey": "w4dXfL",
           "title": "8/7/21 - The Cage Showcase Series",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Ascent-to-Power/080721"
+        }
+      ]
+    },
+    {
+      "name": "Breanne Powell",
+      "photoCount": 2,
+      "albums": [
+        {
+          "albumKey": "bPsK48",
+          "title": "12/22/23 - The Christmas Miracle Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/122223"
         }
       ]
     },
@@ -808,14 +855,14 @@
       "photoCount": 31,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -832,8 +879,43 @@
     },
     {
       "name": "Brian Rathbun",
-      "photoCount": 4,
+      "photoCount": 141,
       "albums": [
+        {
+          "albumKey": "KqbpGg",
+          "title": "8/10/24 - 23rd Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081024"
+        },
+        {
+          "albumKey": "bPsK48",
+          "title": "12/22/23 - The Christmas Miracle Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/122223"
+        },
+        {
+          "albumKey": "72hhhm",
+          "title": "6/24/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062422"
+        },
+        {
+          "albumKey": "L3skWd",
+          "title": "8/15/20 - 10th Annual Dark Rain BBQ",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081520"
+        },
+        {
+          "albumKey": "fBqsGX",
+          "title": "6/29/19 - 18th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062919"
+        },
+        {
+          "albumKey": "Wrqt7s",
+          "title": "3/26/16 - Benefit for Linda Cyr",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/032616"
+        },
+        {
+          "albumKey": "HgpDJR",
+          "title": "6/18/16 - Y Wouldn't U Pig Roast-Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/061816"
+        },
         {
           "albumKey": "rhhSzr",
           "title": "8/23/15 - 5th Annual Dark Rain BBQ",
@@ -955,14 +1037,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/092912"
         },
         {
-          "albumKey": "nGTmtJ",
-          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
-        },
-        {
           "albumKey": "fkQWjS",
           "title": "6/8/12 - Widow Sunday w/ Guests 2012 - Round 2",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/060812"
+        },
+        {
+          "albumKey": "nGTmtJ",
+          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
         }
       ]
     },
@@ -1108,14 +1190,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/110516"
         },
         {
-          "albumKey": "JgWHKN",
-          "title": "4/16/16 - Burning Time CD Release Party 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
-        },
-        {
           "albumKey": "8wkXJB",
           "title": "8/6/16 - Rise Above Fest 2016",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
+        },
+        {
+          "albumKey": "JgWHKN",
+          "title": "4/16/16 - Burning Time CD Release Party 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
         },
         {
           "albumKey": "2FZrH2",
@@ -1171,24 +1253,24 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022225"
         },
         {
-          "albumKey": "ZBzpGr",
-          "title": "9/3/22 - Rikk Ashe's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
-        },
-        {
           "albumKey": "xVG74B",
           "title": "2/25/23 - Shawn Caron's Birthday Bash '23",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022523"
         },
         {
-          "albumKey": "RTNrhG",
-          "title": "6/30/18 - 17th Annual Windham Tattoo Appreciation Party (Day 2)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/063018"
+          "albumKey": "ZBzpGr",
+          "title": "9/3/22 - Rikk Ashe's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
         },
         {
           "albumKey": "js9w7Q",
           "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
+        },
+        {
+          "albumKey": "RTNrhG",
+          "title": "6/30/18 - 17th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/063018"
         }
       ]
     },
@@ -1211,6 +1293,17 @@
           "albumKey": "xxhtNH",
           "title": "4/4/15 - School of Rock Concert",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cheers-to-Verona/040415"
+        }
+      ]
+    },
+    {
+      "name": "Chip Sample",
+      "photoCount": 20,
+      "albums": [
+        {
+          "albumKey": "72hhhm",
+          "title": "6/24/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062422"
         }
       ]
     },
@@ -1260,20 +1353,20 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/081719"
         },
         {
-          "albumKey": "RPwp6k",
-          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
-        },
-        {
           "albumKey": "CFGw9t",
           "title": "2/10/18 - Reunion at Genos",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/021018"
+        },
+        {
+          "albumKey": "RPwp6k",
+          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
         }
       ]
     },
     {
       "name": "Chris Gagne",
-      "photoCount": 6,
+      "photoCount": 133,
       "albums": [
         {
           "albumKey": "qvwtd4",
@@ -1284,6 +1377,31 @@
           "albumKey": "VTGbcT",
           "title": "4/24/21 - Mud Season Mayhem",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Alions/042421"
+        },
+        {
+          "albumKey": "BMB4qN",
+          "title": "12/6/25 - 5th Annual Justin Smith Mosh for Tots",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/120625"
+        },
+        {
+          "albumKey": "PCfSkj",
+          "title": "8/4/23 - Herd Flock V: Revenge of the Fifth (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/080423"
+        },
+        {
+          "albumKey": "SNWpBX",
+          "title": "4/24/21 - Mud Season Mayhem",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/042421"
+        },
+        {
+          "albumKey": "SVL4cN",
+          "title": "1/13/23 - I, The Conqueror CD Release Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/011323"
+        },
+        {
+          "albumKey": "rdns4B",
+          "title": "11/2/19 - Cage Annual Halloween Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/110219"
         }
       ]
     },
@@ -1364,7 +1482,7 @@
     },
     {
       "name": "Chris Williams",
-      "photoCount": 119,
+      "photoCount": 138,
       "albums": [
         {
           "albumKey": "8S7GHr",
@@ -1392,6 +1510,11 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/041417"
         },
         {
+          "albumKey": "L3skWd",
+          "title": "8/15/20 - 10th Annual Dark Rain BBQ",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081520"
+        },
+        {
           "albumKey": "vXFMFS",
           "title": "10/18/25 - Cuda's 50th Birthday Party",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Four-Feet-Out/101825"
@@ -1411,6 +1534,42 @@
           "albumKey": "TZL8jt",
           "title": "4/22/17 - Threatpoint / Objet / WMA / Pariah",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/National/Threatpoint/042217"
+        }
+      ]
+    },
+    {
+      "name": "CJ Rowe",
+      "photoCount": 130,
+      "albums": [
+        {
+          "albumKey": "BMB4qN",
+          "title": "12/6/25 - 5th Annual Justin Smith Mosh for Tots",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/120625"
+        },
+        {
+          "albumKey": "PCfSkj",
+          "title": "8/4/23 - Herd Flock V: Revenge of the Fifth (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/080423"
+        },
+        {
+          "albumKey": "BXzTm5",
+          "title": "8/1/25 - Herd Flock 7: Flock On (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/080125"
+        },
+        {
+          "albumKey": "SNWpBX",
+          "title": "4/24/21 - Mud Season Mayhem",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/042421"
+        },
+        {
+          "albumKey": "SVL4cN",
+          "title": "1/13/23 - I, The Conqueror CD Release Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/011323"
+        },
+        {
+          "albumKey": "rdns4B",
+          "title": "11/2/19 - Cage Annual Halloween Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/110219"
         }
       ]
     },
@@ -1501,6 +1660,17 @@
       ]
     },
     {
+      "name": "Damien Pinkham",
+      "photoCount": 26,
+      "albums": [
+        {
+          "albumKey": "bPsK48",
+          "title": "12/22/23 - The Christmas Miracle Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/122223"
+        }
+      ]
+    },
+    {
       "name": "Dan Murphy",
       "photoCount": 35,
       "albums": [
@@ -1566,14 +1736,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/110516"
         },
         {
-          "albumKey": "JgWHKN",
-          "title": "4/16/16 - Burning Time CD Release Party 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
-        },
-        {
           "albumKey": "8wkXJB",
           "title": "8/6/16 - Rise Above Fest 2016",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
+        },
+        {
+          "albumKey": "JgWHKN",
+          "title": "4/16/16 - Burning Time CD Release Party 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
         },
         {
           "albumKey": "2FZrH2",
@@ -1621,7 +1791,7 @@
     },
     {
       "name": "David Barnes",
-      "photoCount": 23,
+      "photoCount": 29,
       "albums": [
         {
           "albumKey": "b57LP5",
@@ -1632,6 +1802,11 @@
           "albumKey": "DhXJ7c",
           "title": "6/22/14 - Threat Signal at the Kave",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cavemanifesto/062214"
+        },
+        {
+          "albumKey": "SNWpBX",
+          "title": "4/24/21 - Mud Season Mayhem",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/042421"
         }
       ]
     },
@@ -1667,14 +1842,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022225"
         },
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         },
         {
           "albumKey": "RCRrPS",
@@ -1759,14 +1934,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/110516"
         },
         {
-          "albumKey": "JgWHKN",
-          "title": "4/16/16 - Burning Time CD Release Party 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
-        },
-        {
           "albumKey": "8wkXJB",
           "title": "8/6/16 - Rise Above Fest 2016",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
+        },
+        {
+          "albumKey": "JgWHKN",
+          "title": "4/16/16 - Burning Time CD Release Party 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
         },
         {
           "albumKey": "2FZrH2",
@@ -1787,8 +1962,43 @@
     },
     {
       "name": "Dudley Leavitt",
-      "photoCount": 3,
+      "photoCount": 110,
       "albums": [
+        {
+          "albumKey": "KqbpGg",
+          "title": "8/10/24 - 23rd Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081024"
+        },
+        {
+          "albumKey": "bPsK48",
+          "title": "12/22/23 - The Christmas Miracle Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/122223"
+        },
+        {
+          "albumKey": "72hhhm",
+          "title": "6/24/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062422"
+        },
+        {
+          "albumKey": "L3skWd",
+          "title": "8/15/20 - 10th Annual Dark Rain BBQ",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081520"
+        },
+        {
+          "albumKey": "fBqsGX",
+          "title": "6/29/19 - 18th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062919"
+        },
+        {
+          "albumKey": "Wrqt7s",
+          "title": "3/26/16 - Benefit for Linda Cyr",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/032616"
+        },
+        {
+          "albumKey": "HgpDJR",
+          "title": "6/18/16 - Y Wouldn't U Pig Roast-Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/061816"
+        },
         {
           "albumKey": "rhhSzr",
           "title": "8/23/15 - 5th Annual Dark Rain BBQ",
@@ -1841,7 +2051,7 @@
     },
     {
       "name": "Echo Parker",
-      "photoCount": 19,
+      "photoCount": 21,
       "albums": [
         {
           "albumKey": "KCdQdZ",
@@ -1849,14 +2059,19 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/053125"
         },
         {
+          "albumKey": "9vnzWs",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
           "albumKey": "2S6RDH",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         },
         {
-          "albumKey": "9vnzWs",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+          "albumKey": "bPsK48",
+          "title": "12/22/23 - The Christmas Miracle Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/122223"
         }
       ]
     },
@@ -1924,14 +2139,14 @@
       "photoCount": 37,
       "albums": [
         {
-          "albumKey": "h55mF4",
-          "title": "3/11/16 - Rick Servidio's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/031116"
-        },
-        {
           "albumKey": "tqkp8n",
           "title": "11/19/16 - Metal Chaos @ 212",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/111916"
+        },
+        {
+          "albumKey": "h55mF4",
+          "title": "3/11/16 - Rick Servidio's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/031116"
         },
         {
           "albumKey": "XjjVQj",
@@ -1953,7 +2168,7 @@
     },
     {
       "name": "Eric Rector",
-      "photoCount": 28,
+      "photoCount": 46,
       "albums": [
         {
           "albumKey": "8S7GHr",
@@ -1974,6 +2189,32 @@
           "albumKey": "b92pzL",
           "title": "2/25/12 - Breakthrough / BTF / 13 High 2012",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/022512"
+        },
+        {
+          "albumKey": "L3skWd",
+          "title": "8/15/20 - 10th Annual Dark Rain BBQ",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081520"
+        },
+        {
+          "albumKey": "Wrqt7s",
+          "title": "3/26/16 - Benefit for Linda Cyr",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/032616"
+        }
+      ]
+    },
+    {
+      "name": "Ethan Hartley",
+      "photoCount": 4,
+      "albums": [
+        {
+          "albumKey": "BMB4qN",
+          "title": "12/6/25 - 5th Annual Justin Smith Mosh for Tots",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/120625"
+        },
+        {
+          "albumKey": "SNWpBX",
+          "title": "4/24/21 - Mud Season Mayhem",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/042421"
         }
       ]
     },
@@ -2009,14 +2250,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Fifth-Freedom/020125"
         },
         {
-          "albumKey": "z22bGz",
-          "title": "10/4/18 - Objet / Division North / Trawl",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/100418"
-        },
-        {
           "albumKey": "vgLKtQ",
           "title": "7/9/21 - Murcielago/Ultra Major/Trawl",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/070921"
+        },
+        {
+          "albumKey": "z22bGz",
+          "title": "10/4/18 - Objet / Division North / Trawl",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/100418"
         }
       ]
     },
@@ -2167,14 +2408,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/081719"
         },
         {
-          "albumKey": "RPwp6k",
-          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
-        },
-        {
           "albumKey": "CFGw9t",
           "title": "2/10/18 - Reunion at Genos",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/021018"
+        },
+        {
+          "albumKey": "RPwp6k",
+          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
         }
       ]
     },
@@ -2287,14 +2528,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/090118"
         },
         {
-          "albumKey": "K6RX7z",
-          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
-        },
-        {
           "albumKey": "ZLkZ4p",
           "title": "1/16/16 - Trial By Stone w/ Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/011616"
+        },
+        {
+          "albumKey": "K6RX7z",
+          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
         },
         {
           "albumKey": "TkwwSx",
@@ -2307,14 +2548,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/092912"
         },
         {
-          "albumKey": "nGTmtJ",
-          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
-        },
-        {
           "albumKey": "fkQWjS",
           "title": "6/8/12 - Widow Sunday w/ Guests 2012 - Round 2",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/060812"
+        },
+        {
+          "albumKey": "nGTmtJ",
+          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
         }
       ]
     },
@@ -2514,14 +2755,14 @@
       "photoCount": 41,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -2595,14 +2836,14 @@
       "photoCount": 24,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -2634,6 +2875,22 @@
           "albumKey": "LfsGXG",
           "title": "7/15/17 - Shenanigans Music Showcase",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dirty-Rotten-Winter/071517"
+        }
+      ]
+    },
+    {
+      "name": "Jeremy Shoblock",
+      "photoCount": 24,
+      "albums": [
+        {
+          "albumKey": "Wrqt7s",
+          "title": "3/26/16 - Benefit for Linda Cyr",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/032616"
+        },
+        {
+          "albumKey": "HgpDJR",
+          "title": "6/18/16 - Y Wouldn't U Pig Roast-Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/061816"
         }
       ]
     },
@@ -2724,14 +2981,14 @@
       "photoCount": 18,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -2908,6 +3165,42 @@
       ]
     },
     {
+      "name": "Jon Riley",
+      "photoCount": 127,
+      "albums": [
+        {
+          "albumKey": "BMB4qN",
+          "title": "12/6/25 - 5th Annual Justin Smith Mosh for Tots",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/120625"
+        },
+        {
+          "albumKey": "PCfSkj",
+          "title": "8/4/23 - Herd Flock V: Revenge of the Fifth (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/080423"
+        },
+        {
+          "albumKey": "BXzTm5",
+          "title": "8/1/25 - Herd Flock 7: Flock On (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/080125"
+        },
+        {
+          "albumKey": "SNWpBX",
+          "title": "4/24/21 - Mud Season Mayhem",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/042421"
+        },
+        {
+          "albumKey": "SVL4cN",
+          "title": "1/13/23 - I, The Conqueror CD Release Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/011323"
+        },
+        {
+          "albumKey": "rdns4B",
+          "title": "11/2/19 - Cage Annual Halloween Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/110219"
+        }
+      ]
+    },
+    {
       "name": "Jon Sturdee",
       "photoCount": 128,
       "albums": [
@@ -2939,9 +3232,35 @@
       ]
     },
     {
-      "name": "Josh Currie",
-      "photoCount": 49,
+      "name": "Josh Correia",
+      "photoCount": 44,
       "albums": [
+        {
+          "albumKey": "PCfSkj",
+          "title": "8/4/23 - Herd Flock V: Revenge of the Fifth (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/080423"
+        },
+        {
+          "albumKey": "BXzTm5",
+          "title": "8/1/25 - Herd Flock 7: Flock On (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/080125"
+        },
+        {
+          "albumKey": "SVL4cN",
+          "title": "1/13/23 - I, The Conqueror CD Release Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/011323"
+        }
+      ]
+    },
+    {
+      "name": "Josh Currie",
+      "photoCount": 68,
+      "albums": [
+        {
+          "albumKey": "BMB4qN",
+          "title": "12/6/25 - 5th Annual Justin Smith Mosh for Tots",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/120625"
+        },
         {
           "albumKey": "KjWRJS",
           "title": "8/25/17 - Fred 332's Birthday Bash",
@@ -3065,14 +3384,14 @@
       "photoCount": 372,
       "albums": [
         {
-          "albumKey": "fTCfTz",
-          "title": "10/24/25 - Trawl-O-Ween 3",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102425"
-        },
-        {
           "albumKey": "7V3Mtz",
           "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/080225"
+        },
+        {
+          "albumKey": "fTCfTz",
+          "title": "10/24/25 - Trawl-O-Ween 3",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102425"
         },
         {
           "albumKey": "DLkJXG",
@@ -3172,17 +3491,52 @@
     },
     {
       "name": "Kelleigh Doughty",
-      "photoCount": 22,
+      "photoCount": 183,
       "albums": [
+        {
+          "albumKey": "9vnzWs",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
         {
           "albumKey": "2S6RDH",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         },
         {
-          "albumKey": "9vnzWs",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+          "albumKey": "KqbpGg",
+          "title": "8/10/24 - 23rd Annual Windham Tattoo Appreciation Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081024"
+        },
+        {
+          "albumKey": "bPsK48",
+          "title": "12/22/23 - The Christmas Miracle Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/122223"
+        },
+        {
+          "albumKey": "72hhhm",
+          "title": "6/24/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062422"
+        },
+        {
+          "albumKey": "L3skWd",
+          "title": "8/15/20 - 10th Annual Dark Rain BBQ",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/081520"
+        },
+        {
+          "albumKey": "fBqsGX",
+          "title": "6/29/19 - 18th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/062919"
+        },
+        {
+          "albumKey": "Wrqt7s",
+          "title": "3/26/16 - Benefit for Linda Cyr",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/032616"
+        },
+        {
+          "albumKey": "HgpDJR",
+          "title": "6/18/16 - Y Wouldn't U Pig Roast-Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/061816"
         }
       ]
     },
@@ -3274,14 +3628,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/110516"
         },
         {
-          "albumKey": "JgWHKN",
-          "title": "4/16/16 - Burning Time CD Release Party 2016",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
-        },
-        {
           "albumKey": "8wkXJB",
           "title": "8/6/16 - Rise Above Fest 2016",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/080616"
+        },
+        {
+          "albumKey": "JgWHKN",
+          "title": "4/16/16 - Burning Time CD Release Party 2016",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Burning-Time/041616"
         },
         {
           "albumKey": "2FZrH2",
@@ -3370,7 +3724,7 @@
     },
     {
       "name": "Lenny Smith",
-      "photoCount": 11,
+      "photoCount": 12,
       "albums": [
         {
           "albumKey": "QB4Lwq",
@@ -3381,6 +3735,11 @@
           "albumKey": "VTGbcT",
           "title": "4/24/21 - Mud Season Mayhem",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Alions/042421"
+        },
+        {
+          "albumKey": "SNWpBX",
+          "title": "4/24/21 - Mud Season Mayhem",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/042421"
         },
         {
           "albumKey": "pshC24",
@@ -3510,14 +3869,14 @@
       "photoCount": 19,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -3559,14 +3918,14 @@
       "photoCount": 37,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -3618,14 +3977,14 @@
       "photoCount": 51,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -3686,14 +4045,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022225"
         },
         {
-          "albumKey": "ZBzpGr",
-          "title": "9/3/22 - Rikk Ashe's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
-        },
-        {
           "albumKey": "xVG74B",
           "title": "2/25/23 - Shawn Caron's Birthday Bash '23",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022523"
+        },
+        {
+          "albumKey": "ZBzpGr",
+          "title": "9/3/22 - Rikk Ashe's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
         }
       ]
     },
@@ -3766,14 +4125,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/090118"
         },
         {
-          "albumKey": "K6RX7z",
-          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
-        },
-        {
           "albumKey": "ZLkZ4p",
           "title": "1/16/16 - Trial By Stone w/ Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/011616"
+        },
+        {
+          "albumKey": "K6RX7z",
+          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
         },
         {
           "albumKey": "TkwwSx",
@@ -3786,14 +4145,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/092912"
         },
         {
-          "albumKey": "nGTmtJ",
-          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
-        },
-        {
           "albumKey": "fkQWjS",
           "title": "6/8/12 - Widow Sunday w/ Guests 2012 - Round 2",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/060812"
+        },
+        {
+          "albumKey": "nGTmtJ",
+          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
         }
       ]
     },
@@ -3871,14 +4230,14 @@
       "photoCount": 44,
       "albums": [
         {
-          "albumKey": "h55mF4",
-          "title": "3/11/16 - Rick Servidio's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/031116"
-        },
-        {
           "albumKey": "tqkp8n",
           "title": "11/19/16 - Metal Chaos @ 212",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/111916"
+        },
+        {
+          "albumKey": "h55mF4",
+          "title": "3/11/16 - Rick Servidio's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/031116"
         },
         {
           "albumKey": "XjjVQj",
@@ -3986,14 +4345,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/081719"
         },
         {
-          "albumKey": "RPwp6k",
-          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
-        },
-        {
           "albumKey": "CFGw9t",
           "title": "2/10/18 - Reunion at Genos",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/021018"
+        },
+        {
+          "albumKey": "RPwp6k",
+          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
         },
         {
           "albumKey": "7V3Mtz",
@@ -4136,6 +4495,17 @@
       ]
     },
     {
+      "name": "Patrick Dolan",
+      "photoCount": 9,
+      "albums": [
+        {
+          "albumKey": "PVXQzV",
+          "title": "6/29/19 - 18th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-River-Rising/062919"
+        }
+      ]
+    },
+    {
       "name": "Paul McKinnon",
       "photoCount": 1,
       "albums": [
@@ -4188,14 +4558,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/090118"
         },
         {
-          "albumKey": "K6RX7z",
-          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
-        },
-        {
           "albumKey": "ZLkZ4p",
           "title": "1/16/16 - Trial By Stone w/ Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/011616"
+        },
+        {
+          "albumKey": "K6RX7z",
+          "title": "3/19/15 - Fuel The Arts Kickoff Party '15",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/031915"
         },
         {
           "albumKey": "TkwwSx",
@@ -4208,14 +4578,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/092912"
         },
         {
-          "albumKey": "nGTmtJ",
-          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
-        },
-        {
           "albumKey": "fkQWjS",
           "title": "6/8/12 - Widow Sunday w/ Guests 2012 - Round 2",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/060812"
+        },
+        {
+          "albumKey": "nGTmtJ",
+          "title": "3/2/12 - Widow Sunday w/ Guests 2012 - Round 1",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Culling-the-Herd/030212"
         }
       ]
     },
@@ -4232,7 +4602,7 @@
     },
     {
       "name": "Rich Yanok",
-      "photoCount": 123,
+      "photoCount": 124,
       "albums": [
         {
           "albumKey": "8S7GHr",
@@ -4260,14 +4630,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/052012"
         },
         {
-          "albumKey": "4VSgxB",
-          "title": "4/14/17 - Rock For Brady Benefit",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/041417"
-        },
-        {
           "albumKey": "kVBjp7",
           "title": "3/10/12 - Motor Creeps / The Hollow Glow / 13 High",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/031012"
+        },
+        {
+          "albumKey": "4VSgxB",
+          "title": "4/14/17 - Rock For Brady Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/13-High/041417"
         },
         {
           "albumKey": "b92pzL",
@@ -4278,6 +4648,11 @@
           "albumKey": "mCks6r",
           "title": "2/18/12 - Quansigamog 475 Hogfest 2012",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Cabal/021812"
+        },
+        {
+          "albumKey": "Wrqt7s",
+          "title": "3/26/16 - Benefit for Linda Cyr",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/032616"
         },
         {
           "albumKey": "vXFMFS",
@@ -4461,14 +4836,14 @@
       "photoCount": 27,
       "albums": [
         {
-          "albumKey": "9zLPRk",
-          "title": "1/31/15 - January Thrash Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Diablooo/013115"
-        },
-        {
           "albumKey": "5Q3pvp",
           "title": "9/12/15 - Noblefest 2015",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Diablooo/091215"
+        },
+        {
+          "albumKey": "9zLPRk",
+          "title": "1/31/15 - January Thrash Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Diablooo/013115"
         }
       ]
     },
@@ -4484,18 +4859,39 @@
       ]
     },
     {
+      "name": "Robbie Buxton",
+      "photoCount": 56,
+      "albums": [
+        {
+          "albumKey": "SNWpBX",
+          "title": "4/24/21 - Mud Season Mayhem",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/042421"
+        },
+        {
+          "albumKey": "SVL4cN",
+          "title": "1/13/23 - I, The Conqueror CD Release Party",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/011323"
+        },
+        {
+          "albumKey": "rdns4B",
+          "title": "11/2/19 - Cage Annual Halloween Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/110219"
+        }
+      ]
+    },
+    {
       "name": "Russ Dumond",
       "photoCount": 39,
       "albums": [
         {
-          "albumKey": "h55mF4",
-          "title": "3/11/16 - Rick Servidio's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/031116"
-        },
-        {
           "albumKey": "tqkp8n",
           "title": "11/19/16 - Metal Chaos @ 212",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/111916"
+        },
+        {
+          "albumKey": "h55mF4",
+          "title": "3/11/16 - Rick Servidio's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Bloodborn/031116"
         },
         {
           "albumKey": "XjjVQj",
@@ -4559,6 +4955,17 @@
       ]
     },
     {
+      "name": "Sam Rathbun",
+      "photoCount": 2,
+      "albums": [
+        {
+          "albumKey": "bPsK48",
+          "title": "12/22/23 - The Christmas Miracle Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/122223"
+        }
+      ]
+    },
+    {
       "name": "Scott Lebourdais",
       "photoCount": 182,
       "albums": [
@@ -4573,24 +4980,24 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022225"
         },
         {
-          "albumKey": "ZBzpGr",
-          "title": "9/3/22 - Rikk Ashe's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
-        },
-        {
           "albumKey": "xVG74B",
           "title": "2/25/23 - Shawn Caron's Birthday Bash '23",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022523"
         },
         {
-          "albumKey": "RTNrhG",
-          "title": "6/30/18 - 17th Annual Windham Tattoo Appreciation Party (Day 2)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/063018"
+          "albumKey": "ZBzpGr",
+          "title": "9/3/22 - Rikk Ashe's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
         },
         {
           "albumKey": "js9w7Q",
           "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
+        },
+        {
+          "albumKey": "RTNrhG",
+          "title": "6/30/18 - 17th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/063018"
         },
         {
           "albumKey": "X8Mh2F",
@@ -4636,14 +5043,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         },
         {
-          "albumKey": "fTCfTz",
-          "title": "10/24/25 - Trawl-O-Ween 3",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102425"
-        },
-        {
           "albumKey": "7V3Mtz",
           "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/080225"
+        },
+        {
+          "albumKey": "fTCfTz",
+          "title": "10/24/25 - Trawl-O-Ween 3",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102425"
         },
         {
           "albumKey": "DLkJXG",
@@ -4686,14 +5093,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102122"
         },
         {
-          "albumKey": "z22bGz",
-          "title": "10/4/18 - Objet / Division North / Trawl",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/100418"
-        },
-        {
           "albumKey": "vgLKtQ",
           "title": "7/9/21 - Murcielago/Ultra Major/Trawl",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/070921"
+        },
+        {
+          "albumKey": "z22bGz",
+          "title": "10/4/18 - Objet / Division North / Trawl",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/100418"
         }
       ]
     },
@@ -4801,14 +5208,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022225"
         },
         {
-          "albumKey": "fTCfTz",
-          "title": "10/24/25 - Trawl-O-Ween 3",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102425"
-        },
-        {
           "albumKey": "7V3Mtz",
           "title": "8/2/25 - Herd Flock 7: Flock On (Day 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/080225"
+        },
+        {
+          "albumKey": "fTCfTz",
+          "title": "10/24/25 - Trawl-O-Ween 3",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102425"
         },
         {
           "albumKey": "DLkJXG",
@@ -4851,14 +5258,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/102122"
         },
         {
-          "albumKey": "z22bGz",
-          "title": "10/4/18 - Objet / Division North / Trawl",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/100418"
-        },
-        {
           "albumKey": "vgLKtQ",
           "title": "7/9/21 - Murcielago/Ultra Major/Trawl",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/070921"
+        },
+        {
+          "albumKey": "z22bGz",
+          "title": "10/4/18 - Objet / Division North / Trawl",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Trawl/100418"
         }
       ]
     },
@@ -4892,14 +5299,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/081719"
         },
         {
-          "albumKey": "RPwp6k",
-          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
-        },
-        {
           "albumKey": "CFGw9t",
           "title": "2/10/18 - Reunion at Genos",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/021018"
+        },
+        {
+          "albumKey": "RPwp6k",
+          "title": "9/1/18 - Herd Flock 3: Flock Yeah!",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Stillborn-Condition/090118"
         }
       ]
     },
@@ -4955,14 +5362,14 @@
       "photoCount": 16,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -5089,6 +5496,22 @@
       ]
     },
     {
+      "name": "Steven Cole",
+      "photoCount": 34,
+      "albums": [
+        {
+          "albumKey": "Wrqt7s",
+          "title": "3/26/16 - Benefit for Linda Cyr",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/032616"
+        },
+        {
+          "albumKey": "HgpDJR",
+          "title": "6/18/16 - Y Wouldn't U Pig Roast-Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/061816"
+        }
+      ]
+    },
+    {
       "name": "Tanner Smith",
       "photoCount": 22,
       "albums": [
@@ -5104,14 +5527,14 @@
       "photoCount": 33,
       "albums": [
         {
-          "albumKey": "2S6RDH",
-          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
-        },
-        {
           "albumKey": "9vnzWs",
           "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-2"
+        },
+        {
+          "albumKey": "2S6RDH",
+          "title": "9/26/25 - \"You Can't Kill Rock N Roll\" Benefit (Set 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/All-Stars/092625-1"
         }
       ]
     },
@@ -5249,7 +5672,7 @@
     },
     {
       "name": "Trevor Driscoll",
-      "photoCount": 56,
+      "photoCount": 74,
       "albums": [
         {
           "albumKey": "dQd3SJ",
@@ -5260,6 +5683,22 @@
           "albumKey": "nXPQkf",
           "title": "8/1/25 - Herd Flock 7: Flock On (Day 1)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Anatomy-of-a-Thief/080125"
+        },
+        {
+          "albumKey": "BXzTm5",
+          "title": "8/1/25 - Herd Flock 7: Flock On (Day 1)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dead-In-Your-Eyes/080125"
+        }
+      ]
+    },
+    {
+      "name": "Trish Merrick",
+      "photoCount": 12,
+      "albums": [
+        {
+          "albumKey": "HgpDJR",
+          "title": "6/18/16 - Y Wouldn't U Pig Roast-Benefit",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Dark-Rain/061816"
         }
       ]
     },
@@ -5294,14 +5733,14 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Creatures/042515"
         },
         {
-          "albumKey": "9zLPRk",
-          "title": "1/31/15 - January Thrash Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Diablooo/013115"
-        },
-        {
           "albumKey": "5Q3pvp",
           "title": "9/12/15 - Noblefest 2015",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Diablooo/091215"
+        },
+        {
+          "albumKey": "9zLPRk",
+          "title": "1/31/15 - January Thrash Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Diablooo/013115"
         }
       ]
     },
@@ -5367,24 +5806,24 @@
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022225"
         },
         {
-          "albumKey": "ZBzpGr",
-          "title": "9/3/22 - Rikk Ashe's Birthday Bash",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
-        },
-        {
           "albumKey": "xVG74B",
           "title": "2/25/23 - Shawn Caron's Birthday Bash '23",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/022523"
         },
         {
-          "albumKey": "RTNrhG",
-          "title": "6/30/18 - 17th Annual Windham Tattoo Appreciation Party (Day 2)",
-          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/063018"
+          "albumKey": "ZBzpGr",
+          "title": "9/3/22 - Rikk Ashe's Birthday Bash",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/090322"
         },
         {
           "albumKey": "js9w7Q",
           "title": "6/25/22 - 20th Annual WIndham Tattoo Appreciation Party (Day 2)",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/062522"
+        },
+        {
+          "albumKey": "RTNrhG",
+          "title": "6/30/18 - 17th Annual Windham Tattoo Appreciation Party (Day 2)",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/3FD/063018"
         },
         {
           "albumKey": "gqBmFG",
@@ -5451,7 +5890,7 @@
   "cache": {
     "hit": false,
     "layer": "computed",
-    "building": true,
+    "building": false,
     "mode": "full-rebuild"
   }
 }
