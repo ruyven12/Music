@@ -678,6 +678,11 @@ async function computePeopleIndexFromShows() {
   // 3) For each album, scan captions
   const peopleToAlbums = new Map(); // name -> Map(albumKey -> {albumKey,title,url})
   const peopleToPhotoCount = new Map(); // name -> number of photos they appear in
+  const shotStats = {
+    totalShotsScanned: 0,
+    shotsTagged: 0,
+    shotsUntagged: 0
+  };
 
   async function ensureAlbumMeta(albumKey) {
     try {
@@ -703,11 +708,19 @@ async function computePeopleIndexFromShows() {
       // Prefer captions available in the page payload.
       const imageKeysNeedingDetail = [];
       for (const ai of items) {
-        const cap =
-          (ai && ai.Caption) ||
-          (ai && ai.Image && ai.Image.Caption) ||
-          (ai && ai.Image && ai.Image.CaptionText) ||
-          "";
+        const pageCaption =
+          (ai && Object.prototype.hasOwnProperty.call(ai, "Caption")) ? ai.Caption :
+          (ai && ai.Image && Object.prototype.hasOwnProperty.call(ai.Image, "Caption")) ? ai.Image.Caption :
+          (ai && ai.Image && Object.prototype.hasOwnProperty.call(ai.Image, "CaptionText")) ? ai.Image.CaptionText :
+          undefined;
+        const cap = typeof pageCaption === "string" ? pageCaption : "";
+
+        if (pageCaption !== undefined) {
+          shotStats.totalShotsScanned += 1;
+          if (cap.trim()) shotStats.shotsTagged += 1;
+          else shotStats.shotsUntagged += 1;
+        }
+
         const names = parsePeopleFromCaption(cap);
         if (names.length) {
           for (const n of names) {
@@ -722,7 +735,11 @@ async function computePeopleIndexFromShows() {
         }
 
         const ik = (ai && ai.Image && ai.Image.ImageKey) || ai.ImageKey || "";
-        if (ik) imageKeysNeedingDetail.push(String(ik));
+        if (pageCaption === undefined && ik) imageKeysNeedingDetail.push(String(ik));
+        else if (pageCaption === undefined) {
+          shotStats.totalShotsScanned += 1;
+          shotStats.shotsUntagged += 1;
+        }
       }
 
       // If captions weren't included, fetch per-image detail for the remaining.
@@ -732,6 +749,9 @@ async function computePeopleIndexFromShows() {
           const resp2 = detail && detail.Response ? detail.Response : detail;
           const img = resp2 && (resp2.Image || resp2.image || resp2);
           const cap = img && (img.Caption || img.CaptionText || "");
+          shotStats.totalShotsScanned += 1;
+          if (String(cap || "").trim()) shotStats.shotsTagged += 1;
+          else shotStats.shotsUntagged += 1;
           const names = parsePeopleFromCaption(cap);
           if (!names.length) return;
           for (const n of names) {
@@ -771,6 +791,9 @@ async function computePeopleIndexFromShows() {
   return {
     generatedAt: new Date().toISOString(),
     albumsScanned: albumKeys.length,
+    totalShotsScanned: shotStats.totalShotsScanned,
+    shotsTagged: shotStats.shotsTagged,
+    shotsUntagged: shotStats.shotsUntagged,
     people
   };
 }
@@ -866,6 +889,26 @@ async function computePeopleIndexFromBandsFolder(opts) {
     ? buildPhotoCountMapFromPayload(previous)
     : new Map();
 
+  function buildShotStatsFromPayload(payload) {
+    if (!payload || typeof payload !== "object") {
+      return { totalShotsScanned: 0, shotsTagged: 0, shotsUntagged: 0 };
+    }
+
+    const totalShotsScanned = Number(payload.totalShotsScanned || 0);
+    const shotsTagged = Number(payload.shotsTagged || 0);
+    const shotsUntagged = Number(payload.shotsUntagged || 0);
+
+    return {
+      totalShotsScanned: Number.isFinite(totalShotsScanned) ? totalShotsScanned : 0,
+      shotsTagged: Number.isFinite(shotsTagged) ? shotsTagged : 0,
+      shotsUntagged: Number.isFinite(shotsUntagged) ? shotsUntagged : 0
+    };
+  }
+
+  const shotStats = (incremental && previous)
+    ? buildShotStatsFromPayload(previous)
+    : { totalShotsScanned: 0, shotsTagged: 0, shotsUntagged: 0 };
+
   async function ensureAlbumMeta(albumKey) {
     const pre = discovered.find((x) => x.albumKey === albumKey);
     if (pre && (pre.title || pre.url)) return { title: pre.title || "", url: pre.url || "" };
@@ -891,11 +934,19 @@ async function computePeopleIndexFromBandsFolder(opts) {
 
       const imageKeysNeedingDetail = [];
       for (const ai of items) {
-        const cap =
-          (ai && ai.Caption) ||
-          (ai && ai.Image && ai.Image.Caption) ||
-          (ai && ai.Image && ai.Image.CaptionText) ||
-          "";
+        const pageCaption =
+          (ai && Object.prototype.hasOwnProperty.call(ai, "Caption")) ? ai.Caption :
+          (ai && ai.Image && Object.prototype.hasOwnProperty.call(ai.Image, "Caption")) ? ai.Image.Caption :
+          (ai && ai.Image && Object.prototype.hasOwnProperty.call(ai.Image, "CaptionText")) ? ai.Image.CaptionText :
+          undefined;
+        const cap = typeof pageCaption === "string" ? pageCaption : "";
+
+        if (pageCaption !== undefined) {
+          shotStats.totalShotsScanned += 1;
+          if (cap.trim()) shotStats.shotsTagged += 1;
+          else shotStats.shotsUntagged += 1;
+        }
+
         const names = parsePeopleFromCaption(cap);
         if (names.length) {
           for (const n of names) {
@@ -909,7 +960,11 @@ async function computePeopleIndexFromBandsFolder(opts) {
         }
 
         const ik = (ai && ai.Image && ai.Image.ImageKey) || ai.ImageKey || "";
-        if (ik) imageKeysNeedingDetail.push(String(ik));
+        if (pageCaption === undefined && ik) imageKeysNeedingDetail.push(String(ik));
+        else if (pageCaption === undefined) {
+          shotStats.totalShotsScanned += 1;
+          shotStats.shotsUntagged += 1;
+        }
       }
 
       await mapLimit(imageKeysNeedingDetail, 4, async (imageKey) => {
@@ -918,6 +973,9 @@ async function computePeopleIndexFromBandsFolder(opts) {
           const resp2 = detail && detail.Response ? detail.Response : detail;
           const img = resp2 && (resp2.Image || resp2.image || resp2);
           const cap = img && (img.Caption || img.CaptionText || "");
+          shotStats.totalShotsScanned += 1;
+          if (String(cap || "").trim()) shotStats.shotsTagged += 1;
+          else shotStats.shotsUntagged += 1;
           const names = parsePeopleFromCaption(cap);
           if (!names.length) return;
           for (const n of names) {
@@ -967,6 +1025,9 @@ async function computePeopleIndexFromBandsFolder(opts) {
   return {
     generatedAt: new Date().toISOString(),
     albumsScanned: albumKeysAll.length,
+    totalShotsScanned: shotStats.totalShotsScanned,
+    shotsTagged: shotStats.shotsTagged,
+    shotsUntagged: shotStats.shotsUntagged,
     people,
     _albumKeys: albumKeysAll,
     _incremental: incremental ? { scannedNew: albumKeysToScan.length } : undefined
