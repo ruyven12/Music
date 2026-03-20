@@ -7786,9 +7786,7 @@
     }
   ],
   "cache": {
-    "hit": false,
-    "layer": "computed",
-    "building": false,
-    "mode": "full-rebuild"
+    "hit": true,
+    "layer": "disk"
   }
 }
