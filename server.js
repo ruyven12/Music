@@ -1516,7 +1516,7 @@ app.get("/sheet/shows", async (req, res) => {
   }
 });
 
-app.get('/show-index.json', async (req, res) => {
+app.get('/index/shows/show-index.json', async (req, res) => {
   try {
     const force = String(req.query.force || '') === '1';
     let csv = '';
@@ -2029,6 +2029,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server listening on http://localhost:" + PORT);
 });
+
 
 
 
