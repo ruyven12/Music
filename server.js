@@ -1,4 +1,4 @@
-console.log(">>> SERVER FILE VERSION: PATCHED-FULL-8 <<<");
+﻿console.log(">>> SERVER FILE VERSION: PATCHED-FULL-8 <<<");
 
 const express = require("express");
 const archiver = require("archiver");
@@ -382,6 +382,94 @@ function parseCsvSimple(csvText) {
   return { header, rows };
 }
 
+function formatPrettyShowDate(raw) {
+  const value = String(raw || '').trim();
+  if (!value) return '';
+  const parts = value.split('/');
+  if (parts.length !== 3) return value;
+
+  let [m, d, y] = parts.map((p) => String(p || '').trim());
+  m = parseInt(m, 10);
+  d = parseInt(d, 10);
+  if (String(y).length === 2) y = Number('20' + y);
+  else y = parseInt(y, 10);
+
+  const monthNames = [
+    '', 'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  function ordinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+
+  if (!monthNames[m] || !d || !y) return value;
+  return `${monthNames[m]} ${ordinal(d)}, ${y}`;
+}
+
+function buildShowIndexPayload(csvText) {
+  const { header, rows } = parseCsvSimple(csvText);
+  const headerLower = header.map((h) => String(h || '').trim().toLowerCase());
+
+  const nameIdx = headerLower.indexOf('show_name') !== -1
+    ? headerLower.indexOf('show_name')
+    : headerLower.indexOf('title');
+  const urlIdx = headerLower.indexOf('show_url') !== -1
+    ? headerLower.indexOf('show_url')
+    : headerLower.indexOf('poster_url');
+  const dateIdx = headerLower.indexOf('show_date') !== -1
+    ? headerLower.indexOf('show_date')
+    : headerLower.indexOf('date');
+  const venueIdx = headerLower.indexOf('show_venue');
+  const cityIdx = headerLower.indexOf('show_city') !== -1
+    ? headerLower.indexOf('show_city')
+    : headerLower.indexOf('city');
+  const stateIdx = headerLower.indexOf('show_state') !== -1
+    ? headerLower.indexOf('show_state')
+    : headerLower.indexOf('state');
+
+  const shows = rows.map((cols) => {
+    const title = nameIdx !== -1 ? String(cols[nameIdx] || '').trim() : '';
+    const posterUrl = urlIdx !== -1 ? String(cols[urlIdx] || '').trim() : '';
+    const date = dateIdx !== -1 ? String(cols[dateIdx] || '').trim() : '';
+    const venue = venueIdx !== -1 ? String(cols[venueIdx] || '').trim() : '';
+    const city = cityIdx !== -1 ? String(cols[cityIdx] || '').trim() : '';
+    const state = stateIdx !== -1 ? String(cols[stateIdx] || '').trim() : '';
+
+    const row = {
+      title,
+      show_name: title,
+      poster_url: posterUrl,
+      show_url: posterUrl,
+      date,
+      show_date: date,
+      pretty_date: formatPrettyShowDate(date),
+      venue,
+      show_venue: venue,
+      city,
+      show_city: city,
+      state,
+      show_state: state
+    };
+
+    header.forEach((colName, i) => {
+      const key = String(colName || '').trim().toLowerCase();
+      if (!key) return;
+      const val = String(cols[i] || '').trim();
+      if (typeof row[key] === 'undefined') row[key] = val;
+    });
+
+    return row;
+  });
+
+  return {
+    generatedAt: new Date().toISOString(),
+    count: shows.length,
+    shows
+  };
+}
 function extractImageKeyFromUrl(url) {
   const u = String(url || "").trim();
   if (!u) return "";
@@ -1428,6 +1516,20 @@ app.get("/sheet/shows", async (req, res) => {
   }
 });
 
+app.get('/show-index.json', async (req, res) => {
+  try {
+    const csv = await fetchTextWithShortCache('shows', SHOWS_SHEET_URL);
+    const payload = buildShowIndexPayload(csv);
+    allowCors(res, req);
+    setPublicTextCacheHeaders(res, 300);
+    res.json(payload);
+  } catch (err) {
+    console.error('show-index fetch failed:', err);
+    allowCors(res, req);
+    res.status(500).json({ error: 'show index error' });
+  }
+});
+
 // Stats tab (Fix / Metadata)
 // Aliases included to match different frontend endpoint names used over time.
 async function sendStatsCsv(req, res) {
@@ -1909,4 +2011,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server listening on http://localhost:" + PORT);
 });
+
+
+
 
