@@ -240,6 +240,7 @@ const PEOPLE_INDEX_BUILD_TIMEOUT_MS = Math.max(
 
 const PEOPLE_INDEX_FILE = path.join(__dirname, "people-index.json");
 const SHOW_INDEX_FILE = path.join(__dirname, "show-index.json");
+const BAND_INDEX_FILE = path.join(__dirname, "band-index.json");
 let peopleIndexMem = null; // { generatedAt, albumsScanned, people:[...] }
 let peopleIndexBuildPromise = null; // prevents concurrent long rebuilds
 let peopleIndexBuildStartedAt = 0;
@@ -1514,6 +1515,46 @@ app.get("/sheet/shows", async (req, res) => {
     console.error("sheet /shows fetch failed:", err);
     allowCors(res, req);
     res.status(500).send("shows sheet error");
+  }
+});
+
+app.get('/index/bands', async (req, res) => {
+  try {
+    const force = String(req.query.force || '') === '1';
+    if (force) {
+      let csv = '';
+      const upstream = await fetch(BANDS_SHEET_URL, {
+        headers: { Accept: 'text/plain,text/csv;q=0.9,*/*;q=0.8', 'Cache-Control': 'no-cache' }
+      });
+      if (!upstream.ok) {
+        let body = '';
+        try { body = await upstream.text(); } catch (_) {}
+        const snippet = String(body || '').slice(0, 180).replace(/s+/g, ' ').trim();
+        throw new Error('sheet upstream returned ' + upstream.status + (snippet ? ': ' + snippet : ''));
+      }
+      csv = await upstream.text();
+      sheetResponseCache.set('bands', { text: csv, fetchedAt: Date.now() });
+      const payload = buildBandIndexPayload(csv);
+      allowCors(res, req);
+      setPublicTextCacheHeaders(res, 15);
+      return res.json(payload);
+    }
+
+    const snapshot = safeReadJsonFile(BAND_INDEX_FILE);
+    allowCors(res, req);
+    if (snapshot && typeof snapshot === 'object') {
+      setPublicTextCacheHeaders(res, 300);
+      return res.json(snapshot);
+    }
+
+    return res.status(503).json({
+      error: 'band index unavailable',
+      message: 'No band snapshot is available yet. Use force=1 to generate a fresh export.'
+    });
+  } catch (err) {
+    console.error('band-index fetch failed:', err);
+    allowCors(res, req);
+    res.status(500).json({ error: 'band index error' });
   }
 });
 
