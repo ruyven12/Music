@@ -472,6 +472,54 @@ function buildShowIndexPayload(csvText) {
     shows
   };
 }
+function buildBandIndexPayload(csvText) {
+  const { header, rows } = parseCsvSimple(csvText);
+  const headerLower = header.map((h) => String(h || '').trim().toLowerCase());
+
+  const bandIdx = headerLower.indexOf('band');
+  const regionIdx = headerLower.indexOf('region');
+  const letterIdx = headerLower.indexOf('letter');
+  const smugFolderIdx = headerLower.indexOf('smug_folder');
+  const logoIdx = headerLower.indexOf('logo_url');
+  const totalSetsIdx = headerLower.indexOf('total_sets');
+  const setsArchiveIdx = headerLower.indexOf('sets_archive');
+
+  const bands = rows.map((cols) => {
+    const name = bandIdx !== -1 ? String(cols[bandIdx] || '').trim() : '';
+    const region = regionIdx !== -1 ? String(cols[regionIdx] || '').trim() : '';
+    const letter = letterIdx !== -1 ? String(cols[letterIdx] || '').trim() : '';
+    const smugFolder = smugFolderIdx !== -1 ? String(cols[smugFolderIdx] || '').trim() : '';
+    const logoUrl = logoIdx !== -1 ? String(cols[logoIdx] || '').trim() : '';
+    const totalSets = totalSetsIdx !== -1 ? String(cols[totalSetsIdx] || '').trim() : '';
+    const setsArchive = setsArchiveIdx !== -1 ? String(cols[setsArchiveIdx] || '').trim() : '';
+
+    const row = {
+      name,
+      band: name,
+      region,
+      letter,
+      smug_folder: smugFolder,
+      logo_url: logoUrl,
+      total_sets: totalSets,
+      sets_archive: setsArchive
+    };
+
+    header.forEach((colName, i) => {
+      const key = String(colName || '').trim().toLowerCase();
+      if (!key) return;
+      row[key] = String(cols[i] || '').trim();
+    });
+
+    return row;
+  }).filter((row) => String(row.band || '').trim());
+
+  return {
+    generatedAt: new Date().toISOString(),
+    count: bands.length,
+    bands
+  };
+}
+
 function extractImageKeyFromUrl(url) {
   const u = String(url || "").trim();
   if (!u) return "";
@@ -1529,7 +1577,7 @@ app.get('/index/bands', async (req, res) => {
       if (!upstream.ok) {
         let body = '';
         try { body = await upstream.text(); } catch (_) {}
-        const snippet = String(body || '').slice(0, 180).replace(/s+/g, ' ').trim();
+        const snippet = String(body || '').slice(0, 180).replace(/\s+/g, ' ').trim();
         throw new Error('sheet upstream returned ' + upstream.status + (snippet ? ': ' + snippet : ''));
       }
       csv = await upstream.text();
