@@ -384,6 +384,69 @@ function parseCsvSimple(csvText) {
   return { header, rows };
 }
 
+function _roundPct(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.round(n * 100) / 100;
+}
+
+function _normalizeStatsHeader(value) {
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+async function fetchMusicPeopleSheetStats(totalShotsScanned) {
+  try {
+    const csv = await fetchTextWithShortCache('stats', STATS_SHEET_URL);
+    const { header, rows } = parseCsvSimple(csv);
+    if (!header.length || !rows.length) {
+      return {
+        totalMusicShots: 0,
+        DAIDone: 0,
+        DAIDonePct: 0,
+        DAIAppliedPct: 0
+      };
+    }
+
+    const normalized = header.map(_normalizeStatsHeader);
+    const totalIdx = normalized.indexOf('total');
+    const daiAppliedIdx = normalized.indexOf('daiappliednotedited');
+
+    const valueRow = rows.find((cols) => Array.isArray(cols) && cols.some((cell) => String(cell || '').trim()));
+    if (!valueRow) {
+      return {
+        totalMusicShots: 0,
+        DAIDone: 0,
+        DAIDonePct: 0,
+        DAIAppliedPct: 0
+      };
+    }
+
+    const totalMusicShots = Number(totalIdx !== -1 ? String(valueRow[totalIdx] || '').trim() : 0);
+    const DAIDone = Number(daiAppliedIdx !== -1 ? String(valueRow[daiAppliedIdx] || '').trim() : 0);
+    const totalSafe = Number.isFinite(totalMusicShots) && totalMusicShots > 0 ? totalMusicShots : 0;
+    const doneSafe = Number.isFinite(DAIDone) && DAIDone > 0 ? DAIDone : 0;
+    const scannedSafe = Number.isFinite(Number(totalShotsScanned)) ? Number(totalShotsScanned) : 0;
+
+    return {
+      totalMusicShots: totalSafe,
+      DAIDone: doneSafe,
+      DAIDonePct: totalSafe > 0 ? _roundPct((doneSafe / totalSafe) * 100) : 0,
+      DAIAppliedPct: totalSafe > 0 ? _roundPct((scannedSafe / totalSafe) * 100) : 0
+    };
+  } catch (err) {
+    console.warn('people-index: stats sheet parse failed:', err && err.message ? err.message : err);
+    return {
+      totalMusicShots: 0,
+      DAIDone: 0,
+      DAIDonePct: 0,
+      DAIAppliedPct: 0
+    };
+  }
+}
+
 function formatPrettyShowDate(raw) {
   const value = String(raw || '').trim();
   if (!value) return '';
@@ -926,8 +989,14 @@ async function computePeopleIndexFromShows() {
     .filter((person) => !isLikelyCompositePersonName(person && person.name))
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
+  const sheetStats = await fetchMusicPeopleSheetStats(shotStats.totalShotsScanned);
+
   return {
     generatedAt: new Date().toISOString(),
+    totalMusicShots: sheetStats.totalMusicShots,
+    DAIDone: sheetStats.DAIDone,
+    DAIDonePct: sheetStats.DAIDonePct,
+    DAIAppliedPct: sheetStats.DAIAppliedPct,
     albumsScanned: albumKeys.length,
     totalShotsScanned: shotStats.totalShotsScanned,
     shotsTagged: shotStats.shotsTagged,
@@ -1160,8 +1229,14 @@ async function computePeopleIndexFromBandsFolder(opts) {
 
   // Store album keys privately for incremental diffs next time.
   // (Front-end safely ignores unknown fields.)
+  const sheetStats = await fetchMusicPeopleSheetStats(shotStats.totalShotsScanned);
+
   return {
     generatedAt: new Date().toISOString(),
+    totalMusicShots: sheetStats.totalMusicShots,
+    DAIDone: sheetStats.DAIDone,
+    DAIDonePct: sheetStats.DAIDonePct,
+    DAIAppliedPct: sheetStats.DAIAppliedPct,
     albumsScanned: albumKeysAll.length,
     totalShotsScanned: shotStats.totalShotsScanned,
     shotsTagged: shotStats.shotsTagged,
