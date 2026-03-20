@@ -239,6 +239,7 @@ const PEOPLE_INDEX_BUILD_TIMEOUT_MS = Math.max(
 );
 
 const PEOPLE_INDEX_FILE = path.join(__dirname, "people-index.json");
+const SHOW_INDEX_FILE = path.join(__dirname, "show-index.json");
 let peopleIndexMem = null; // { generatedAt, albumsScanned, people:[...] }
 let peopleIndexBuildPromise = null; // prevents concurrent long rebuilds
 let peopleIndexBuildStartedAt = 0;
@@ -1516,12 +1517,11 @@ app.get("/sheet/shows", async (req, res) => {
   }
 });
 
-app.get('/index/shows/show-index.json', async (req, res) => {
+app.get('/index/shows', async (req, res) => {
   try {
     const force = String(req.query.force || '') === '1';
-    let csv = '';
-
     if (force) {
+      let csv = '';
       const upstream = await fetch(SHOWS_SHEET_URL, {
         headers: { Accept: 'text/plain,text/csv;q=0.9,*/*;q=0.8', 'Cache-Control': 'no-cache' }
       });
@@ -1533,14 +1533,23 @@ app.get('/index/shows/show-index.json', async (req, res) => {
       }
       csv = await upstream.text();
       sheetResponseCache.set('shows', { text: csv, fetchedAt: Date.now() });
-    } else {
-      csv = await fetchTextWithShortCache('shows', SHOWS_SHEET_URL);
+      const payload = buildShowIndexPayload(csv);
+      allowCors(res, req);
+      setPublicTextCacheHeaders(res, 15);
+      return res.json(payload);
     }
 
-    const payload = buildShowIndexPayload(csv);
+    const snapshot = safeReadJsonFile(SHOW_INDEX_FILE);
     allowCors(res, req);
-    setPublicTextCacheHeaders(res, force ? 15 : 300);
-    res.json(payload);
+    if (snapshot && typeof snapshot === 'object') {
+      setPublicTextCacheHeaders(res, 300);
+      return res.json(snapshot);
+    }
+
+    return res.status(503).json({
+      error: 'show index unavailable',
+      message: 'No show snapshot is available yet. Use force=1 to generate a fresh export.'
+    });
   } catch (err) {
     console.error('show-index fetch failed:', err);
     allowCors(res, req);
