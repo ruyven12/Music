@@ -1518,10 +1518,28 @@ app.get("/sheet/shows", async (req, res) => {
 
 app.get('/show-index.json', async (req, res) => {
   try {
-    const csv = await fetchTextWithShortCache('shows', SHOWS_SHEET_URL);
+    const force = String(req.query.force || '') === '1';
+    let csv = '';
+
+    if (force) {
+      const upstream = await fetch(SHOWS_SHEET_URL, {
+        headers: { Accept: 'text/plain,text/csv;q=0.9,*/*;q=0.8', 'Cache-Control': 'no-cache' }
+      });
+      if (!upstream.ok) {
+        let body = '';
+        try { body = await upstream.text(); } catch (_) {}
+        const snippet = String(body || '').slice(0, 180).replace(/\s+/g, ' ').trim();
+        throw new Error('sheet upstream returned ' + upstream.status + (snippet ? ': ' + snippet : ''));
+      }
+      csv = await upstream.text();
+      sheetResponseCache.set('shows', { text: csv, fetchedAt: Date.now() });
+    } else {
+      csv = await fetchTextWithShortCache('shows', SHOWS_SHEET_URL);
+    }
+
     const payload = buildShowIndexPayload(csv);
     allowCors(res, req);
-    setPublicTextCacheHeaders(res, 300);
+    setPublicTextCacheHeaders(res, force ? 15 : 300);
     res.json(payload);
   } catch (err) {
     console.error('show-index fetch failed:', err);
@@ -2011,6 +2029,8 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server listening on http://localhost:" + PORT);
 });
+
+
 
 
 
