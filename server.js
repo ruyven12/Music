@@ -79,7 +79,7 @@ const SHOWS_SHEET_URL =
 // NOTE: Uses the Google Sheet "export?format=csv" URL style.
 // This will work as long as the sheet (or at least this tab) is readable without auth.
 const STATS_SHEET_URL =
-  "https://docs.google.com/spreadsheets/d/12P8b85K24dcyy9jubil_h4DN6xXr3wYFsILz-5LkGkk/export?format=csv&gid=1973247444";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdi19qTDyPeBGzq0PpkdlDS_bNg34XpdRiXy8aBa-Jlu-jg2Wzkj1SnLXtRVFU4TGOh5KHJPK8Lwhc/pub?gid=1973247444&single=true&output=csv";
 
 // Lightweight CSV response cache (keeps Google Sheet fetches from repeating for every visitor)
 const SHEET_CACHE_TTL_MS = Math.max(15_000, Number(process.env.SHEET_CACHE_TTL_MS || String(1000 * 60 * 5)));
