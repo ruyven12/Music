@@ -1183,6 +1183,92 @@ async function getAlbumGeoSummaryCached(albumKey, opts) {
   return work;
 }
 
+function _combineGeoSummaries(albumKeys, summaries) {
+  const keys = Array.isArray(albumKeys) ? albumKeys.filter(Boolean) : [];
+  const list = (Array.isArray(summaries) ? summaries : []).filter(Boolean);
+  if (!list.length) {
+    return {
+      albumKeys: keys,
+      totalImagesScanned: 0,
+      geoTaggedImages: 0,
+      coveragePct: 0,
+      center: null,
+      bounds: null,
+      mapUrl: ""
+    };
+  }
+
+  let totalImagesScanned = 0;
+  let geoTaggedImages = 0;
+  let latWeighted = 0;
+  let lngWeighted = 0;
+  let weightedCount = 0;
+  let bounds = null;
+  let sampleImageKey = "";
+
+  list.forEach((item) => {
+    const scanned = Number(item && item.totalImagesScanned || 0);
+    const tagged = Number(item && item.geoTaggedImages || 0);
+    const center = item && item.center ? item.center : null;
+    const itemBounds = item && item.bounds ? item.bounds : null;
+
+    totalImagesScanned += scanned;
+    geoTaggedImages += tagged;
+
+    if (center && Number.isFinite(Number(center.lat)) && Number.isFinite(Number(center.lng)) && tagged > 0) {
+      latWeighted += Number(center.lat) * tagged;
+      lngWeighted += Number(center.lng) * tagged;
+      weightedCount += tagged;
+    }
+
+    if (itemBounds) {
+      if (!bounds) {
+        bounds = {
+          minLat: Number(itemBounds.minLat),
+          maxLat: Number(itemBounds.maxLat),
+          minLng: Number(itemBounds.minLng),
+          maxLng: Number(itemBounds.maxLng)
+        };
+      } else {
+        bounds.minLat = Math.min(bounds.minLat, Number(itemBounds.minLat));
+        bounds.maxLat = Math.max(bounds.maxLat, Number(itemBounds.maxLat));
+        bounds.minLng = Math.min(bounds.minLng, Number(itemBounds.minLng));
+        bounds.maxLng = Math.max(bounds.maxLng, Number(itemBounds.maxLng));
+      }
+    }
+
+    if (!sampleImageKey && item && item.sampleImageKey) sampleImageKey = item.sampleImageKey;
+  });
+
+  const center = weightedCount > 0
+    ? {
+        lat: _roundGeoCoord(latWeighted / weightedCount, 6),
+        lng: _roundGeoCoord(lngWeighted / weightedCount, 6)
+      }
+    : null;
+
+  if (bounds) {
+    bounds = {
+      minLat: _roundGeoCoord(bounds.minLat, 6),
+      maxLat: _roundGeoCoord(bounds.maxLat, 6),
+      minLng: _roundGeoCoord(bounds.minLng, 6),
+      maxLng: _roundGeoCoord(bounds.maxLng, 6)
+    };
+  }
+
+  return {
+    albumKeys: keys,
+    albumKey: keys[0] || "",
+    sampleImageKey,
+    totalImagesScanned,
+    geoTaggedImages,
+    coveragePct: totalImagesScanned > 0 ? _roundPct((geoTaggedImages / totalImagesScanned) * 100) : 0,
+    center,
+    bounds,
+    mapUrl: center ? _buildGeoMapUrl(center.lat, center.lng) : ""
+  };
+}
+
 function _buildGeoVenueLine(row) {
   if (!row || typeof row !== "object") return "";
   const venue = String(row.show_venue || row.venue || "").trim();
@@ -1223,8 +1309,14 @@ async function buildMusicGeoReportPayload(forceFresh) {
       const parsed = _parseRecentAlbumTitleParts(item.title);
       const dateKey = _normalizeRecentLookupText(parsed.showDate);
       const showKey = `${dateKey}|${_normalizeRecentLookupText(parsed.showName)}`;
-      if (dateKey && !albumLookupByDate.has(dateKey)) albumLookupByDate.set(dateKey, item);
-      if (dateKey && parsed.showName && !albumLookup.has(showKey)) albumLookup.set(showKey, item);
+      if (dateKey) {
+        if (!albumLookupByDate.has(dateKey)) albumLookupByDate.set(dateKey, []);
+        albumLookupByDate.get(dateKey).push(item);
+      }
+      if (dateKey && parsed.showName) {
+        if (!albumLookup.has(showKey)) albumLookup.set(showKey, []);
+        albumLookup.get(showKey).push(item);
+      }
     });
     const items = [];
     let cursor = 0;
@@ -1238,16 +1330,18 @@ async function buildMusicGeoReportPayload(forceFresh) {
         const showDate = String(row && (row.show_date || row.date) || "").trim();
         const normalizedDate = _normalizeRecentLookupText(showDate);
         const normalizedKey = `${normalizedDate}|${_normalizeRecentLookupText(showName)}`;
-        const matchedAlbum = albumLookup.get(normalizedKey) || albumLookupByDate.get(normalizedDate) || null;
-        const albumKey = String(matchedAlbum && matchedAlbum.albumKey || "").trim();
-        const geo = albumKey ? await getAlbumGeoSummaryCached(albumKey, { force: forceFresh }).catch(() => null) : null;
+        const matchedAlbums = albumLookup.get(normalizedKey) || albumLookupByDate.get(normalizedDate) || [];
+        const albumKeys = Array.from(new Set((Array.isArray(matchedAlbums) ? matchedAlbums : []).map((item) => String(item && item.albumKey || '').trim()).filter(Boolean)));
+        const geoSummaries = await Promise.all(albumKeys.map((albumKey) => getAlbumGeoSummaryCached(albumKey, { force: forceFresh }).catch(() => null)));
+        const geo = _combineGeoSummaries(albumKeys, geoSummaries);
         items.push({
           showName,
           showDate,
           prettyDate: String(row && row.pretty_date || formatPrettyShowDate(row && (row.show_date || row.date) || "")).trim(),
           venueLine: _buildGeoVenueLine(row),
           posterUrl: showUrl,
-          albumKey,
+          albumKey: String(geo && geo.albumKey || '').trim(),
+          albumKeys,
           hasGeo: !!(geo && geo.center),
           geoTaggedImages: Number(geo && geo.geoTaggedImages || 0),
           totalImagesScanned: Number(geo && geo.totalImagesScanned || 0),
