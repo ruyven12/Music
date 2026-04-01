@@ -84,6 +84,9 @@ const STATS_SHEET_URL =
 // Lightweight CSV response cache (keeps Google Sheet fetches from repeating for every visitor)
 const SHEET_CACHE_TTL_MS = Math.max(15_000, Number(process.env.SHEET_CACHE_TTL_MS || String(1000 * 60 * 5)));
 const sheetResponseCache = new Map();
+const RECENT_ACTIVITY_CACHE_TTL_MS = Math.max(60_000, Number(process.env.RECENT_ACTIVITY_CACHE_TTL_MS || String(1000 * 60 * 10)));
+let recentMusicActivityCache = null;
+let recentMusicActivityPromise = null;
 
 function isPeoplePayloadEffectivelyEmpty(payload) {
   return !!(
@@ -118,6 +121,10 @@ async function fetchTextWithShortCache(cacheKey, url) {
 function setPublicTextCacheHeaders(res, maxAgeSec) {
   const sec = Math.max(0, Number(maxAgeSec) || 0);
   res.set('Cache-Control', `public, max-age=${sec}, s-maxage=${sec}, stale-while-revalidate=60`);
+}
+
+function isFreshRecentMusicActivityCache(entry) {
+  return !!(entry && Number.isFinite(Number(entry.builtAt)) && (Date.now() - Number(entry.builtAt) < RECENT_ACTIVITY_CACHE_TTL_MS) && entry.payload);
 }
 
 
@@ -752,6 +759,108 @@ async function listAlbumsAndFoldersRecursive(rootFolderPath) {
   }
 
   return Array.from(albums.values());
+}
+
+function _safeIsoDateValue(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const dt = new Date(raw);
+  if (Number.isNaN(dt.getTime())) return "";
+  return dt.toISOString();
+}
+
+function _pickAlbumThumbUrl(album) {
+  const candidates = [
+    album && album.HighlightImage && album.HighlightImage.ThumbnailUrl,
+    album && album.HighlightImage && album.HighlightImage.SmallUrl,
+    album && album.HighlightImage && album.HighlightImage.MediumUrl,
+    album && album.HighlightImage && album.HighlightImage.LargeUrl,
+    album && album.HighlightImageUri,
+    album && album.ThumbnailUrl,
+    album && album.SmallUrl,
+    album && album.MediumUrl
+  ];
+  for (const value of candidates) {
+    const url = String(value || "").trim();
+    if (url) return url;
+  }
+  return "";
+}
+
+async function _fetchRecentMusicAlbumEntry(seed) {
+  const albumKey = String(seed && seed.albumKey || "").trim();
+  if (!albumKey) return null;
+  try {
+    const result = await smug(`/album/${encodeURIComponent(albumKey)}?_accept=application/json&_verbosity=1&_expand=HighlightImage`);
+    const album = (result && result.Response && result.Response.Album) || result.Album || result || {};
+    const title = String(album.Title || seed.title || "").trim();
+    const url = String(album.WebUri || album.Url || seed.url || "").trim();
+    const lastUpdated = _safeIsoDateValue(album.LastUpdated);
+    const dateUploaded = _safeIsoDateValue(album.Date || album.DateUploaded);
+    if (!title || (!lastUpdated && !dateUploaded)) return null;
+    return {
+      type: "album",
+      albumKey,
+      title,
+      url,
+      thumbUrl: _pickAlbumThumbUrl(album),
+      lastUpdated,
+      dateUploaded
+    };
+  } catch (err) {
+    console.warn("recent-activity: album metadata fetch failed:", albumKey, err && err.message ? err.message : err);
+    return null;
+  }
+}
+
+async function buildRecentMusicActivityPayload(forceFresh) {
+  if (!forceFresh && isFreshRecentMusicActivityCache(recentMusicActivityCache)) {
+    return recentMusicActivityCache.payload;
+  }
+  if (recentMusicActivityPromise) return recentMusicActivityPromise;
+
+  recentMusicActivityPromise = (async () => {
+    const discovered = await listAlbumsAndFoldersRecursive(PEOPLE_INDEX_BANDS_ROOT);
+    const seeds = Array.isArray(discovered) ? discovered.filter((item) => item && item.albumKey) : [];
+    const concurrency = 8;
+    const entries = [];
+    let cursor = 0;
+
+    async function worker() {
+      while (cursor < seeds.length) {
+        const idx = cursor++;
+        const seed = seeds[idx];
+        const item = await _fetchRecentMusicAlbumEntry(seed);
+        if (item) entries.push(item);
+      }
+    }
+
+    const workers = [];
+    for (let i = 0; i < concurrency; i++) workers.push(worker());
+    await Promise.all(workers);
+
+    const byLastUpdated = entries
+      .filter((item) => item.lastUpdated)
+      .sort((a, b) => String(b.lastUpdated).localeCompare(String(a.lastUpdated)))
+      .slice(0, 6);
+
+    const byDateUploaded = entries
+      .filter((item) => item.dateUploaded)
+      .sort((a, b) => String(b.dateUploaded).localeCompare(String(a.dateUploaded)))
+      .slice(0, 6);
+
+    const payload = {
+      generatedAt: new Date().toISOString(),
+      latestUpdated: byLastUpdated,
+      latestAdded: byDateUploaded
+    };
+    recentMusicActivityCache = { builtAt: Date.now(), payload };
+    return payload;
+  })().finally(() => {
+    recentMusicActivityPromise = null;
+  });
+
+  return recentMusicActivityPromise;
 }
 
 function isLikelyCompositePersonName(name) {
@@ -1767,6 +1876,19 @@ app.get("/sheet/fixmetadata", sendStatsCsv);
 app.get("/sheet/fixmetadata/", sendStatsCsv);
 app.get("/sheet/fix", sendStatsCsv);
 app.get("/sheet/fix/", sendStatsCsv);
+
+app.get('/recent-activity', async (req, res) => {
+  allowCors(res, req);
+  const forceFresh = String(req.query.force || '').trim() === '1';
+  try {
+    const payload = await buildRecentMusicActivityPayload(forceFresh);
+    setPublicTextCacheHeaders(res, forceFresh ? 30 : 300);
+    return res.json(payload);
+  } catch (err) {
+    console.error('/recent-activity failed:', err);
+    return res.status(500).json({ error: 'recent activity error' });
+  }
+});
 
 // =========================================================
 // IMAGE PROXY (posters)
