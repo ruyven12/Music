@@ -267,6 +267,25 @@ function publicPeopleIndexPayload(payload) {
   return out;
 }
 
+function buildPeopleIndexResponse(payload, cacheInfo) {
+  const safe = publicPeopleIndexPayload(payload) || {};
+  const report = Object.assign(
+    {},
+    (safe.report && typeof safe.report === "object") ? safe.report : {},
+    (safe.rebuild && typeof safe.rebuild === "object") ? { rebuild: safe.rebuild } : {}
+  );
+  if (cacheInfo && typeof cacheInfo === "object") {
+    report.cache = cacheInfo;
+  }
+  const out = {
+    generatedAt: safe.generatedAt || "",
+    stats: safe.stats && typeof safe.stats === "object" ? safe.stats : {},
+    report,
+    people: Array.isArray(safe.people) ? safe.people : []
+  };
+  return out;
+}
+
 function safeReadJsonFile(p) {
   try {
     const raw = fs.readFileSync(p, "utf8");
@@ -1483,8 +1502,10 @@ async function computePeopleIndexFromBandsFolder(opts) {
   return {
     generatedAt: new Date().toISOString(),
     stats,
+    report: {
+      rebuild: buildSummary
+    },
     people,
-    rebuild: buildSummary,
     _albumKeys: albumKeysAll,
     _incremental: buildSummary,
     _albumStateByKey: albumStateByKey
@@ -1804,23 +1825,23 @@ app.get('/index/people', async (req, res) => {
     if (!force && peopleIndexMem) {
       const looksEmpty = isPeoplePayloadEffectivelyEmpty(peopleIndexMem);
       const isFresh = isFreshGeneratedAt(peopleIndexMem.generatedAt, PEOPLE_INDEX_TTL_MS);
-      if (looksEmpty || !isFresh) {
-        peopleIndexMem = null;
-      } else {
-        return res.json({ ...publicPeopleIndexPayload(peopleIndexMem), cache: { hit: true, layer: 'memory' } });
+        if (looksEmpty || !isFresh) {
+          peopleIndexMem = null;
+        } else {
+          return res.json(buildPeopleIndexResponse(peopleIndexMem, { hit: true, layer: 'memory' }));
+        }
       }
-    }
 
     // 2) Disk cache (ignore cached-empty or stale results so we don't get stuck on old snapshots forever)
     if (!force) {
       const disk = safeReadJsonFile(PEOPLE_INDEX_FILE);
       const looksEmpty = isPeoplePayloadEffectivelyEmpty(disk);
-      const isFresh = disk && isFreshGeneratedAt(disk.generatedAt, PEOPLE_INDEX_TTL_MS);
-      if (!looksEmpty && isFresh) {
-        peopleIndexMem = disk;
-        return res.json({ ...publicPeopleIndexPayload(disk), cache: { hit: true, layer: 'disk' } });
+        const isFresh = disk && isFreshGeneratedAt(disk.generatedAt, PEOPLE_INDEX_TTL_MS);
+        if (!looksEmpty && isFresh) {
+          peopleIndexMem = disk;
+          return res.json(buildPeopleIndexResponse(disk, { hit: true, layer: 'disk' }));
+        }
       }
-    }
 
     // 3) Non-force requests must stay on cache layers only.
     if (!force) {
@@ -1838,13 +1859,15 @@ app.get('/index/people', async (req, res) => {
       resetPeopleIndexBuildState();
     }
 
-      const attachedToBuild = !!peopleIndexBuildPromise;
-      const computed = await startPeopleIndexBuild({ mode: buildMode });
-      return res.json({
-        ...publicPeopleIndexPayload(computed),
-        cache: { hit: false, layer: 'computed', building: attachedToBuild, mode: buildMode === 'full' ? 'full-rebuild' : 'incremental-rebuild' }
-      });
-  } catch (err) {
+        const attachedToBuild = !!peopleIndexBuildPromise;
+        const computed = await startPeopleIndexBuild({ mode: buildMode });
+        return res.json(buildPeopleIndexResponse(computed, {
+          hit: false,
+          layer: 'computed',
+          building: attachedToBuild,
+          mode: buildMode === 'full' ? 'full-rebuild' : 'incremental-rebuild'
+        }));
+    } catch (err) {
     const detail = String(err && err.message ? err.message : err || 'unknown error');
     console.error('people index failed:', detail);
     if (force) {
