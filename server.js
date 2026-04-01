@@ -787,6 +787,56 @@ function _pickAlbumThumbUrl(album) {
   return "";
 }
 
+function _normalizeRecentLookupText(value) {
+  return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function _parseRecentAlbumTitleParts(title) {
+  const raw = String(title || "").trim();
+  if (!raw) return { showName: "", showDate: "" };
+  const m = raw.match(/^(\d{1,2}\/\d{1,2}\/\d{2,4})\s*-\s*(.+)$/);
+  if (!m) return { showName: raw, showDate: "" };
+  return {
+    showDate: String(m[1] || "").trim(),
+    showName: String(m[2] || "").trim()
+  };
+}
+
+function _deriveBandNameFromAlbumUrl(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return "";
+  try {
+    const u = new URL(raw);
+    const parts = String(u.pathname || "").split("/").filter(Boolean);
+    const bandsIdx = parts.findIndex((part) => String(part || "").toLowerCase() === "bands");
+    if (bandsIdx !== -1 && parts.length >= bandsIdx + 3) {
+      const bandSlug = String(parts[bandsIdx + 2] || "").trim();
+      if (bandSlug) return bandSlug.replace(/[-_]+/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
+    }
+  } catch (_) {}
+  return "";
+}
+
+function _buildRecentShowLookup(rows) {
+  const map = new Map();
+  (Array.isArray(rows) ? rows : []).forEach((row) => {
+    const showName = String(row && (row.show_name || row.title) || "").trim();
+    const showDate = String(row && (row.show_date || row.date) || "").trim();
+    const showUrl = String(row && (row.show_url || row.poster_url) || "").trim();
+    if (!showName && !showDate) return;
+    const key = `${_normalizeRecentLookupText(showDate)}|${_normalizeRecentLookupText(showName)}`;
+    if (!map.has(key)) {
+      map.set(key, {
+        showName,
+        showDate,
+        prettyDate: String(row && row.pretty_date || formatPrettyShowDate(showDate)).trim(),
+        showUrl
+      });
+    }
+  });
+  return map;
+}
+
 async function _fetchRecentMusicAlbumEntry(seed) {
   const albumKey = String(seed && seed.albumKey || "").trim();
   if (!albumKey) return null;
@@ -821,6 +871,9 @@ async function buildRecentMusicActivityPayload(forceFresh) {
 
   recentMusicActivityPromise = (async () => {
     const discovered = await listAlbumsAndFoldersRecursive(PEOPLE_INDEX_BANDS_ROOT);
+    const showsCsv = await fetchTextWithShortCache('shows', SHOWS_SHEET_URL);
+    const showRows = buildShowIndexPayload(showsCsv).shows || [];
+    const showLookup = _buildRecentShowLookup(showRows);
     const seeds = Array.isArray(discovered) ? discovered.filter((item) => item && item.albumKey) : [];
     const concurrency = 8;
     const entries = [];
@@ -839,12 +892,25 @@ async function buildRecentMusicActivityPayload(forceFresh) {
     for (let i = 0; i < concurrency; i++) workers.push(worker());
     await Promise.all(workers);
 
-    const byLastUpdated = entries
+    const hydrated = entries.map((item) => {
+      const parsed = _parseRecentAlbumTitleParts(item.title);
+      const key = `${_normalizeRecentLookupText(parsed.showDate)}|${_normalizeRecentLookupText(parsed.showName)}`;
+      const showInfo = showLookup.get(key) || null;
+      return Object.assign({}, item, {
+        showName: String((showInfo && showInfo.showName) || parsed.showName || item.title || '').trim(),
+        showDate: String((showInfo && showInfo.showDate) || parsed.showDate || '').trim(),
+        prettyDate: String((showInfo && showInfo.prettyDate) || formatPrettyShowDate(parsed.showDate || '')).trim(),
+        showUrl: String((showInfo && showInfo.showUrl) || '').trim(),
+        band: _deriveBandNameFromAlbumUrl(item.url || '')
+      });
+    });
+
+    const byLastUpdated = hydrated
       .filter((item) => item.lastUpdated)
       .sort((a, b) => String(b.lastUpdated).localeCompare(String(a.lastUpdated)))
       .slice(0, 6);
 
-    const byDateUploaded = entries
+    const byDateUploaded = hydrated
       .filter((item) => item.dateUploaded)
       .sort((a, b) => String(b.dateUploaded).localeCompare(String(a.dateUploaded)))
       .slice(0, 6);
