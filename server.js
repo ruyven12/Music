@@ -1180,6 +1180,31 @@ async function buildMusicGeoReportPayload(forceFresh) {
   geoReportPromise = (async () => {
     const showsCsv = await fetchTextWithShortCache('shows', SHOWS_SHEET_URL);
     const rows = buildShowIndexPayload(showsCsv).shows || [];
+    const discovered = await listAlbumsAndFoldersRecursive(PEOPLE_INDEX_BANDS_ROOT);
+    const seeds = Array.isArray(discovered) ? discovered.filter((item) => item && item.albumKey) : [];
+    const albumEntries = [];
+    let albumCursor = 0;
+
+    async function albumWorker() {
+      while (albumCursor < seeds.length) {
+        const idx = albumCursor++;
+        const seed = seeds[idx];
+        const item = await _fetchRecentMusicAlbumEntry(seed);
+        if (item && item.albumKey) albumEntries.push(item);
+      }
+    }
+
+    await Promise.all(Array.from({ length: 6 }, () => albumWorker()));
+
+    const albumLookup = new Map();
+    const albumLookupByDate = new Map();
+    albumEntries.forEach((item) => {
+      const parsed = _parseRecentAlbumTitleParts(item.title);
+      const dateKey = _normalizeRecentLookupText(parsed.showDate);
+      const showKey = `${dateKey}|${_normalizeRecentLookupText(parsed.showName)}`;
+      if (dateKey && !albumLookupByDate.has(dateKey)) albumLookupByDate.set(dateKey, item);
+      if (dateKey && parsed.showName && !albumLookup.has(showKey)) albumLookup.set(showKey, item);
+    });
     const items = [];
     let cursor = 0;
 
@@ -1188,11 +1213,16 @@ async function buildMusicGeoReportPayload(forceFresh) {
         const idx = cursor++;
         const row = rows[idx];
         const showUrl = String(row && row.show_url || "").trim();
-        const albumKey = await _resolveAlbumKeyFromShowUrl(showUrl).catch(() => "");
+        const showName = String(row && (row.show_name || row.title) || "").trim();
+        const showDate = String(row && (row.show_date || row.date) || "").trim();
+        const normalizedDate = _normalizeRecentLookupText(showDate);
+        const normalizedKey = `${normalizedDate}|${_normalizeRecentLookupText(showName)}`;
+        const matchedAlbum = albumLookup.get(normalizedKey) || albumLookupByDate.get(normalizedDate) || null;
+        const albumKey = String(matchedAlbum && matchedAlbum.albumKey || "").trim();
         const geo = albumKey ? await getAlbumGeoSummaryCached(albumKey, { force: forceFresh }).catch(() => null) : null;
         items.push({
-          showName: String(row && (row.show_name || row.title) || "").trim(),
-          showDate: String(row && (row.show_date || row.date) || "").trim(),
+          showName,
+          showDate,
           prettyDate: String(row && row.pretty_date || formatPrettyShowDate(row && (row.show_date || row.date) || "")).trim(),
           venueLine: _buildGeoVenueLine(row),
           posterUrl: showUrl,
