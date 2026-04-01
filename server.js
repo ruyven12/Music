@@ -990,15 +990,22 @@ async function computePeopleIndexFromShows() {
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
   const sheetStats = await fetchMusicPeopleSheetStats(shotStats.totalShotsScanned);
+  const totalMusicShots = Number(sheetStats.totalMusicShots || 0);
+  const shotsLeftToDo = Number(sheetStats.DAIDone || 0);
+  const totalShotsScanned = Number(shotStats.totalShotsScanned || 0);
+  const shotsTagged = Number(shotStats.shotsTagged || 0);
+  const shotsUntagged = Number(shotStats.shotsUntagged || 0);
   const stats = {
-    totalMusicShots: sheetStats.totalMusicShots,
-    DAIDone: sheetStats.DAIDone,
-    DAIDonePct: sheetStats.DAIDonePct,
-    DAIAppliedPct: sheetStats.DAIAppliedPct,
-    albumsScanned: albumKeys.length,
-    totalShotsScanned: shotStats.totalShotsScanned,
-    shotsTagged: shotStats.shotsTagged,
-    shotsUntagged: shotStats.shotsUntagged
+    totalMusicShots,
+    shotsLeftToDo,
+    daiLeftPct: totalMusicShots > 0 ? _roundPct((shotsLeftToDo / totalMusicShots) * 100) : 0,
+    totalShotsScanned,
+    shotsPct: totalMusicShots > 0 ? _roundPct((totalShotsScanned / totalMusicShots) * 100) : 0,
+    shotsTagged,
+    taggedPct: totalShotsScanned > 0 ? _roundPct((shotsTagged / totalShotsScanned) * 100) : 0,
+    shotsUntagged,
+    untaggedPct: totalShotsScanned > 0 ? _roundPct((shotsUntagged / totalShotsScanned) * 100) : 0,
+    albumsScanned: albumKeys.length
   };
 
   return {
@@ -1234,15 +1241,22 @@ async function computePeopleIndexFromBandsFolder(opts) {
   // Store album keys privately for incremental diffs next time.
   // (Front-end safely ignores unknown fields.)
   const sheetStats = await fetchMusicPeopleSheetStats(shotStats.totalShotsScanned);
+  const totalMusicShots = Number(sheetStats.totalMusicShots || 0);
+  const shotsLeftToDo = Number(sheetStats.DAIDone || 0);
+  const totalShotsScanned = Number(shotStats.totalShotsScanned || 0);
+  const shotsTagged = Number(shotStats.shotsTagged || 0);
+  const shotsUntagged = Number(shotStats.shotsUntagged || 0);
   const stats = {
-    totalMusicShots: sheetStats.totalMusicShots,
-    DAIDone: sheetStats.DAIDone,
-    DAIDonePct: sheetStats.DAIDonePct,
-    DAIAppliedPct: sheetStats.DAIAppliedPct,
-    albumsScanned: albumKeysAll.length,
-    totalShotsScanned: shotStats.totalShotsScanned,
-    shotsTagged: shotStats.shotsTagged,
-    shotsUntagged: shotStats.shotsUntagged
+    totalMusicShots,
+    shotsLeftToDo,
+    daiLeftPct: totalMusicShots > 0 ? _roundPct((shotsLeftToDo / totalMusicShots) * 100) : 0,
+    totalShotsScanned,
+    shotsPct: totalMusicShots > 0 ? _roundPct((totalShotsScanned / totalMusicShots) * 100) : 0,
+    shotsTagged,
+    taggedPct: totalShotsScanned > 0 ? _roundPct((shotsTagged / totalShotsScanned) * 100) : 0,
+    shotsUntagged,
+    untaggedPct: totalShotsScanned > 0 ? _roundPct((shotsUntagged / totalShotsScanned) * 100) : 0,
+    albumsScanned: albumKeysAll.length
   };
 
   return {
