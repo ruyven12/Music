@@ -1064,7 +1064,10 @@ async function buildAlbumGeoSummary(albumKey, opts) {
   const key = String(albumKey || "").trim();
   if (!key) return null;
   const o = (opts && typeof opts === "object") ? opts : {};
-  const maxImages = Math.max(12, Math.min(400, Number(o.maxImages || 160)));
+  const requestedMaxImages = Number(o.maxImages);
+  const maxImages = Number.isFinite(requestedMaxImages) && requestedMaxImages > 0
+    ? Math.max(12, Math.floor(requestedMaxImages))
+    : Number.MAX_SAFE_INTEGER;
   let start = 1;
   const count = 200;
   let totalImagesScanned = 0;
@@ -1139,6 +1142,24 @@ async function buildAlbumGeoSummary(albumKey, opts) {
     sampleImageKey,
     mapUrl: center ? _buildGeoMapUrl(center.lat, center.lng) : ""
   };
+}
+
+function _parseGeoShowDateValue(raw) {
+  const value = String(raw || '').trim();
+  if (!value) return 0;
+  const iso = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) {
+    const ts = Date.UTC(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+    return Number.isFinite(ts) ? ts : 0;
+  }
+  const us = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (us) {
+    const yyyy = us[3].length === 2 ? 2000 + Number(us[3]) : Number(us[3]);
+    const ts = Date.UTC(yyyy, Number(us[1]) - 1, Number(us[2]));
+    return Number.isFinite(ts) ? ts : 0;
+  }
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 async function getAlbumGeoSummaryCached(albumKey, opts) {
@@ -1240,8 +1261,8 @@ async function buildMusicGeoReportPayload(forceFresh) {
 
     await Promise.all(Array.from({ length: 4 }, () => worker()));
     items.sort((a, b) =>
-      Number(b.geoTaggedImages || 0) - Number(a.geoTaggedImages || 0) ||
-      String(b.showDate || "").localeCompare(String(a.showDate || ""))
+      _parseGeoShowDateValue(b.showDate || b.prettyDate || '') -
+      _parseGeoShowDateValue(a.showDate || a.prettyDate || '')
     );
 
     const payload = {
