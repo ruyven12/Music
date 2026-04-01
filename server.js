@@ -990,9 +990,7 @@ async function computePeopleIndexFromShows() {
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
   const sheetStats = await fetchMusicPeopleSheetStats(shotStats.totalShotsScanned);
-
-  return {
-    generatedAt: new Date().toISOString(),
+  const stats = {
     totalMusicShots: sheetStats.totalMusicShots,
     DAIDone: sheetStats.DAIDone,
     DAIDonePct: sheetStats.DAIDonePct,
@@ -1000,7 +998,12 @@ async function computePeopleIndexFromShows() {
     albumsScanned: albumKeys.length,
     totalShotsScanned: shotStats.totalShotsScanned,
     shotsTagged: shotStats.shotsTagged,
-    shotsUntagged: shotStats.shotsUntagged,
+    shotsUntagged: shotStats.shotsUntagged
+  };
+
+  return {
+    generatedAt: new Date().toISOString(),
+    stats,
     people
   };
 }
@@ -1101,9 +1104,10 @@ async function computePeopleIndexFromBandsFolder(opts) {
       return { totalShotsScanned: 0, shotsTagged: 0, shotsUntagged: 0 };
     }
 
-    const totalShotsScanned = Number(payload.totalShotsScanned || 0);
-    const shotsTagged = Number(payload.shotsTagged || 0);
-    const shotsUntagged = Number(payload.shotsUntagged || 0);
+    const stats = (payload.stats && typeof payload.stats === "object") ? payload.stats : payload;
+    const totalShotsScanned = Number(stats.totalShotsScanned || 0);
+    const shotsTagged = Number(stats.shotsTagged || 0);
+    const shotsUntagged = Number(stats.shotsUntagged || 0);
 
     return {
       totalShotsScanned: Number.isFinite(totalShotsScanned) ? totalShotsScanned : 0,
@@ -1230,9 +1234,7 @@ async function computePeopleIndexFromBandsFolder(opts) {
   // Store album keys privately for incremental diffs next time.
   // (Front-end safely ignores unknown fields.)
   const sheetStats = await fetchMusicPeopleSheetStats(shotStats.totalShotsScanned);
-
-  return {
-    generatedAt: new Date().toISOString(),
+  const stats = {
     totalMusicShots: sheetStats.totalMusicShots,
     DAIDone: sheetStats.DAIDone,
     DAIDonePct: sheetStats.DAIDonePct,
@@ -1240,7 +1242,12 @@ async function computePeopleIndexFromBandsFolder(opts) {
     albumsScanned: albumKeysAll.length,
     totalShotsScanned: shotStats.totalShotsScanned,
     shotsTagged: shotStats.shotsTagged,
-    shotsUntagged: shotStats.shotsUntagged,
+    shotsUntagged: shotStats.shotsUntagged
+  };
+
+  return {
+    generatedAt: new Date().toISOString(),
+    stats,
     people,
     _albumKeys: albumKeysAll,
     _incremental: incremental ? { scannedNew: albumKeysToScan.length } : undefined
