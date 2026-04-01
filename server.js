@@ -626,9 +626,20 @@ function buildBandIndexPayload(csvText) {
 function extractImageKeyFromUrl(url) {
   const u = String(url || "").trim();
   if (!u) return "";
-  // common SmugMug image URL contains /i-<ImageKey>
-  const m = u.match(/\b\/i-([A-Za-z0-9]+)\b/);
-  return m ? String(m[1] || "").trim() : "";
+  // Common SmugMug image URL styles:
+  // - /i-<ImageKey>
+  // - .../<ImageKey>-X2.jpg
+  // - .../1-<ImageKey>/...
+  const direct = u.match(/\b\/i-([A-Za-z0-9]+)\b/i);
+  if (direct && direct[1]) return String(direct[1] || "").trim();
+
+  const fileStyle = u.match(/\/([A-Za-z0-9]+)-[A-Za-z0-9]+\.(?:jpe?g|png|gif|webp)(?:\?|#|$)/i);
+  if (fileStyle && fileStyle[1]) return String(fileStyle[1] || "").trim();
+
+  const segmentStyle = u.match(/\/\d+-([A-Za-z0-9]+)(?:\/|$)/i);
+  if (segmentStyle && segmentStyle[1]) return String(segmentStyle[1] || "").trim();
+
+  return "";
 }
 
 function extractAlbumKeyFromImageDetail(json) {
