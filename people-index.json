@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-04-01T15:15:37.599Z",
+  "generatedAt": "2026-04-01T15:51:47.156Z",
   "stats": {
     "totalMusicShots": 61390,
     "shotsLeftToDo": 20326,
     "daiLeftPct": 33.11,
     "totalShotsScanned": 38394,
     "shotsPct": 62.54,
-    "shotsTagged": 27232,
-    "taggedPct": 70.93,
-    "shotsUntagged": 11162,
-    "untaggedPct": 29.07,
+    "shotsTagged": 27354,
+    "taggedPct": 71.25,
+    "shotsUntagged": 11040,
+    "untaggedPct": 28.75,
     "albumsScanned": 598
   },
   "report": {
     "rebuild": {
-      "mode": "incremental",
+      "mode": "full",
       "albumsDiscovered": 598,
       "albumsReused": 0,
       "albumsRescanned": 598,
@@ -23,8 +23,8 @@
     "cache": {
       "hit": false,
       "layer": "computed",
-      "building": true,
-      "mode": "incremental-rebuild"
+      "building": false,
+      "mode": "full-rebuild"
     }
   },
   "people": [
@@ -833,6 +833,17 @@
           "albumKey": "h6Bxv3",
           "title": "6/27/15 - Khaos at the Kave",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Spectrobot/062715"
+        }
+      ]
+    },
+    {
+      "name": "Amelia Louise",
+      "photoCount": 28,
+      "albums": [
+        {
+          "albumKey": "rHmnfm",
+          "title": "8/19/19 - Herd Flock 4",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Regional/Time-Out-Timmy/081919"
         }
       ]
     },
@@ -9724,6 +9735,17 @@
       ]
     },
     {
+      "name": "Owen Dube",
+      "photoCount": 22,
+      "albums": [
+        {
+          "albumKey": "rHmnfm",
+          "title": "8/19/19 - Herd Flock 4",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Regional/Time-Out-Timmy/081919"
+        }
+      ]
+    },
+    {
       "name": "Pat Flathery",
       "photoCount": 44,
       "albums": [
@@ -10628,6 +10650,17 @@
           "albumKey": "vGRHFG",
           "title": "6/3/17 - Rockfest 2",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Regional/SEXCoffee/060317"
+        }
+      ]
+    },
+    {
+      "name": "Robert LaFlamme",
+      "photoCount": 21,
+      "albums": [
+        {
+          "albumKey": "LDXc3j",
+          "title": "3/16/19 - Lucky Leprechaun Bash 2019",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Regional/Renegade-Cartel/031619"
         }
       ]
     },
@@ -12011,6 +12044,17 @@
       ]
     },
     {
+      "name": "Stephen Damon-Tilley",
+      "photoCount": 33,
+      "albums": [
+        {
+          "albumKey": "LDXc3j",
+          "title": "3/16/19 - Lucky Leprechaun Bash 2019",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Regional/Renegade-Cartel/031619"
+        }
+      ]
+    },
+    {
       "name": "Stephen Hill",
       "photoCount": 11,
       "albums": [
@@ -12329,6 +12373,17 @@
           "albumKey": "hLx8pm",
           "title": "1/16/16 - Trial By Stone w/ Guests",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/Saturns-Return/011616"
+        }
+      ]
+    },
+    {
+      "name": "Tim Hite",
+      "photoCount": 24,
+      "albums": [
+        {
+          "albumKey": "rHmnfm",
+          "title": "8/19/19 - Herd Flock 4",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Regional/Time-Out-Timmy/081919"
         }
       ]
     },
@@ -13002,6 +13057,17 @@
           "albumKey": "j947vL",
           "title": "8/17/19 - Herd Flock 4",
           "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Local/In-The-Kingdom-Of-Nightmares/081719"
+        }
+      ]
+    },
+    {
+      "name": "Victor Robles",
+      "photoCount": 20,
+      "albums": [
+        {
+          "albumKey": "LDXc3j",
+          "title": "3/16/19 - Lucky Leprechaun Bash 2019",
+          "url": "https://vmpix.smugmug.com/Music/Archives/Bands/Regional/Renegade-Cartel/031619"
         }
       ]
     },
