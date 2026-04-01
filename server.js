@@ -690,6 +690,45 @@ function extractAlbumKeyFromImageDetail(json) {
     // fall through
   }
 
+  // Last resort: walk the full response object and grab the first AlbumKey
+  // or any URI that embeds /album/<key>. Smug image payloads vary a lot.
+  try {
+    const roots = [resp, img];
+    const seen = new Set();
+    const stack = roots.filter((node) => node && typeof node === "object");
+    while (stack.length) {
+      const cur = stack.pop();
+      if (!cur || typeof cur !== "object") continue;
+      if (seen.has(cur)) continue;
+      seen.add(cur);
+
+      const directAlbumKey = cur.AlbumKey || cur.albumKey || "";
+      if (typeof directAlbumKey === "string" && directAlbumKey.trim()) {
+        return directAlbumKey.trim();
+      }
+
+      const uriCandidates = [
+        cur.Uri,
+        cur.URI,
+        cur.Url,
+        cur.URL,
+        cur.AlbumUri,
+        cur.AlbumURL,
+        cur.AlbumUrl
+      ];
+      for (const candidate of uriCandidates) {
+        const mm = String(candidate || "").match(/\/album\/([^/?#]+)/i);
+        if (mm && mm[1]) return String(mm[1] || "").trim();
+      }
+
+      for (const value of Object.values(cur)) {
+        if (value && typeof value === "object") stack.push(value);
+      }
+    }
+  } catch (_) {
+    // fall through
+  }
+
   return "";
 }
 
