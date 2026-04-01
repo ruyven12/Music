@@ -87,6 +87,12 @@ const sheetResponseCache = new Map();
 const RECENT_ACTIVITY_CACHE_TTL_MS = Math.max(60_000, Number(process.env.RECENT_ACTIVITY_CACHE_TTL_MS || String(1000 * 60 * 10)));
 let recentMusicActivityCache = null;
 let recentMusicActivityPromise = null;
+const GEO_SUMMARY_CACHE_TTL_MS = Math.max(60_000, Number(process.env.GEO_SUMMARY_CACHE_TTL_MS || String(1000 * 60 * 60 * 6)));
+const GEO_REPORT_CACHE_TTL_MS = Math.max(60_000, Number(process.env.GEO_REPORT_CACHE_TTL_MS || String(1000 * 60 * 15)));
+const albumGeoSummaryCache = new Map();
+const albumGeoSummaryInFlight = new Map();
+let geoReportCache = null;
+let geoReportPromise = null;
 
 function isPeoplePayloadEffectivelyEmpty(payload) {
   const albumsScanned = Number(
@@ -958,6 +964,219 @@ async function _fetchAlbumFingerprint(seed) {
       lastUpdated: ""
     };
   }
+}
+
+function _roundGeoCoord(value, digits) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const places = Math.max(0, Number.isFinite(Number(digits)) ? Number(digits) : 5);
+  return Number(n.toFixed(places));
+}
+
+function _extractGeoFromAlbumImage(item) {
+  const src = (item && item.Image && typeof item.Image === "object") ? item.Image : item;
+  if (!src || typeof src !== "object") return null;
+  const lat = Number(src.Latitude);
+  const lng = Number(src.Longitude);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return {
+    lat,
+    lng,
+    imageKey: String(src.ImageKey || item && item.ImageKey || "").trim()
+  };
+}
+
+function _buildGeoMapUrl(lat, lng) {
+  const latVal = _roundGeoCoord(lat, 6);
+  const lngVal = _roundGeoCoord(lng, 6);
+  if (!Number.isFinite(latVal) || !Number.isFinite(lngVal)) return "";
+  return `https://www.google.com/maps?q=${encodeURIComponent(`${latVal},${lngVal}`)}`;
+}
+
+async function _resolveAlbumKeyFromShowUrl(showUrl) {
+  const url = String(showUrl || "").trim();
+  if (!url) return "";
+  const imageKey = extractImageKeyFromUrl(url);
+  if (!imageKey) return "";
+  try {
+    const img = await smug(`/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=1&_expand=Image`);
+    return extractAlbumKeyFromImageDetail(img);
+  } catch (_) {
+    return "";
+  }
+}
+
+function _isFreshGeoCache(entry, ttlMs) {
+  return !!(entry && Number.isFinite(Number(entry.builtAt)) && (Date.now() - Number(entry.builtAt) < ttlMs) && entry.payload);
+}
+
+async function buildAlbumGeoSummary(albumKey, opts) {
+  const key = String(albumKey || "").trim();
+  if (!key) return null;
+  const o = (opts && typeof opts === "object") ? opts : {};
+  const maxImages = Math.max(12, Math.min(400, Number(o.maxImages || 160)));
+  let start = 1;
+  const count = 200;
+  let totalImagesScanned = 0;
+  let geoTaggedImages = 0;
+  const coords = [];
+  let sampleImageKey = "";
+
+  while (totalImagesScanned < maxImages) {
+    const page = await smug(`/album/${encodeURIComponent(key)}!images?count=${count}&start=${start}&_accept=application/json&_expand=Image&_verbosity=1`);
+    const resp = page && page.Response ? page.Response : page;
+    const items = Array.isArray(resp && resp.AlbumImage) ? resp.AlbumImage : [];
+    if (!items.length) break;
+
+    const detailKeys = [];
+    for (const item of items) {
+      if (totalImagesScanned >= maxImages) break;
+      totalImagesScanned += 1;
+      const geo = _extractGeoFromAlbumImage(item);
+      if (geo) {
+        geoTaggedImages += 1;
+        coords.push(geo);
+        if (!sampleImageKey && geo.imageKey) sampleImageKey = geo.imageKey;
+        continue;
+      }
+      const imageKey = String(item && item.Image && item.Image.ImageKey || item && item.ImageKey || "").trim();
+      if (imageKey) detailKeys.push(imageKey);
+    }
+
+    await mapLimit(detailKeys, 4, async (imageKey) => {
+      try {
+        const detail = await smug(`/image/${encodeURIComponent(imageKey)}-0?_accept=application/json&_verbosity=1&_expand=Image`);
+        const resp2 = detail && detail.Response ? detail.Response : detail;
+        const geo = _extractGeoFromAlbumImage(resp2 && (resp2.Image || resp2));
+        if (!geo) return;
+        geoTaggedImages += 1;
+        coords.push(geo);
+        if (!sampleImageKey && geo.imageKey) sampleImageKey = geo.imageKey;
+      } catch (_) {}
+    });
+
+    if (items.length < count) break;
+    start += count;
+  }
+
+  let center = null;
+  let bounds = null;
+  if (coords.length) {
+    const latSum = coords.reduce((sum, item) => sum + Number(item.lat || 0), 0);
+    const lngSum = coords.reduce((sum, item) => sum + Number(item.lng || 0), 0);
+    const lats = coords.map((item) => Number(item.lat)).filter(Number.isFinite);
+    const lngs = coords.map((item) => Number(item.lng)).filter(Number.isFinite);
+    center = {
+      lat: _roundGeoCoord(latSum / coords.length, 6),
+      lng: _roundGeoCoord(lngSum / coords.length, 6)
+    };
+    bounds = {
+      minLat: _roundGeoCoord(Math.min(...lats), 6),
+      maxLat: _roundGeoCoord(Math.max(...lats), 6),
+      minLng: _roundGeoCoord(Math.min(...lngs), 6),
+      maxLng: _roundGeoCoord(Math.max(...lngs), 6)
+    };
+  }
+
+  return {
+    albumKey: key,
+    builtAt: new Date().toISOString(),
+    totalImagesScanned,
+    geoTaggedImages,
+    coveragePct: totalImagesScanned > 0 ? _roundPct((geoTaggedImages / totalImagesScanned) * 100) : 0,
+    center,
+    bounds,
+    sampleImageKey,
+    mapUrl: center ? _buildGeoMapUrl(center.lat, center.lng) : ""
+  };
+}
+
+async function getAlbumGeoSummaryCached(albumKey, opts) {
+  const key = String(albumKey || "").trim();
+  if (!key) return null;
+  const force = !!(opts && opts.force);
+  const cacheHit = albumGeoSummaryCache.get(key);
+  if (!force && _isFreshGeoCache(cacheHit, GEO_SUMMARY_CACHE_TTL_MS)) {
+    return cacheHit.payload;
+  }
+  if (!force && albumGeoSummaryInFlight.has(key)) {
+    return albumGeoSummaryInFlight.get(key);
+  }
+  const work = buildAlbumGeoSummary(key, opts).then((payload) => {
+    if (payload) albumGeoSummaryCache.set(key, { builtAt: Date.now(), payload });
+    return payload;
+  }).finally(() => {
+    albumGeoSummaryInFlight.delete(key);
+  });
+  albumGeoSummaryInFlight.set(key, work);
+  return work;
+}
+
+function _buildGeoVenueLine(row) {
+  if (!row || typeof row !== "object") return "";
+  const venue = String(row.show_venue || row.venue || "").trim();
+  const city = String(row.show_city || row.city || "").trim();
+  const state = String(row.show_state || row.state || "").trim();
+  const place = (city && state) ? `${city}, ${state}` : (city || state);
+  return [venue, place].filter(Boolean).join(" - ");
+}
+
+async function buildMusicGeoReportPayload(forceFresh) {
+  if (!forceFresh && _isFreshGeoCache(geoReportCache, GEO_REPORT_CACHE_TTL_MS)) {
+    return geoReportCache.payload;
+  }
+  if (!forceFresh && geoReportPromise) return geoReportPromise;
+
+  geoReportPromise = (async () => {
+    const showsCsv = await fetchTextWithShortCache('shows', SHOWS_SHEET_URL);
+    const rows = buildShowIndexPayload(showsCsv).shows || [];
+    const items = [];
+    let cursor = 0;
+
+    async function worker() {
+      while (cursor < rows.length) {
+        const idx = cursor++;
+        const row = rows[idx];
+        const showUrl = String(row && row.show_url || "").trim();
+        const albumKey = await _resolveAlbumKeyFromShowUrl(showUrl).catch(() => "");
+        const geo = albumKey ? await getAlbumGeoSummaryCached(albumKey, { force: forceFresh }).catch(() => null) : null;
+        items.push({
+          showName: String(row && (row.show_name || row.title) || "").trim(),
+          showDate: String(row && (row.show_date || row.date) || "").trim(),
+          prettyDate: String(row && row.pretty_date || formatPrettyShowDate(row && (row.show_date || row.date) || "")).trim(),
+          venueLine: _buildGeoVenueLine(row),
+          posterUrl: showUrl,
+          albumKey,
+          hasGeo: !!(geo && geo.center),
+          geoTaggedImages: Number(geo && geo.geoTaggedImages || 0),
+          totalImagesScanned: Number(geo && geo.totalImagesScanned || 0),
+          coveragePct: Number(geo && geo.coveragePct || 0),
+          center: geo && geo.center ? geo.center : null,
+          bounds: geo && geo.bounds ? geo.bounds : null,
+          mapUrl: String(geo && geo.mapUrl || "").trim()
+        });
+      }
+    }
+
+    await Promise.all(Array.from({ length: 4 }, () => worker()));
+    items.sort((a, b) =>
+      Number(b.geoTaggedImages || 0) - Number(a.geoTaggedImages || 0) ||
+      String(b.showDate || "").localeCompare(String(a.showDate || ""))
+    );
+
+    const payload = {
+      generatedAt: new Date().toISOString(),
+      count: items.length,
+      geoTaggedCount: items.filter((item) => item.hasGeo).length,
+      items
+    };
+    geoReportCache = { builtAt: Date.now(), payload };
+    return payload;
+  })().finally(() => {
+    geoReportPromise = null;
+  });
+
+  return geoReportPromise;
 }
 
 async function buildRecentMusicActivityPayload(forceFresh) {
@@ -2072,6 +2291,73 @@ app.get('/recent-activity', async (req, res) => {
   } catch (err) {
     console.error('/recent-activity failed:', err);
     return res.status(500).json({ error: 'recent activity error' });
+  }
+});
+
+app.get('/geo/album-summary', async (req, res) => {
+  allowCors(res, req);
+  const forceFresh = String(req.query.force || '').trim() === '1';
+  try {
+    let albumKey = String(req.query.albumKey || '').trim();
+    if (!albumKey) {
+      albumKey = await _resolveAlbumKeyFromShowUrl(String(req.query.url || '').trim());
+    }
+    if (!albumKey) {
+      return res.status(400).json({ error: 'missing albumKey or resolvable url' });
+    }
+    const payload = await getAlbumGeoSummaryCached(albumKey, { force: forceFresh });
+    if (!payload) {
+      return res.status(404).json({ error: 'geo summary unavailable', albumKey });
+    }
+    setPublicTextCacheHeaders(res, forceFresh ? 30 : 300);
+    return res.json(payload);
+  } catch (err) {
+    console.error('/geo/album-summary failed:', err);
+    return res.status(500).json({ error: 'geo album summary error' });
+  }
+});
+
+app.get('/geo/report', async (req, res) => {
+  allowCors(res, req);
+  const forceFresh = String(req.query.force || '').trim() === '1';
+  try {
+    const payload = await buildMusicGeoReportPayload(forceFresh);
+    setPublicTextCacheHeaders(res, forceFresh ? 30 : 300);
+    return res.json(payload);
+  } catch (err) {
+    console.error('/geo/report failed:', err);
+    return res.status(500).json({ error: 'geo report error' });
+  }
+});
+
+app.get('/geo/footprint', async (req, res) => {
+  allowCors(res, req);
+  const forceFresh = String(req.query.force || '').trim() === '1';
+  try {
+    const report = await buildMusicGeoReportPayload(forceFresh);
+    const items = (Array.isArray(report && report.items) ? report.items : [])
+      .filter((item) => item && item.hasGeo && item.center)
+      .map((item) => ({
+        showName: item.showName,
+        showDate: item.showDate,
+        prettyDate: item.prettyDate,
+        venueLine: item.venueLine,
+        albumKey: item.albumKey,
+        lat: Number(item.center && item.center.lat || 0),
+        lng: Number(item.center && item.center.lng || 0),
+        geoTaggedImages: Number(item.geoTaggedImages || 0),
+        coveragePct: Number(item.coveragePct || 0),
+        mapUrl: item.mapUrl || ""
+      }));
+    setPublicTextCacheHeaders(res, forceFresh ? 30 : 300);
+    return res.json({
+      generatedAt: new Date().toISOString(),
+      count: items.length,
+      items
+    });
+  } catch (err) {
+    console.error('/geo/footprint failed:', err);
+    return res.status(500).json({ error: 'geo footprint error' });
   }
 });
 
