@@ -89,9 +89,14 @@ let recentMusicActivityCache = null;
 let recentMusicActivityPromise = null;
 
 function isPeoplePayloadEffectivelyEmpty(payload) {
+  const albumsScanned = Number(
+    (payload && payload.stats && payload.stats.albumsScanned) ||
+    (payload && payload.albumsScanned) ||
+    0
+  );
   return !!(
     payload &&
-    Number(payload.albumsScanned || 0) === 0 &&
+    albumsScanned === 0 &&
     Array.isArray(payload.people) &&
     payload.people.length === 0
   );
@@ -258,6 +263,7 @@ function publicPeopleIndexPayload(payload) {
   const out = { ...payload };
   try { delete out._albumKeys; } catch (_) {}
   try { delete out._incremental; } catch (_) {}
+  try { delete out._albumStateByKey; } catch (_) {}
   return out;
 }
 
@@ -317,7 +323,9 @@ function isPeopleIndexBuildTimedOut() {
   );
 }
 
-function startPeopleIndexBuild() {
+function startPeopleIndexBuild(opts) {
+  const o = (opts && typeof opts === "object") ? opts : {};
+  const mode = String(o.mode || "incremental").trim().toLowerCase() === "full" ? "full" : "incremental";
   if (peopleIndexBuildPromise && !isPeopleIndexBuildTimedOut()) {
     return peopleIndexBuildPromise;
   }
@@ -330,11 +338,11 @@ function startPeopleIndexBuild() {
   peopleIndexBuildStartedAt = Date.now();
   peopleIndexBuildPromise = (async () => {
     try {
-      // Force rebuilds always regenerate the People index from scratch.
+      const previous = safeReadJsonFile(PEOPLE_INDEX_FILE);
       const computed = await withTimeout(
         computePeopleIndexFromBandsFolder({
-          previous: null,
-          incremental: false
+          previous,
+          incremental: mode !== "full"
         }),
         PEOPLE_INDEX_BUILD_TIMEOUT_MS,
         "people index rebuild"
@@ -863,6 +871,30 @@ async function _fetchRecentMusicAlbumEntry(seed) {
   }
 }
 
+async function _fetchAlbumFingerprint(seed) {
+  const albumKey = String(seed && seed.albumKey || "").trim();
+  if (!albumKey) return null;
+  try {
+    const result = await smug(`/album/${encodeURIComponent(albumKey)}?_accept=application/json&_verbosity=1`);
+    const album = (result && result.Response && result.Response.Album) || result.Album || result || {};
+    const meta = extractAlbumMeta(result);
+    return {
+      albumKey,
+      title: String(meta.title || seed.title || "").trim(),
+      url: String(meta.url || seed.url || "").trim(),
+      lastUpdated: _safeIsoDateValue(album.LastUpdated)
+    };
+  } catch (err) {
+    console.warn("people-index: album fingerprint fetch failed:", albumKey, err && err.message ? err.message : err);
+    return {
+      albumKey,
+      title: String(seed && seed.title || "").trim(),
+      url: String(seed && seed.url || "").trim(),
+      lastUpdated: ""
+    };
+  }
+}
+
 async function buildRecentMusicActivityPayload(forceFresh) {
   if (!forceFresh && isFreshRecentMusicActivityCache(recentMusicActivityCache)) {
     return recentMusicActivityCache.payload;
@@ -1204,117 +1236,88 @@ async function computePeopleIndexFromBandsFolder(opts) {
   }
 
   const albumKeySetAll = new Set(albumKeysAll);
+  const discoveredByKey = new Map();
+  discovered.forEach((item) => {
+    const key = String(item && item.albumKey || "").trim();
+    if (key && albumKeySetAll.has(key)) discoveredByKey.set(key, item);
+  });
 
-  // Build a working People map from previous payload if present (incremental mode),
-  // so we only scan NEW albums by default.
-  function buildPeopleMapFromPayload(payload) {
-    const map = new Map(); // name -> Map(albumKey -> {albumKey,title,url})
-    if (!payload || !Array.isArray(payload.people)) return map;
-    for (const p of payload.people) {
-      const name = p && p.name ? String(p.name).trim() : "";
-      if (!name) continue;
-      const albums = Array.isArray(p.albums) ? p.albums : [];
-      for (const a of albums) {
-        const k = a && a.albumKey ? String(a.albumKey).trim() : "";
-        if (!k) continue;
-        // Only keep albums that still exist under the current Bands root.
-        if (!albumKeySetAll.has(k)) continue;
-        if (!map.has(name)) map.set(name, new Map());
-        map.get(name).set(k, {
-          albumKey: k,
-          title: String(a.title || "").trim(),
-          url: String(a.url || "").trim()
-        });
-      }
+  const previousStatesRaw = (incremental && previous && previous._albumStateByKey && typeof previous._albumStateByKey === "object")
+    ? previous._albumStateByKey
+    : {};
+  const previousStates = new Map();
+  Object.keys(previousStatesRaw).forEach((key) => {
+    const clean = String(key || "").trim();
+    const value = previousStatesRaw[key];
+    if (clean && value && typeof value === "object") previousStates.set(clean, value);
+  });
+
+  const removedAlbums = incremental
+    ? Array.from(previousStates.keys()).filter((key) => !albumKeySetAll.has(key))
+    : [];
+
+  const discoveredSeeds = albumKeysAll
+    .map((key) => discoveredByKey.get(key))
+    .filter(Boolean);
+
+  const fingerprints = [];
+  let cursor = 0;
+  async function fingerprintWorker() {
+    while (cursor < discoveredSeeds.length) {
+      const idx = cursor++;
+      const seed = discoveredSeeds[idx];
+      const fp = await _fetchAlbumFingerprint(seed);
+      if (fp && fp.albumKey) fingerprints.push(fp);
     }
-    return map;
   }
+  await Promise.all(Array.from({ length: 6 }, () => fingerprintWorker()));
 
-  // Prefer explicit stored album key list if available; else derive from people list.
-  function extractAlbumKeysFromPayload(payload) {
-    const out = new Set();
-    if (!payload || typeof payload !== "object") return out;
-    if (Array.isArray(payload._albumKeys)) {
-      payload._albumKeys.forEach((k) => {
-        const kk = String(k || "").trim();
-        if (kk) out.add(kk);
-      });
-      return out;
-    }
-    if (Array.isArray(payload.people)) {
-      for (const p of payload.people) {
-        const albums = p && Array.isArray(p.albums) ? p.albums : [];
-        for (const a of albums) {
-          const k = a && a.albumKey ? String(a.albumKey).trim() : "";
-          if (k) out.add(k);
-        }
-      }
-    }
-    return out;
-  }
+  const fingerprintByKey = new Map();
+  fingerprints.forEach((item) => {
+    if (item && item.albumKey && albumKeySetAll.has(item.albumKey)) fingerprintByKey.set(item.albumKey, item);
+  });
 
-  const prevAlbumKeys = (incremental && previous) ? extractAlbumKeysFromPayload(previous) : new Set();
-  const albumKeysToScan = (incremental && previous)
-    ? albumKeysAll.filter((k) => !prevAlbumKeys.has(k))
-    : albumKeysAll;
-
-  const peopleToAlbums = (incremental && previous)
-    ? buildPeopleMapFromPayload(previous)
-    : new Map();
-
-  // Best-effort incremental photo counts: seed from previous payload (if present)
-  // then add counts for newly scanned albums. If albums are later removed, counts may
-  // become slightly over-reported until a full rebuild is run.
-  function buildPhotoCountMapFromPayload(payload) {
-    const map = new Map();
-    if (!payload || !Array.isArray(payload.people)) return map;
-    for (const p of payload.people) {
-      const name = p && p.name ? String(p.name).trim() : "";
-      if (!name) continue;
-      const n = Number(p.photoCount || 0);
-      if (Number.isFinite(n) && n > 0) map.set(name, n);
-    }
-    return map;
-  }
-
-  const peopleToPhotoCount = (incremental && previous)
-    ? buildPhotoCountMapFromPayload(previous)
-    : new Map();
-
-  function buildShotStatsFromPayload(payload) {
-    if (!payload || typeof payload !== "object") {
-      return { totalShotsScanned: 0, shotsTagged: 0, shotsUntagged: 0 };
-    }
-
-    const stats = (payload.stats && typeof payload.stats === "object") ? payload.stats : payload;
-    const totalShotsScanned = Number(stats.totalShotsScanned || 0);
-    const shotsTagged = Number(stats.shotsTagged || 0);
-    const shotsUntagged = Number(stats.shotsUntagged || 0);
-
-    return {
-      totalShotsScanned: Number.isFinite(totalShotsScanned) ? totalShotsScanned : 0,
-      shotsTagged: Number.isFinite(shotsTagged) ? shotsTagged : 0,
-      shotsUntagged: Number.isFinite(shotsUntagged) ? shotsUntagged : 0
+  const albumKeysToScan = [];
+  const reusableStates = new Map();
+  for (const albumKey of albumKeysAll) {
+    const fingerprint = fingerprintByKey.get(albumKey) || {
+      albumKey,
+      title: String((discoveredByKey.get(albumKey) && discoveredByKey.get(albumKey).title) || "").trim(),
+      url: String((discoveredByKey.get(albumKey) && discoveredByKey.get(albumKey).url) || "").trim(),
+      lastUpdated: ""
     };
-  }
-
-  const shotStats = (incremental && previous)
-    ? buildShotStatsFromPayload(previous)
-    : { totalShotsScanned: 0, shotsTagged: 0, shotsUntagged: 0 };
-
-  async function ensureAlbumMeta(albumKey) {
-    const pre = discovered.find((x) => x.albumKey === albumKey);
-    if (pre && (pre.title || pre.url)) return { title: pre.title || "", url: pre.url || "" };
-    try {
-      const meta = await smug(`/album/${encodeURIComponent(albumKey)}?_accept=application/json&_verbosity=1`);
-      return extractAlbumMeta(meta);
-    } catch (_) {
-      return { title: "", url: "" };
+    const prevState = previousStates.get(albumKey);
+    const currentLastUpdated = String(fingerprint.lastUpdated || "").trim();
+    const previousLastUpdated = String(prevState && prevState.lastUpdated || "").trim();
+    if (
+      incremental &&
+      prevState &&
+      currentLastUpdated &&
+      previousLastUpdated &&
+      currentLastUpdated === previousLastUpdated
+    ) {
+      reusableStates.set(albumKey, Object.assign({}, prevState, {
+        albumKey,
+        title: String(fingerprint.title || prevState.title || "").trim(),
+        url: String(fingerprint.url || prevState.url || "").trim(),
+        lastUpdated: currentLastUpdated
+      }));
+    } else {
+      albumKeysToScan.push(albumKey);
     }
   }
 
   async function scanAlbum(albumKey) {
-    const meta = await ensureAlbumMeta(albumKey);
+    const fingerprint = fingerprintByKey.get(albumKey) || {
+      albumKey,
+      title: String((discoveredByKey.get(albumKey) && discoveredByKey.get(albumKey).title) || "").trim(),
+      url: String((discoveredByKey.get(albumKey) && discoveredByKey.get(albumKey).url) || "").trim(),
+      lastUpdated: ""
+    };
+    const peopleCounts = new Map();
+    let totalShotsScanned = 0;
+    let shotsTagged = 0;
+    let shotsUntagged = 0;
     let start = 1;
     const count = 200;
     while (true) {
@@ -1335,9 +1338,9 @@ async function computePeopleIndexFromBandsFolder(opts) {
         const cap = typeof pageCaption === "string" ? pageCaption : "";
 
         if (pageCaption !== undefined) {
-          shotStats.totalShotsScanned += 1;
-          if (cap.trim()) shotStats.shotsTagged += 1;
-          else shotStats.shotsUntagged += 1;
+          totalShotsScanned += 1;
+          if (cap.trim()) shotsTagged += 1;
+          else shotsUntagged += 1;
         }
 
         const names = parsePeopleFromCaption(cap);
@@ -1345,9 +1348,7 @@ async function computePeopleIndexFromBandsFolder(opts) {
           for (const n of names) {
             const key = String(n).trim();
             if (!key) continue;
-            if (!peopleToAlbums.has(key)) peopleToAlbums.set(key, new Map());
-            peopleToAlbums.get(key).set(albumKey, { albumKey, title: meta.title, url: meta.url });
-            peopleToPhotoCount.set(key, (peopleToPhotoCount.get(key) || 0) + 1);
+            peopleCounts.set(key, Number(peopleCounts.get(key) || 0) + 1);
           }
           continue;
         }
@@ -1355,8 +1356,8 @@ async function computePeopleIndexFromBandsFolder(opts) {
         const ik = (ai && ai.Image && ai.Image.ImageKey) || ai.ImageKey || "";
         if (pageCaption === undefined && ik) imageKeysNeedingDetail.push(String(ik));
         else if (pageCaption === undefined) {
-          shotStats.totalShotsScanned += 1;
-          shotStats.shotsUntagged += 1;
+          totalShotsScanned += 1;
+          shotsUntagged += 1;
         }
       }
 
@@ -1366,17 +1367,15 @@ async function computePeopleIndexFromBandsFolder(opts) {
           const resp2 = detail && detail.Response ? detail.Response : detail;
           const img = resp2 && (resp2.Image || resp2.image || resp2);
           const cap = img && (img.Caption || img.CaptionText || "");
-          shotStats.totalShotsScanned += 1;
-          if (String(cap || "").trim()) shotStats.shotsTagged += 1;
-          else shotStats.shotsUntagged += 1;
+          totalShotsScanned += 1;
+          if (String(cap || "").trim()) shotsTagged += 1;
+          else shotsUntagged += 1;
           const names = parsePeopleFromCaption(cap);
           if (!names.length) return;
           for (const n of names) {
             const key = String(n).trim();
             if (!key) continue;
-            if (!peopleToAlbums.has(key)) peopleToAlbums.set(key, new Map());
-            peopleToAlbums.get(key).set(albumKey, { albumKey, title: meta.title, url: meta.url });
-            peopleToPhotoCount.set(key, (peopleToPhotoCount.get(key) || 0) + 1);
+            peopleCounts.set(key, Number(peopleCounts.get(key) || 0) + 1);
           }
         } catch (_) {
           // continue
@@ -1386,23 +1385,57 @@ async function computePeopleIndexFromBandsFolder(opts) {
       if (items.length < count) break;
       start += count;
     }
+    return {
+      albumKey,
+      title: String(fingerprint.title || "").trim(),
+      url: String(fingerprint.url || "").trim(),
+      lastUpdated: String(fingerprint.lastUpdated || "").trim(),
+      stats: {
+        totalShotsScanned,
+        shotsTagged,
+        shotsUntagged
+      },
+      people: Object.fromEntries(Array.from(peopleCounts.entries()))
+    };
   }
 
-  // Scan only the needed albums (NEW only when incremental).
+  const scannedStates = new Map();
   await mapLimit(albumKeysToScan, 2, async (albumKey) => {
     try {
-      await scanAlbum(albumKey);
+      const state = await scanAlbum(albumKey);
+      if (state && state.albumKey) scannedStates.set(albumKey, state);
     } catch (e) {
       console.warn("people-index: album scan failed:", albumKey, e && e.message ? e.message : e);
     }
   });
 
-  // Prune any albums that no longer exist and any people that ended up empty.
-  for (const [person, albumMap] of Array.from(peopleToAlbums.entries())) {
-    for (const k of Array.from(albumMap.keys())) {
-      if (!albumKeySetAll.has(k)) albumMap.delete(k);
-    }
-    if (albumMap.size === 0) peopleToAlbums.delete(person);
+  const finalAlbumStates = new Map();
+  for (const albumKey of albumKeysAll) {
+    if (scannedStates.has(albumKey)) finalAlbumStates.set(albumKey, scannedStates.get(albumKey));
+    else if (reusableStates.has(albumKey)) finalAlbumStates.set(albumKey, reusableStates.get(albumKey));
+  }
+
+  const peopleToAlbums = new Map();
+  const peopleToPhotoCount = new Map();
+  const shotStats = { totalShotsScanned: 0, shotsTagged: 0, shotsUntagged: 0 };
+  for (const [albumKey, state] of finalAlbumStates.entries()) {
+    const title = String(state && state.title || "").trim();
+    const url = String(state && state.url || "").trim();
+    const statsBlock = (state && state.stats && typeof state.stats === "object") ? state.stats : {};
+    shotStats.totalShotsScanned += Number(statsBlock.totalShotsScanned || 0);
+    shotStats.shotsTagged += Number(statsBlock.shotsTagged || 0);
+    shotStats.shotsUntagged += Number(statsBlock.shotsUntagged || 0);
+
+    const peopleBlock = (state && state.people && typeof state.people === "object") ? state.people : {};
+    Object.keys(peopleBlock).forEach((name) => {
+      const cleanName = String(name || "").trim();
+      if (!cleanName) return;
+      const count = Number(peopleBlock[name] || 0);
+      if (!Number.isFinite(count) || count <= 0) return;
+      if (!peopleToAlbums.has(cleanName)) peopleToAlbums.set(cleanName, new Map());
+      peopleToAlbums.get(cleanName).set(albumKey, { albumKey, title, url });
+      peopleToPhotoCount.set(cleanName, Number(peopleToPhotoCount.get(cleanName) || 0) + count);
+    });
   }
 
   const people = Array.from(peopleToAlbums.entries())
@@ -1434,12 +1467,27 @@ async function computePeopleIndexFromBandsFolder(opts) {
     albumsScanned: albumKeysAll.length
   };
 
+  const buildSummary = {
+    mode: incremental ? "incremental" : "full",
+    albumsDiscovered: albumKeysAll.length,
+    albumsReused: reusableStates.size,
+    albumsRescanned: scannedStates.size,
+    albumsRemoved: removedAlbums.length
+  };
+
+  const albumStateByKey = {};
+  finalAlbumStates.forEach((state, key) => {
+    albumStateByKey[key] = state;
+  });
+
   return {
     generatedAt: new Date().toISOString(),
     stats,
     people,
+    rebuild: buildSummary,
     _albumKeys: albumKeysAll,
-    _incremental: incremental ? { scannedNew: albumKeysToScan.length } : undefined
+    _incremental: buildSummary,
+    _albumStateByKey: albumStateByKey
   };
 }
 
@@ -1747,6 +1795,8 @@ app.get('/ping', (req, res) => {
 // =========================================================
 app.get('/index/people', async (req, res) => {
   const force = String(req.query.force || '') === '1';
+  const full = String(req.query.full || req.query.mode || '').trim().toLowerCase();
+  const buildMode = full === '1' || full === 'true' || full === 'full' ? 'full' : 'incremental';
   allowCors(res, req);
 
   try {
@@ -1788,12 +1838,12 @@ app.get('/index/people', async (req, res) => {
       resetPeopleIndexBuildState();
     }
 
-    const attachedToBuild = !!peopleIndexBuildPromise;
-    const computed = await startPeopleIndexBuild();
-    return res.json({
-      ...publicPeopleIndexPayload(computed),
-      cache: { hit: false, layer: 'computed', building: attachedToBuild, mode: 'full-rebuild' }
-    });
+      const attachedToBuild = !!peopleIndexBuildPromise;
+      const computed = await startPeopleIndexBuild({ mode: buildMode });
+      return res.json({
+        ...publicPeopleIndexPayload(computed),
+        cache: { hit: false, layer: 'computed', building: attachedToBuild, mode: buildMode === 'full' ? 'full-rebuild' : 'incremental-rebuild' }
+      });
   } catch (err) {
     const detail = String(err && err.message ? err.message : err || 'unknown error');
     console.error('people index failed:', detail);
