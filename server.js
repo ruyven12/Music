@@ -814,6 +814,51 @@ function _pickAlbumThumbUrl(album) {
   return "";
 }
 
+function _maxIsoDateValue(values) {
+  let best = "";
+  let bestMs = -1;
+  (Array.isArray(values) ? values : []).forEach((value) => {
+    const iso = _safeIsoDateValue(value);
+    if (!iso) return;
+    const ms = Date.parse(iso);
+    if (!Number.isFinite(ms)) return;
+    if (ms > bestMs) {
+      bestMs = ms;
+      best = iso;
+    }
+  });
+  return best;
+}
+
+function _extractRecentAlbumActivity(album) {
+  const highlight = (album && album.HighlightImage && typeof album.HighlightImage === "object")
+    ? album.HighlightImage
+    : {};
+
+  const lastUpdated = _maxIsoDateValue([
+    album && album.LastUpdated,
+    album && album.DateModified,
+    album && album.DateTimeModified,
+    album && album.ModifiedAt,
+    highlight && highlight.LastUpdated,
+    highlight && highlight.DateModified,
+    highlight && highlight.DateTimeModified,
+    highlight && highlight.ModifiedAt,
+    highlight && highlight.DateTimeUploaded
+  ]);
+
+  const dateUploaded = _maxIsoDateValue([
+    album && album.DateUploaded,
+    album && album.DateTimeUploaded,
+    album && album.Date,
+    highlight && highlight.DateUploaded,
+    highlight && highlight.DateTimeUploaded,
+    highlight && highlight.Date
+  ]);
+
+  return { lastUpdated, dateUploaded };
+}
+
 function _normalizeRecentLookupText(value) {
   return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -872,8 +917,9 @@ async function _fetchRecentMusicAlbumEntry(seed) {
     const album = (result && result.Response && result.Response.Album) || result.Album || result || {};
     const title = String(album.Title || seed.title || "").trim();
     const url = String(album.WebUri || album.Url || seed.url || "").trim();
-    const lastUpdated = _safeIsoDateValue(album.LastUpdated);
-    const dateUploaded = _safeIsoDateValue(album.Date || album.DateUploaded);
+    const activity = _extractRecentAlbumActivity(album);
+    const lastUpdated = activity.lastUpdated;
+    const dateUploaded = activity.dateUploaded;
     if (!title || (!lastUpdated && !dateUploaded)) return null;
     return {
       type: "album",
