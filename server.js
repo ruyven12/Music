@@ -294,26 +294,31 @@ function buildUnknownPeopleFromAlbumState(payload) {
     : {};
 
   const albums = [];
+  const images = [];
   let photoCount = 0;
   Object.entries(albumStateByKey).forEach(([albumKey, state]) => {
     const item = state && typeof state === "object" ? state : {};
     const stats = item.stats && typeof item.stats === "object" ? item.stats : {};
-    const untagged = Number(stats.shotsUntagged || 0);
-    if (!Number.isFinite(untagged) || untagged <= 0) return;
-    photoCount += untagged;
+    const perAlbumUnknownImages = Array.isArray(item.unknownImages) ? item.unknownImages : [];
+    const perAlbumPhotoCount = perAlbumUnknownImages.length || Number(stats.shotsUntagged || 0);
+    if (!Number.isFinite(perAlbumPhotoCount) || perAlbumPhotoCount <= 0) return;
+    photoCount += perAlbumPhotoCount;
     albums.push({
       albumKey: String(albumKey || "").trim(),
       title: String(item.title || "").trim(),
       url: String(item.url || "").trim(),
-      photoCount: untagged,
+      photoCount: perAlbumPhotoCount,
       lastUpdated: String(item.lastUpdated || "").trim()
+    });
+    perAlbumUnknownImages.forEach((image) => {
+      if (image && typeof image === "object") images.push(image);
     });
   });
 
   return {
-    photoCount,
+    photoCount: images.length || photoCount,
     albums,
-    images: []
+    images
   };
 }
 
@@ -914,6 +919,40 @@ function _pickAlbumThumbUrl(album) {
     if (url) return url;
   }
   return "";
+}
+
+function _pickAlbumImageUrl(src, keys) {
+  const list = Array.isArray(keys) ? keys : [];
+  for (const key of list) {
+    const url = String(src && src[key] || "").trim();
+    if (url) return url;
+  }
+  return "";
+}
+
+function _extractUnknownImageFromAlbumImage(albumImage, albumMeta, caption, reason) {
+  const src = (albumImage && albumImage.Image && typeof albumImage.Image === "object") ? albumImage.Image : albumImage;
+  const imageKey = String(src && src.ImageKey || albumImage && albumImage.ImageKey || "").trim();
+  const thumbUrl = _pickAlbumImageUrl(src, [
+    "ThumbnailUrl", "ThumbUrl", "SmallUrl", "MediumUrl", "LargeUrl", "XLargeUrl", "X3LargeUrl", "LargestUrl", "WebUri", "Url", "URL", "Uri"
+  ]) || _pickAlbumImageUrl(albumImage, [
+    "ThumbnailUrl", "ThumbUrl", "SmallUrl", "MediumUrl", "LargeUrl", "XLargeUrl", "X3LargeUrl", "LargestUrl", "WebUri", "Url", "URL", "Uri"
+  ]);
+  const imageUrl = _pickAlbumImageUrl(src, [
+    "LargestUrl", "X3LargeUrl", "XLargeUrl", "LargeUrl", "MediumUrl", "WebUri", "Url", "URL", "Uri"
+  ]) || _pickAlbumImageUrl(albumImage, [
+    "LargestUrl", "X3LargeUrl", "XLargeUrl", "LargeUrl", "MediumUrl", "WebUri", "Url", "URL", "Uri"
+  ]) || thumbUrl;
+  return {
+    imageKey,
+    caption: String(caption || ""),
+    reason: String(reason || "").trim(),
+    thumbUrl,
+    imageUrl,
+    albumKey: String(albumMeta && albumMeta.albumKey || "").trim(),
+    albumTitle: String(albumMeta && albumMeta.title || "").trim(),
+    albumUrl: String(albumMeta && albumMeta.url || "").trim()
+  };
 }
 
 function _maxIsoDateValue(values) {
@@ -1840,6 +1879,7 @@ async function computePeopleIndexFromBandsFolder(opts) {
       lastUpdated: ""
     };
     const peopleCounts = new Map();
+    const unknownImages = [];
     let totalShotsScanned = 0;
     let shotsTagged = 0;
     let shotsUntagged = 0;
@@ -1878,11 +1918,16 @@ async function computePeopleIndexFromBandsFolder(opts) {
           continue;
         }
 
+        if (pageCaption !== undefined) {
+          unknownImages.push(_extractUnknownImageFromAlbumImage(ai, fingerprint, cap, cap.trim() ? "unmatched_caption" : "missing_caption"));
+        }
+
         const ik = (ai && ai.Image && ai.Image.ImageKey) || ai.ImageKey || "";
         if (pageCaption === undefined && ik) imageKeysNeedingDetail.push(String(ik));
         else if (pageCaption === undefined) {
           totalShotsScanned += 1;
           shotsUntagged += 1;
+          unknownImages.push(_extractUnknownImageFromAlbumImage(ai, fingerprint, "", "missing_caption"));
         }
       }
 
@@ -1896,7 +1941,10 @@ async function computePeopleIndexFromBandsFolder(opts) {
           if (String(cap || "").trim()) shotsTagged += 1;
           else shotsUntagged += 1;
           const names = parsePeopleFromCaption(cap);
-          if (!names.length) return;
+          if (!names.length) {
+            unknownImages.push(_extractUnknownImageFromAlbumImage(img, fingerprint, cap, String(cap || "").trim() ? "unmatched_caption" : "missing_caption"));
+            return;
+          }
           for (const n of names) {
             const key = String(n).trim();
             if (!key) continue;
@@ -1920,6 +1968,7 @@ async function computePeopleIndexFromBandsFolder(opts) {
         shotsTagged,
         shotsUntagged
       },
+      unknownImages,
       people: Object.fromEntries(Array.from(peopleCounts.entries()))
     };
   }
@@ -2006,10 +2055,12 @@ async function computePeopleIndexFromBandsFolder(opts) {
   });
 
   const unknownAlbums = [];
+  const unknownImages = [];
   finalAlbumStates.forEach((state, key) => {
     const item = state && typeof state === "object" ? state : {};
     const statsBlock = item.stats && typeof item.stats === "object" ? item.stats : {};
-    const shots = Number(statsBlock.shotsUntagged || 0);
+    const perAlbumUnknownImages = Array.isArray(item.unknownImages) ? item.unknownImages : [];
+    const shots = perAlbumUnknownImages.length || Number(statsBlock.shotsUntagged || 0);
     if (!Number.isFinite(shots) || shots <= 0) return;
     unknownAlbums.push({
       albumKey: String(key || "").trim(),
@@ -2017,6 +2068,9 @@ async function computePeopleIndexFromBandsFolder(opts) {
       url: String(item.url || "").trim(),
       photoCount: shots,
       lastUpdated: String(item.lastUpdated || "").trim()
+    });
+    perAlbumUnknownImages.forEach((image) => {
+      if (image && typeof image === "object") unknownImages.push(image);
     });
   });
 
@@ -2028,9 +2082,9 @@ async function computePeopleIndexFromBandsFolder(opts) {
     },
     people,
     unknown: {
-      photoCount: shotsUntagged,
+      photoCount: unknownImages.length || shotsUntagged,
       albums: unknownAlbums,
-      images: []
+      images: unknownImages
     },
     _albumKeys: albumKeysAll,
     _incremental: buildSummary,
