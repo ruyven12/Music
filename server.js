@@ -273,8 +273,53 @@ function publicPeopleIndexPayload(payload) {
   return out;
 }
 
+function buildUnknownPeopleFromAlbumState(payload) {
+  const src = payload && typeof payload === "object" ? payload : {};
+  const explicit = src.unknown && typeof src.unknown === "object" ? src.unknown : null;
+  if (explicit) {
+    const explicitPhotoCount = Number(explicit.photoCount || 0);
+    const explicitAlbums = Array.isArray(explicit.albums) ? explicit.albums : [];
+    const explicitImages = Array.isArray(explicit.images) ? explicit.images : [];
+    if (explicitPhotoCount > 0 || explicitAlbums.length || explicitImages.length) {
+      return {
+        photoCount: explicitPhotoCount,
+        albums: explicitAlbums,
+        images: explicitImages
+      };
+    }
+  }
+
+  const albumStateByKey = src._albumStateByKey && typeof src._albumStateByKey === "object"
+    ? src._albumStateByKey
+    : {};
+
+  const albums = [];
+  let photoCount = 0;
+  Object.entries(albumStateByKey).forEach(([albumKey, state]) => {
+    const item = state && typeof state === "object" ? state : {};
+    const stats = item.stats && typeof item.stats === "object" ? item.stats : {};
+    const untagged = Number(stats.shotsUntagged || 0);
+    if (!Number.isFinite(untagged) || untagged <= 0) return;
+    photoCount += untagged;
+    albums.push({
+      albumKey: String(albumKey || "").trim(),
+      title: String(item.title || "").trim(),
+      url: String(item.url || "").trim(),
+      photoCount: untagged,
+      lastUpdated: String(item.lastUpdated || "").trim()
+    });
+  });
+
+  return {
+    photoCount,
+    albums,
+    images: []
+  };
+}
+
 function buildPeopleIndexResponse(payload, cacheInfo) {
   const safe = publicPeopleIndexPayload(payload) || {};
+  const unknown = buildUnknownPeopleFromAlbumState(payload);
   const report = Object.assign(
     {},
     (safe.report && typeof safe.report === "object") ? safe.report : {},
@@ -287,7 +332,8 @@ function buildPeopleIndexResponse(payload, cacheInfo) {
     generatedAt: safe.generatedAt || "",
     stats: safe.stats && typeof safe.stats === "object" ? safe.stats : {},
     report,
-    people: Array.isArray(safe.people) ? safe.people : []
+    people: Array.isArray(safe.people) ? safe.people : [],
+    unknown
   };
   return out;
 }
@@ -1959,6 +2005,21 @@ async function computePeopleIndexFromBandsFolder(opts) {
     albumStateByKey[key] = state;
   });
 
+  const unknownAlbums = [];
+  finalAlbumStates.forEach((state, key) => {
+    const item = state && typeof state === "object" ? state : {};
+    const statsBlock = item.stats && typeof item.stats === "object" ? item.stats : {};
+    const shots = Number(statsBlock.shotsUntagged || 0);
+    if (!Number.isFinite(shots) || shots <= 0) return;
+    unknownAlbums.push({
+      albumKey: String(key || "").trim(),
+      title: String(item.title || "").trim(),
+      url: String(item.url || "").trim(),
+      photoCount: shots,
+      lastUpdated: String(item.lastUpdated || "").trim()
+    });
+  });
+
   return {
     generatedAt: new Date().toISOString(),
     stats,
@@ -1966,6 +2027,11 @@ async function computePeopleIndexFromBandsFolder(opts) {
       rebuild: buildSummary
     },
     people,
+    unknown: {
+      photoCount: shotsUntagged,
+      albums: unknownAlbums,
+      images: []
+    },
     _albumKeys: albumKeysAll,
     _incremental: buildSummary,
     _albumStateByKey: albumStateByKey
