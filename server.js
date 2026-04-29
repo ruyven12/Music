@@ -786,7 +786,6 @@ function buildNewSheetBandIndexPayload(csvText) {
       stats: compactJsonFields({
         region: item.region,
         location: item.location,
-        city: item.city,
         state: item.state,
         country: item.country,
         archived_sets: item.archived_sets != null ? item.archived_sets : item.sets_archive,
