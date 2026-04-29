@@ -755,11 +755,11 @@ function buildNewSheetBandIndexPayload(csvText) {
     const name = String((item.band || item.name) || '').trim();
     const bandId = String(item.band_id || '').trim();
     const letter = bandLetterFromBandId(bandId, name);
+    const bandKey = bandId || String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'unknown';
 
-    if (!grouped[letter]) grouped[letter] = [];
-    grouped[letter].push({
+    if (!grouped[letter]) grouped[letter] = {};
+    grouped[letter][bandKey] = {
       general: {
-        band_id: bandId,
         name,
         smug_folder: String(item.smug_folder || '').trim(),
         logo_url: String(item.logo_url || '').trim(),
@@ -780,7 +780,7 @@ function buildNewSheetBandIndexPayload(csvText) {
         archived_sets: String((item.archived_sets != null ? item.archived_sets : item.sets_archive) || '').trim(),
         total_sets: String(item.total_sets || '').trim()
       }
-    });
+    };
   });
 
   return {
