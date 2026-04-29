@@ -72,6 +72,11 @@ const PEOPLE_INDEX_MAX_ALBUMS = Math.max(
 const BANDS_SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdi19qTDyPeBGzq0PpkdlDS_bNg34XpdRiXy8aBa-Jlu-jg2Wzkj1SnLXtRVFU4TGOh5KHJPK8Lwhc/pub?gid=0&single=true&output=csv";
 
+const NEW_SHEET_BANDS_URL = String(
+  process.env.NEW_SHEET_BANDS_URL ||
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9eB4uyDNgfQ7Jqydfe-nfTM0PJ4PGt85AI7BcIR7k1c708VMcVXnmxK0_0JCHI1ukAQT_B6xp1ntA/pub?gid=0&single=true&output=csv"
+).trim();
+
 const SHOWS_SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdi19qTDyPeBGzq0PpkdlDS_bNg34XpdRiXy8aBa-Jlu-jg2Wzkj1SnLXtRVFU4TGOh5KHJPK8Lwhc/pub?gid=1306635885&single=true&output=csv";
 
@@ -475,6 +480,54 @@ function parseCsvSimple(csvText) {
   return { header, rows };
 }
 
+function scoreBandHeaderRow(row) {
+  const known = new Set([
+    'band',
+    'band_id',
+    'smug_folder',
+    'logo_url',
+    'region',
+    'location',
+    'state',
+    'country',
+    'members',
+    'past_members',
+    'tags',
+    'status',
+    'notes',
+    'sets_archive',
+    'archived_sets',
+    'total_sets'
+  ]);
+
+  return (Array.isArray(row) ? row : []).reduce((score, value) => {
+    const key = String(value || '').trim().toLowerCase();
+    return known.has(key) ? score + 1 : score;
+  }, 0);
+}
+
+function detectBandHeader(parsed) {
+  const base = parsed && typeof parsed === 'object' ? parsed : { header: [], rows: [] };
+  const allRows = [base.header].concat(Array.isArray(base.rows) ? base.rows : []);
+  let bestIndex = 0;
+  let bestScore = scoreBandHeaderRow(allRows[0]);
+
+  for (let i = 1; i < allRows.length; i++) {
+    const score = scoreBandHeaderRow(allRows[i]);
+    if (score > bestScore) {
+      bestIndex = i;
+      bestScore = score;
+    }
+  }
+
+  if (bestScore < 4) return base;
+  return {
+    header: (allRows[bestIndex] || []).map((h) => String(h || '').trim()),
+    rows: allRows.slice(0, bestIndex).concat(allRows.slice(bestIndex + 1)),
+    headerRowNumber: bestIndex + 1
+  };
+}
+
 function _roundPct(value) {
   const n = Number(value);
   if (!Number.isFinite(n)) return 0;
@@ -626,8 +679,11 @@ function buildShowIndexPayload(csvText) {
     shows
   };
 }
-function buildBandIndexPayload(csvText) {
-  const { header, rows } = parseCsvSimple(csvText);
+function buildBandIndexPayload(csvText, options) {
+  const parsed = options && options.detectHeaderRow
+    ? detectBandHeader(parseCsvSimple(csvText))
+    : parseCsvSimple(csvText);
+  const { header, rows } = parsed;
   const headerLower = header.map((h) => String(h || '').trim().toLowerCase());
 
   const bandIdx = headerLower.indexOf('band');
@@ -2527,6 +2583,38 @@ app.get('/index/bands', async (req, res) => {
     console.error('band-index fetch failed:', err);
     allowCors(res, req);
     res.status(500).json({ error: 'band index error' });
+  }
+});
+
+app.get('/index/new-sheet/bands', async (req, res) => {
+  try {
+    const force = String(req.query.force || '') === '1';
+    let csv = '';
+
+    if (force) {
+      const upstream = await fetch(NEW_SHEET_BANDS_URL, {
+        headers: { Accept: 'text/plain,text/csv;q=0.9,*/*;q=0.8', 'Cache-Control': 'no-cache' }
+      });
+      if (!upstream.ok) {
+        let body = '';
+        try { body = await upstream.text(); } catch (_) {}
+        const snippet = String(body || '').slice(0, 180).replace(/\s+/g, ' ').trim();
+        throw new Error('new sheet upstream returned ' + upstream.status + (snippet ? ': ' + snippet : ''));
+      }
+      csv = await upstream.text();
+      sheetResponseCache.set('new-sheet-bands', { text: csv, fetchedAt: Date.now() });
+    } else {
+      csv = await fetchTextWithShortCache('new-sheet-bands', NEW_SHEET_BANDS_URL);
+    }
+
+    const payload = buildBandIndexPayload(csv, { detectHeaderRow: true });
+    allowCors(res, req);
+    setPublicTextCacheHeaders(res, force ? 15 : 300);
+    return res.json(payload);
+  } catch (err) {
+    console.error('new sheet band-index fetch failed:', err);
+    allowCors(res, req);
+    res.status(500).json({ error: 'new sheet band index error' });
   }
 });
 
