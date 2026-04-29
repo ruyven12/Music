@@ -730,6 +730,66 @@ function buildBandIndexPayload(csvText, options) {
   };
 }
 
+function bandLetterFromBandId(bandId, name) {
+  const source = String(bandId || name || '').trim();
+  const match = source.match(/[A-Za-z0-9]/);
+  return match ? String(match[0]).toUpperCase() : '#';
+}
+
+function buildNewSheetBandIndexPayload(csvText) {
+  const flat = buildBandIndexPayload(csvText, { detectHeaderRow: true });
+  const sourceBands = Array.isArray(flat && flat.bands) ? flat.bands : [];
+  const sortedBands = sourceBands.slice().sort((a, b) => {
+    const aId = String((a && a.band_id) || '').trim();
+    const bId = String((b && b.band_id) || '').trim();
+    const aLetter = bandLetterFromBandId(aId, a && (a.band || a.name));
+    const bLetter = bandLetterFromBandId(bId, b && (b.band || b.name));
+    return aLetter.localeCompare(bLetter, undefined, { numeric: true, sensitivity: 'base' }) ||
+      aId.localeCompare(bId, undefined, { numeric: true, sensitivity: 'base' }) ||
+      String((a && (a.band || a.name)) || '').localeCompare(String((b && (b.band || b.name)) || ''), undefined, { numeric: true, sensitivity: 'base' });
+  });
+
+  const grouped = {};
+  sortedBands.forEach((row) => {
+    const item = row && typeof row === 'object' ? row : {};
+    const name = String((item.band || item.name) || '').trim();
+    const bandId = String(item.band_id || '').trim();
+    const letter = bandLetterFromBandId(bandId, name);
+
+    if (!grouped[letter]) grouped[letter] = [];
+    grouped[letter].push({
+      general: {
+        band_id: bandId,
+        name,
+        smug_folder: String(item.smug_folder || '').trim(),
+        logo_url: String(item.logo_url || '').trim(),
+        status: String(item.status || '').trim(),
+        tags: String(item.tags || '').trim(),
+        notes: String(item.notes || '').trim()
+      },
+      personnel: {
+        members: String(item.members || '').trim(),
+        past_members: String(item.past_members || '').trim()
+      },
+      stats: {
+        region: String(item.region || '').trim(),
+        location: String(item.location || '').trim(),
+        city: String(item.city || '').trim(),
+        state: String(item.state || '').trim(),
+        country: String(item.country || '').trim(),
+        archived_sets: String((item.archived_sets != null ? item.archived_sets : item.sets_archive) || '').trim(),
+        total_sets: String(item.total_sets || '').trim()
+      }
+    });
+  });
+
+  return {
+    generatedAt: flat.generatedAt || new Date().toISOString(),
+    count: sourceBands.length,
+    bands: grouped
+  };
+}
+
 function extractImageKeyFromUrl(url) {
   const u = String(url || "").trim();
   if (!u) return "";
@@ -2607,7 +2667,7 @@ app.get('/index/new-sheet/bands', async (req, res) => {
       csv = await fetchTextWithShortCache('new-sheet-bands', NEW_SHEET_BANDS_URL);
     }
 
-    const payload = buildBandIndexPayload(csv, { detectHeaderRow: true });
+    const payload = buildNewSheetBandIndexPayload(csv);
     allowCors(res, req);
     setPublicTextCacheHeaders(res, force ? 15 : 300);
     return res.json(payload);
