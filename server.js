@@ -736,6 +736,17 @@ function bandLetterFromBandId(bandId, name) {
   return match ? String(match[0]).toUpperCase() : '#';
 }
 
+function compactJsonFields(fields) {
+  const out = {};
+  Object.entries(fields || {}).forEach(([key, value]) => {
+    if (value == null) return;
+    const clean = String(value).trim();
+    if (!clean) return;
+    out[key] = clean;
+  });
+  return out;
+}
+
 function buildNewSheetBandIndexPayload(csvText) {
   const flat = buildBandIndexPayload(csvText, { detectHeaderRow: true });
   const sourceBands = Array.isArray(flat && flat.bands) ? flat.bands : [];
@@ -757,29 +768,30 @@ function buildNewSheetBandIndexPayload(csvText) {
     const letter = bandLetterFromBandId(bandId, name);
     const bandKey = bandId || String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'unknown';
 
-    if (!grouped[letter]) grouped[letter] = {};
-    grouped[letter][bandKey] = {
-      general: {
+    if (!grouped[letter]) grouped[letter] = { band_id: {} };
+    if (!grouped[letter].band_id) grouped[letter].band_id = {};
+    grouped[letter].band_id[bandKey] = {
+      general: compactJsonFields({
         name,
-        smug_folder: String(item.smug_folder || '').trim(),
-        logo_url: String(item.logo_url || '').trim(),
-        status: String(item.status || '').trim(),
-        tags: String(item.tags || '').trim(),
-        notes: String(item.notes || '').trim()
-      },
-      personnel: {
-        members: String(item.members || '').trim(),
-        past_members: String(item.past_members || '').trim()
-      },
-      stats: {
-        region: String(item.region || '').trim(),
-        location: String(item.location || '').trim(),
-        city: String(item.city || '').trim(),
-        state: String(item.state || '').trim(),
-        country: String(item.country || '').trim(),
-        archived_sets: String((item.archived_sets != null ? item.archived_sets : item.sets_archive) || '').trim(),
-        total_sets: String(item.total_sets || '').trim()
-      }
+        smug_folder: item.smug_folder,
+        logo_url: item.logo_url,
+        status: item.status,
+        tags: item.tags,
+        notes: item.notes
+      }),
+      personnel: compactJsonFields({
+        members: item.members,
+        past_members: item.past_members
+      }),
+      stats: compactJsonFields({
+        region: item.region,
+        location: item.location,
+        city: item.city,
+        state: item.state,
+        country: item.country,
+        archived_sets: item.archived_sets != null ? item.archived_sets : item.sets_archive,
+        total_sets: item.total_sets
+      })
     };
   });
 
