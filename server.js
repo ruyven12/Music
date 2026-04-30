@@ -747,6 +747,22 @@ function compactJsonFields(fields) {
   return out;
 }
 
+function parsePersonnelString(str) {
+  if (!str || typeof str !== 'string') return [];
+
+  return str
+    .split(';')
+    .map(entry => {
+      const [name, role] = entry.split('|').map(s => (s || '').trim());
+      if (!name) return null;
+      return {
+        name,
+        role: role || ''
+      };
+    })
+    .filter(Boolean);
+}
+
 function buildNewSheetBandIndexPayload(csvText) {
   const flat = buildBandIndexPayload(csvText, { detectHeaderRow: true });
   const sourceBands = Array.isArray(flat && flat.bands) ? flat.bands : [];
@@ -768,6 +784,21 @@ function buildNewSheetBandIndexPayload(csvText) {
     const letter = bandLetterFromBandId(bandId, name);
     const bandKey = bandId || String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'unknown';
 
+    const personnel = {};
+    Object.entries({
+      members: item.members,
+      past_members: item.past_members
+    }).forEach(([k, v]) => {
+      if (k === 'members' || k === 'past_members') {
+        const parsed = parsePersonnelString(v);
+        if (parsed.length) personnel[k] = parsed;
+      } else {
+        if (v != null && String(v).trim()) {
+          personnel[k] = v;
+        }
+      }
+    });
+
     if (!grouped[letter]) grouped[letter] = { band_id: {} };
     if (!grouped[letter].band_id) grouped[letter].band_id = {};
     grouped[letter].band_id[bandKey] = {
@@ -779,10 +810,7 @@ function buildNewSheetBandIndexPayload(csvText) {
         tags: item.tags,
         notes: item.notes
       }),
-      personnel: compactJsonFields({
-        members: item.members,
-        past_members: item.past_members
-      }),
+      personnel,
       stats: compactJsonFields({
         region: item.region,
         location: item.location,
