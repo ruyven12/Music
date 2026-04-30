@@ -750,17 +750,28 @@ function compactJsonFields(fields) {
 function parsePersonnelString(str) {
   if (!str || typeof str !== 'string') return [];
 
-  return str
-    .split(';')
-    .map(entry => {
-      const [name, role] = entry.split('|').map(s => (s || '').trim());
-      if (!name) return null;
-      return {
+  const grouped = new Map();
+
+  str.split(';').forEach(entry => {
+    const [name, role] = entry.split('|').map(s => (s || '').trim());
+    if (!name) return;
+
+    const key = name.toLowerCase();
+    if (!grouped.has(key)) {
+      grouped.set(key, {
         name,
-        role: role || ''
-      };
-    })
-    .filter(Boolean);
+        roles: []
+      });
+    }
+
+    const item = grouped.get(key);
+    if (role && !item.roles.includes(role)) item.roles.push(role);
+  });
+
+  return Array.from(grouped.values()).map(item => ({
+    name: item.name,
+    role: item.roles.join(', ')
+  }));
 }
 
 function buildNewSheetBandIndexPayload(csvText) {
